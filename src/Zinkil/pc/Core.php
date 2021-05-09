@@ -274,7 +274,7 @@ class Core extends PluginBase{
 		$map->registerEvents(new ServerListener($this), $this);
 		$map->registerEvents(new AntiCheatListener($this), $this);
 		$map->registerEvents(new WorldListener($this), $this);
-		$map->registerEvents(new ItemListener($this), $this);
+		$map->registerEvents(new ItemListener($this), $this); 
 		$map->registerEvents(new PlayerListener($this), $this);
 		$map->registerEvents(new DistanceListener($this), $this);
 	}
