@@ -514,7 +514,7 @@ class CPlayer extends Player{
 			case 8:
 			$x=100.5;
 			$y=130;
-			$z=100.5;
+			$z=100.5; 
 			$world=$this->plugin->getServer()->getLevelByName("nodebuff-java");
 			$this->teleport(new Location($x, $y, $z, 90, 0, $world));
 			$this->setPlayerLocation($loc);
