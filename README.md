@@ -35,7 +35,7 @@ Enjoy. ❤️️
   - Fully custom rods
 - [x] Cosmetics & Player-Based Preferences
   - CPS Counter
-  - Health and Distance (Reach) Counter
+  - Combo (Hits) and Distance (Reach) Counter
   - Combat Counter
   - Auto Rekit
   - Auto Queue
