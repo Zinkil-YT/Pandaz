@@ -53,6 +53,7 @@ Enjoy. ❤️️
   - Hitbox
   - CPS
   - High ping
+  - Anti Clean (2v1)
 
 # Questions or any help
 Contact me on discord @ Zinkil#1808.
