@@ -37,7 +37,7 @@ Enjoy. ❤️️
   - Auto Rekit
   - Auto Queue
   - Auto (Toggle) Sprint
-- [x] PvP utils counters 
+- [x] PvP stats counters 
   - CPS Counter
   - Reach Counter
   - Combo Counter
