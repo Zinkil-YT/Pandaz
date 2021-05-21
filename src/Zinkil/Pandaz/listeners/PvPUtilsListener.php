@@ -58,6 +58,7 @@ class PvPUtilsListener implements Listener{
             $player = $event->getPlayer();
             $killer->combo = 0;
             $player->combo = 0;
+	}
         if (PPM::isIn($player)) {
             PPM::delIn($player);
         }
