@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\listeners;
@@ -62,24 +79,27 @@ class WorldListener implements Listener{
 		$this->plugin=$plugin;
 		$this->opened=[];
 	}
+
 	public function onSlotChange(InventoryTransactionEvent $event){
 		$item=null;
 		$player=null;
 		$transaction=$event->getTransaction();
 		$player=$transaction->getSource();
 		$level=$player->getLevel()->getName();
-		if($level==$this->plugin->getLobby()){
+		if($level==$this->plugin->getLobby() or $level=="buildffa"){
 			$event->setCancelled();
 		}
 	}
+
 	public function onInteract(PlayerInteractEvent $event){
 		$player=$event->getPlayer();
-		$b=$event->getBlock();
+		$block=$event->getBlock();
 		$item=$event->getItem();
-		if($b instanceof Anvil or $b instanceof Bed or $b instanceof BrewingStand or $b instanceof BurningFurnace or $b instanceof Button or $b instanceof Chest or $b instanceof CraftingTable or $b instanceof Door or $b instanceof EnchantingTable or $b instanceof EnderChest or $b instanceof FenceGate or $b instanceof Furnace or $b instanceof IronDoor or $b instanceof IronTrapDoor or $b instanceof Lever or $b instanceof TrapDoor or $b instanceof TrappedChest){
+		if($block instanceof Anvil or $block instanceof Bed or $block instanceof BrewingStand or $block instanceof BurningFurnace or $block instanceof Button or $block instanceof Chest or $block instanceof CraftingTable or $block instanceof Door or $block instanceof EnchantingTable or $block instanceof EnderChest or $block instanceof FenceGate or $block instanceof Furnace or $block instanceof IronDoor or $block instanceof IronTrapDoor or $block instanceof Lever or $block instanceof TrapDoor or $block instanceof TrappedChest){
 			$event->setCancelled();
 		}
 	}
+
 	public function onLevelChange(EntityLevelChangeEvent $event){
 		$player=$event->getEntity();
 		if(!$player instanceof Player) return;
@@ -98,16 +118,19 @@ class WorldListener implements Listener{
 			$player->setScale(1);
 		}
 	}
+
 	public function onLeaveDecay(LeavesDecayEvent $event){
 		$block=$event->getBlock();
 		$level=$block->getLevel()->getName();
 		$event->setCancelled();
 	}
+
 	public function onBurn(BlockBurnEvent $event){
 		$block=$event->getBlock();
 		$level=$block->getLevel()->getName();
 		$event->setCancelled();
 	}
+
 	public function onPlace(BlockPlaceEvent $event){
 		$player=$event->getPlayer();
 		$block=$event->getBlock();
@@ -140,13 +163,15 @@ class WorldListener implements Listener{
 			}
 			return;
 		}
-		if($level!=="buildffa" and !$player->hasPermission("Pandaz.can.build")){
+		if($level!=="buildffa"){
 			$event->setCancelled();
 		}
 	}
+
 	public function onBreak(BlockBreakEvent $event){
 		$player=$event->getPlayer();
 		$block=$event->getBlock();
+		$level=$player->getLevel()->getName();
 		$vector3=new Vector3($block->getX(), $block->getY(), $block->getZ());
 		if($this->plugin->getDuelHandler()->isInDuel($player)){
 			$duel=$this->plugin->getDuelHandler()->getDuel($player);
@@ -186,10 +211,11 @@ class WorldListener implements Listener{
 			}
 			return;
 		}
-		if(!$player->hasPermission("Pandaz.can.break")){
+		if(!$player->hasPermission("Pandaz.can.break") or !$player->isOp()){
 			$event->setCancelled();
 		}
 	}
+
 	public function onBlockSpread(BlockSpreadEvent $event):void{
 		$state=$event->getNewState();
 		$block=$event->getBlock();
@@ -216,6 +242,7 @@ class WorldListener implements Listener{
 			}
 		}
 	}
+
 	public function onBlockForm(BlockFormEvent $event):void{
 		$state=$event->getNewState();
 		$block=$event->getBlock();
@@ -246,6 +273,7 @@ class WorldListener implements Listener{
 			}
 		}
 	}
+
 	public function onBucketFill(PlayerBucketFillEvent $event):void{
 		$player=$event->getPlayer();
 		$block=$event->getBlockClicked();
@@ -259,18 +287,7 @@ class WorldListener implements Listener{
 		if($this->plugin->getDuelHandler()->isInDuel($player)){
 			$duel=$this->plugin->getDuelHandler()->getDuel($player);
 			if($duel!==null and $duel->isDuelRunning() and $duel->canBuild()){
-				/*
-				
-				THIS function is supposed to prevent water/lava that was not
-				placed in a duel to not be able to be collected into a bucket, but it
-				cancels the event completely so keep DISABLED
-
-				if($duel->removeBlock($block)===false){
-					$event->setCancelled();
-					$player->sendMessage("block isnt part of duel");
-				}else{*/
 					$duel->removeBlock($block->getX(), $block->getY(), $block->getZ());
-				//}
 			}else{
 				$event->setCancelled();
 			}
@@ -286,6 +303,7 @@ class WorldListener implements Listener{
 			return;
 		}
 	}
+
 	public function onBucketEmpty(PlayerBucketEmptyEvent $event):void{
 		$player=$event->getPlayer();
 		$block=$event->getBlockClicked();
@@ -323,13 +341,6 @@ class WorldListener implements Listener{
 				$event->setCancelled();
 			}
 			return;
-		}
-	}
-	public function onExhaust(PlayerExhaustEvent $event){
-		$player=$event->getPlayer();
-		$level=$player->getLevel()->getName();
-		if($level==$this->plugin->getLobby()){
-			$event->setCancelled();
 		}
 	}
 }

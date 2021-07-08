@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\duels;
@@ -14,13 +31,10 @@ use Zinkil\Pandaz\Utils;
 class DuelArena extends PracticeArena{
 	
 	private $center;
-	
 	private $playerPos;
 	private $opponentPos;
-	
 	private $playerPitch;
 	private $playerYaw;
-	
 	private $oppPitch;
 	private $oppYaw;
 	
@@ -49,9 +63,11 @@ class DuelArena extends PracticeArena{
 			}
 		}
 	}
+
 	public function getModes():array{
 		return $this->modes;
 	}
+
 	public function setPlayerPos($pos):DuelArena{
 		if($pos instanceof Position){
 			if(Utils::areLevelsEqual($pos->level, $this->level)){
@@ -66,6 +82,7 @@ class DuelArena extends PracticeArena{
 		}
 		return $result;
 	}
+
 	public function setOpponentPos($pos):DuelArena{
 		if($pos instanceof Position){
 			if(Utils::areLevelsEqual($pos->level, $this->level)){
@@ -80,6 +97,7 @@ class DuelArena extends PracticeArena{
 		}
 		return $result;
 	}
+
 	public function getPlayerPos(){
 		$result=$this->playerPos;
 		if(!is_null($this->playerYaw) and !is_null($this->playerPitch)){
@@ -87,6 +105,7 @@ class DuelArena extends PracticeArena{
 		}
 		return $result;
 	}
+
 	public function getOpponentPos(){
 		$result=$this->opponentPos;
 		if(!is_null($this->oppYaw) and !is_null($this->oppPitch)){
@@ -94,6 +113,7 @@ class DuelArena extends PracticeArena{
 		}
 		return $result;
 	}
+
 	public function getCenterPos(){
 		$result=$this->centerPos;
 		$result=new Position($this->centerPos->x, $this->centerPos->y, $this->centerPos->z, $this->level);

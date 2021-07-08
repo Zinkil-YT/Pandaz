@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\discord;
@@ -9,47 +26,24 @@ use pocketmine\Server;
 
 class Webhook{
 
-    /** @var string $url the url of the webhook */
 	protected $url; 
 
 	public function __construct(string $url){
 		$this->url = $url;
 	}
 
-    /**
-     * @return string a string containing the url
-     */
 	public function getURL():string{
 		return $this->url;
 	}
 
-    /**
-     * @author CortexPE
-     *
-     * @return bool represents if the given url is valid
-     */
 	public function isValid(): bool {
 		return filter_var($this->url, FILTER_VALIDATE_URL)!==false;
 	}
 
-    /**
-     * Asynchronously sends the json content to the discord webhook
-     * @author CortexPE
-     *
-     * @param Message $message to be sent
-     */
 	public function sendAsync(Message $message) {
 		Server::getInstance()->getAsyncPool()->submitTask(new WebhookTask($this, $message));
 	}
 
-    /**
-     * Synchronously sends the json content to the discord webhook
-     * @author Jviguy
-     *
-     * @param Message $message the message to be sent
-     *
-     * @return bool Represents the success of the curl operation
-     */
 	public function send(Message $message): bool {
         $ch = curl_init($this->getURL());
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($message));

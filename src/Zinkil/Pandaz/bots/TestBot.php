@@ -1,5 +1,24 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
+declare(strict_types=1);
+
 namespace Zinkil\Pandaz\bots;
 
 use pocketmine\Player;
@@ -30,8 +49,8 @@ class TestBot extends Creature implements NPC{
 	const ATTACK_COOLDOWN=8;
 	const REACH_DISTANCE=3;
 	const ACCURACY=40;
-	const POT_CHANCE=1;//995
-	const POT_WAIT=20 * 8;//8 seconds
+	const POT_CHANCE=1;
+	const POT_WAIT=20 * 8;
 	public $target=null;
 	public $duel=null;
 	public $deactivated=false;
@@ -56,12 +75,15 @@ class TestBot extends Creature implements NPC{
 	public function initEntity():void{
 		parent::initEntity();
 	}
+
 	public function saveNBT() : void{
 		parent::saveNBT();
 	}
+
 	public function getName():string{
 		return $this->name;
 	}
+
 	public function attack(EntityDamageEvent $source):void{
 		parent::attack($source);
 		if($source->isCancelled()){
@@ -81,6 +103,7 @@ class TestBot extends Creature implements NPC{
 			}
 		}
 	}
+
 	public function knockBack($damager, float $damage, float $x, float $z, float $base=0.4):void{
 		$xzKB=0.388;
 		$yKb=0.485;
@@ -103,6 +126,7 @@ class TestBot extends Creature implements NPC{
 			$this->move($motion->x * 1.60, $motion->y * 1.80, $motion->z * 1.60);
 		}
 	}
+
 	public function entityBaseTick(int $tickDiff=1):bool{
 		parent::entityBaseTick($tickDiff);
 		if(!$this->isAlive()){
@@ -149,15 +173,19 @@ class TestBot extends Creature implements NPC{
 		if($this->isAlive()) $this->updateMovement();
 		return $this->isAlive();
 	}
+
 	public function kill():void{
 		parent::kill();
 	}
+
 	public function atRandomPosition(){
 		return $this->getRandomPosition()==null or $this->distance($this->getRandomPosition()) <= 2;
 	}
+
 	public function getRandomPosition(){
 		return $this->randomPosition;
 	}
+
 	public function generateRandomPosition(){
 		$minX=$this->getFloorX() - 8;
 		$minY=$this->getFloorY() - 8;
@@ -185,17 +213,21 @@ class TestBot extends Creature implements NPC{
 		}
 		$this->randomPosition=new Vector3($x, $y + 1, $z);
 	}
+
 	public function getSpeed(){
 		return ($this->isUnderwater() ? $this->speed / 2:$this->speed);
 	}
+
 	public function getBaseAttackDamage(){
 		return $this->attackDamage;
 	}
+
 	public function getFrontBlock($y=0){
 		$dv=$this->getDirectionVector();
 		$pos=$this->asVector3()->add($dv->x * $this->getScale(), $y + 1, $dv->z * $this->getScale())->round();
 		return $this->getLevel()->getBlock($pos);
 	}
+
 	public function shouldJump(){
 		if($this->jumpTicks > 0) return false;
 		if(!$this->isOnGround()) return false;
@@ -208,11 +240,13 @@ class TestBot extends Creature implements NPC{
 		!$this->getFrontBlock() instanceof Flowable and
 		$this->jumpTicks==0;
 	}
+
 	public function shouldPot(){
 		if($this->potsUsed >= 25) return false;
 		if($this->potTicks > 0) return false;
 		return mt_rand(7, 9) >= $this->getHealth();
 	}
+
 	public function getJumpMultiplier(){
 		return 64;
 		if($this->getFrontBlock() instanceof Slab or $this->getFrontBlock() instanceof Stair or $this->getLevel()->getBlock($this->asVector3()->subtract(0,0.5)->round()) instanceof Slab and $this->getFrontBlock()->getId()!=0){
@@ -223,16 +257,18 @@ class TestBot extends Creature implements NPC{
 		}
 		return 32;
 	}
+
 	public function jump():void{
 		if($this->jumpTicks > 0) return;
 		$this->motion->y=$this->gravity * $this->getJumpMultiplier();
 		if($this->isAlive() and !$this->isClosed()) $this->move($this->motion->x * 1.15, $this->motion->y, $this->motion->z * 1.15);
-		$this->jumpTicks=10; //($this->getJumpMultiplier()==4 ? 2:5);
+		$this->jumpTicks=10;
 	}
+
 	public function pot():void{
 		if($this->potsUsed >= 25) return;
 		if(mt_rand(0, 1000) > self::POT_CHANCE){
-			Utils::instantPots(Item::SPLASH_POTION, $this, true);
+			Utils::instantPotsEasy(Item::SPLASH_POTION, $this, true);
 			$this->potTicks=self::POT_WAIT;
 			$this->potsUsed++;
 		}

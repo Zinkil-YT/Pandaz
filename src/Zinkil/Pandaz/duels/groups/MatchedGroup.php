@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\duels\groups;
@@ -22,32 +39,41 @@ class MatchedGroup{
 		$this->queue=$queue;
 		$this->ranked=$ranked;
 	}
+
 	public function isRanked():bool{
 		return $this->ranked;
 	}
+
 	public function getPlayerName():string{
 		return $this->playerName;
 	}
+
 	public function getOpponentName():string{
 		return $this->opponentName;
 	}
+
 	public function getPlayer(){
 		return Utils::getPlayer($this->playerName);
 	}
+
     public function getOpponent(){
 		return Utils::getPlayer($this->opponentName);
 	}
+
     public function isPlayerOnline(){
         $player=$this->getOpponent();
         return !is_null($player) and $player->isOnline();
     }
+
     public function isOpponentOnline(){
         $opponent=$this->getOpponent();
         return !is_null($opponent) and $opponent->isOnline();
     }
+
     public function getQueue():string{
     	return $this->queue;
-   }
+    }
+
     public function equals($object):bool{
         $result=false;
         if($object instanceof MatchedGroup){

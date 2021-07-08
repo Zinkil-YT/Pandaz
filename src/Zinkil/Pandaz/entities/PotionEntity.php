@@ -1,4 +1,22 @@
 <?php
+
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\entities;
@@ -16,9 +34,11 @@ class PotionEntity extends Human{
 	public function __construct(Level $level, CompoundTag $nbt){
 		parent::__construct($level, $nbt);
 	}
+
 	public function saveNBT():void{
 		parent::saveNBT();
 	}
+
 	public function onUpdate(int $currentTick):bool{
 		$this->yaw += 2.5;
 		$this->pitch += 5.5;
@@ -33,6 +53,7 @@ class PotionEntity extends Human{
         $this->spawnToAll();
 		return parent::onUpdate($currentTick);
 	}
+
     public function attack(EntityDamageEvent $source):void{
 		$source->setCancelled();
 	}

@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\entities;
@@ -11,6 +28,7 @@ use pocketmine\event\entity\EntityDamageByChildEntityEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\ProjectileHitEntityEvent;
+use pocketmine\network\mcpe\protocol\ActorEventPacket;
 use pocketmine\level\Level;
 use pocketmine\math\RayTraceResult;
 use pocketmine\nbt\tag\CompoundTag;
@@ -38,6 +56,7 @@ class Hook extends Projectile{
 			$this->handleHookCasting($this->motion->x, $this->motion->y, $this->motion->z, 1.0, 1.0);
 		}
 	}
+
 	public function onHitEntity(Entity $entityHit, RayTraceResult $hitResult):void{
 		$event=new ProjectileHitEntityEvent($this, $hitResult, $entityHit);
 		$damage=$this->getResultDamage();
@@ -51,9 +70,11 @@ class Hook extends Projectile{
 		$this->isCollided=true;
 		$this->flagForDespawn();
 	}
+
 	protected function onHitBlock(Block $blockHit, RayTraceResult $hitResult):void{
 		parent::onHitBlock($blockHit, $hitResult);
 	}
+
 	public function handleHookCasting(float $x, float $y, float $z, float $f1, float $f2){
 		$rand=new Random();
 		$f=sqrt($x * $x + $y * $y + $z * $z);
@@ -70,6 +91,7 @@ class Hook extends Projectile{
 		$this->motion->y = $y;
 		$this->motion->z += $z;
 	}
+
 	public function entityBaseTick(int $tickDiff=1):bool{
 		$hasUpdate=parent::entityBaseTick($tickDiff);
 		$owner=$this->getOwningEntity();
@@ -79,6 +101,7 @@ class Hook extends Projectile{
 		} else $this->flagForDespawn();
 		return $hasUpdate;
 	}
+
 	public function close():void{
 		parent::close();
 		$owner=$this->getOwningEntity();
@@ -86,6 +109,7 @@ class Hook extends Projectile{
 			$owner->stopFishing();
 		}
 	}
+
 	private function getGrapplingSpeed(float $dist):float{
 		if($dist > 600):
 			$motion=0.26;
@@ -104,6 +128,7 @@ class Hook extends Projectile{
 		endif;
 		return $motion;
 	}
+
 	public function applyGravity():void{
 		if($this->isUnderwater()){
 			$this->motion->y += $this->gravity;

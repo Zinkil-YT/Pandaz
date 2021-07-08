@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz;
@@ -16,7 +33,6 @@ use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
-use pocketmine\network\mcpe\protocol\types\SkinAdapterSingleton;
 use Zinkil\Pandaz\duels\groups\{BotDuelGroup, DuelGroup};
 use Zinkil\Pandaz\Core;
 use Zinkil\Pandaz\Utils;
@@ -70,7 +86,7 @@ class CorePlayer extends Player{
 	protected $messages=false;
 	protected $coords=false;
 	protected $anticheat=true;
-	
+
 	protected $hascape=false;
 	
 	public const MAX_ENDERPEARL_SEC=10;
@@ -107,6 +123,7 @@ class CorePlayer extends Player{
 		$re=$player;
 		$this->re=($re!=null ? $re->getName():"");
 	}
+
 	public function hasRe():bool{
 		if($this->re===null) return false;
 		$re=$this->getRe();
@@ -114,12 +131,16 @@ class CorePlayer extends Player{
 		$player=$this->getRe();
 		return $player!==null;
 	}
+
 	public function getRe(){
 		return Server::getInstance()->getPlayerExact($this->re);
 	}
 	
 	public function update():void{
 		$this->rank=$this->plugin->getDatabaseHandler()->getRank(Utils::getPlayerName($this));
+		if($this->isOp()){
+			return;
+		}
 		if($this->getPing() >= 350){
 			$this->pingTicks++;
 		}else{
@@ -192,6 +213,10 @@ class CorePlayer extends Player{
 		return $this->isTrainee() or $this->isHelper() or $this->isMod() or $this->isHeadMod() or $this->isAdmin() or $this->isManager() or $this->isOwner();
 	}
 	
+	public function isMedia():bool{
+		return $this->isYoutube() or $this->isFamous();
+	}
+
 	public function isVip():bool{
 		return $this->getRank()=="VIP";
 	}
@@ -239,7 +264,7 @@ class CorePlayer extends Player{
 	public function isOwner():bool{
 		return $this->getRank()=="Owner";
 	}
-	
+
 	public function setPlayerLocation(int $loc){
 		$this->location=$loc;
 	}
@@ -445,7 +470,7 @@ class CorePlayer extends Player{
 			if($title===true){
 				$this->sendMessage("§6Kits §7»§r§f You Selected §bNoDebuff");
 			}
-			$this->plugin->getScoreboardHandler()->sendMainScoreboard($this);
+			$this->plugin->getScoreboardHandler()->sendFFAScoreboard($this);
 			break;
 			case 2:
 			$x=253;
@@ -460,7 +485,7 @@ class CorePlayer extends Player{
 			if($title===true){
 				$this->sendMessage("§6Kits §7»§r§f You Selected §bGapple");
 			}
-			$this->plugin->getScoreboardHandler()->sendMainScoreboard($this);
+			$this->plugin->getScoreboardHandler()->sendFFAScoreboard($this);
 			break;
 			case 3:
 			$x=100.5;
@@ -475,7 +500,7 @@ class CorePlayer extends Player{
 			if($title===true){
 				$this->sendMessage("§6Kits §7»§r§f You Selected §bOP Gapple");
 			}
-			$this->plugin->getScoreboardHandler()->sendMainScoreboard($this);
+			$this->plugin->getScoreboardHandler()->sendFFAScoreboard($this);
 			break;
 			case 4:
 			$x=263;
@@ -491,7 +516,7 @@ class CorePlayer extends Player{
 			if($title===true){
 				$this->sendMessage("§6Kits §7»§r§f You Selected §bCombo");
 			}
-			$this->plugin->getScoreboardHandler()->sendMainScoreboard($this);
+			$this->plugin->getScoreboardHandler()->sendFFAScoreboard($this);
 			break;
 			case 5:
 			$x=89;
@@ -507,7 +532,7 @@ class CorePlayer extends Player{
 			if($title===true){
 				$this->sendMessage("§6Kits §7»§r§f You Selected §bFist");
 			}
-			$this->plugin->getScoreboardHandler()->sendMainScoreboard($this);
+			$this->plugin->getScoreboardHandler()->sendFFAScoreboard($this);
 			break;
 			case 7:
 			$x=100.5;
@@ -522,7 +547,7 @@ class CorePlayer extends Player{
 			if($title===true){
 				$this->sendMessage("§6Kits §7»§r§f You Selected §bNoDebuff (Low KB)");
 			}
-			$this->plugin->getScoreboardHandler()->sendMainScoreboard($this);
+			$this->plugin->getScoreboardHandler()->sendFFAScoreboard($this);
 			break;
 			case 8:
 			$x=100.5;
@@ -537,7 +562,7 @@ class CorePlayer extends Player{
 			if($title===true){
 				$this->sendMessage("§6Kits §7»§r§f You Selected §bNoDebuff (Java)");
 			}
-			$this->plugin->getScoreboardHandler()->sendMainScoreboard($this);
+			$this->plugin->getScoreboardHandler()->sendFFAScoreboard($this);
 			break;
 			case 9:
 			$x=260;
@@ -553,7 +578,7 @@ class CorePlayer extends Player{
 			if($title===true){
 				$this->sendMessage("§6Kits §7»§r§f You Selected §bResistance");
 			}
-			$this->plugin->getScoreboardHandler()->sendMainScoreboard($this);
+			$this->plugin->getScoreboardHandler()->sendFFAScoreboard($this);
 			break;
 			case 11:
 			$x=256;
@@ -569,7 +594,7 @@ class CorePlayer extends Player{
 			if($title===true){
 				$this->sendMessage("§6Kits §7»§r§f You Selected §bSumoFFA");
 			}
-			$this->plugin->getScoreboardHandler()->sendMainScoreboard($this);
+			$this->plugin->getScoreboardHandler()->sendFFAScoreboard($this);
 			break;
 			case 12:
 			$x=1;
@@ -585,24 +610,24 @@ class CorePlayer extends Player{
 			if($title===true){
 				$this->sendMessage("§6Kits §7»§r§f You Selected §bKnockBackFFA");
 			}
-			$this->plugin->getScoreboardHandler()->sendMainScoreboard($this);
+			$this->plugin->getScoreboardHandler()->sendFFAScoreboard($this);
 			break;
 			case 13:
-				$x=1;
-				$y=120;
-				$z=0;
-				$yaw=mt_rand(0, 180);
-				$world=$this->plugin->getServer()->getLevelByName("buildffa");
-				$this->teleport(new Location($x, $y, $z, $yaw, 0, $world));
-				$this->setPlayerLocation($loc);
-				if($kit===true){
-					Kits::sendKit($this, "buildffa");
-				}
-				if($title===true){
-					$this->sendMessage("§6Kits §7»§r§f You Selected §bBuildFFA");
-				}
-				$this->plugin->getScoreboardHandler()->sendMainScoreboard($this);
-				break;
+			$x=1;
+			$y=120;
+			$z=0;
+			$yaw=mt_rand(0, 180);
+			$world=$this->plugin->getServer()->getLevelByName("buildffa");
+			$this->teleport(new Location($x, $y, $z, $yaw, 0, $world));
+			$this->setPlayerLocation($loc);
+			if($kit===true){
+				Kits::sendKit($this, "buildffa");
+			}
+			if($title===true){
+				$this->sendMessage("§6Kits §7»§r§f You Selected §bBuildFFA");
+			}
+			$this->plugin->getScoreboardHandler()->sendFFAScoreboard($this);
+			break;
 			default:
 			return;
 			break;
@@ -781,6 +806,7 @@ class CorePlayer extends Player{
 			$this->setMotion($motion);
 		}
 	}
+
 	public function initializeLogin(){
 		$this->plugin->getDatabaseHandler()->rankAdd(Utils::getPlayerName($this));
 		$this->plugin->getDatabaseHandler()->levelsAdd(Utils::getPlayerName($this));
@@ -814,32 +840,10 @@ class CorePlayer extends Player{
 	}
 	
 	public function initializeJoin(){
-		if(!$this->hasPlayedBefore()){
-			$this->sendMessage("§eBe sure to check out our discord at ".$this->plugin->getDiscord()." to stay updated with the network!");
-		}
 		$this->setDisplayName(Utils::getPlayerName($this));
 		$this->plugin->getPermissionHandler()->addPermission($this, $this->getRank());
 		$this->sendTo(0, true);
 		$this->plugin->getClickHandler()->addToArray($this);
-		$this->addTitle("§3Welcome At", "§bPandaz §fPractice", 20, 50, 60);
-        $this->sendMessage("§r✅§7----------------------------------------");
-        $this->sendMessage("§r");
-        $this->sendMessage("§r✅§b§lPandaz §fPractice§r");
-		$this->sendMessage("§r✅§7» Welcome, We Offer:");
-        $this->sendMessage("§r");
-        $this->sendMessage("§r✅§7» FFA system with all gamemodes you can imagine and best kb.");
-        $this->sendMessage("§r✅§7» Duels system with many gamemodes and elo system.");
-		$this->sendMessage("§r✅§7» Bot duels system (easy, medium, hard, hacker).");
-        $this->sendMessage("§r✅§7» Anti cheat, Anti swearing, Anti toxic, Anti advertising.");
-        $this->sendMessage("§r✅§7» Good nodebuff gameplay (cosmetics, anti 2v1, etc...)");
-		$this->sendMessage("§r✅§7» Party system which allow you to play with you bros.");
-        $this->sendMessage("§r");
-        $this->sendMessage("§r✅§7» Website: pandazpractice.net");
-        $this->sendMessage("§r✅§7» Discord: discord.gg/d85MUcttJu");
-        $this->sendMessage("§r✅§7» Store: store.pandazpractice.net");
-		$this->sendMessage("§r✅§7» Twitter: @PandazPractice");
-        $this->sendMessage("§r");
-        $this->sendMessage("§r✅§7----------------------------------------");
 		Utils::spawnStaticTextsToPlayer($this);
 		Utils::spawnUpdatingTextsToPlayer($this);
 		Utils::teleportSound($this);

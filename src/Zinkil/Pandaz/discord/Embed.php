@@ -1,17 +1,34 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\discord;
 
 class Embed{
 
-    /** @var string[] $data */
 	protected $data = [];
 
 	public function asArray():array{
 		return $this->data;
 	}
+
 	public function setAuthor(string $name, string $url=null, string $iconURL=null):void{
 		if(!isset($this->data["author"])){
 			$this->data["author"]=[];
@@ -24,36 +41,43 @@ class Embed{
 			$this->data["author"]["icon_url"]=$iconURL;
 		}
 	}
+
 	public function setTitle(string $title):void{
 		$this->data["title"]=$title;
 	}
+
 	public function setDescription(string $description):void{
 		$this->data["description"]=$description;
 	}
+
 	public function setColor(int $color):void{
 		$this->data["color"]=$color;
 	}
+
 	public function addField(string $name, string $value, bool $inline=false):void{
 		if(!isset($this->data["fields"])){
 			$this->data["fields"]=[];
 		}
 		$this->data["fields"][]=[
-								"name" => $name,
-								"value" => $value,
-								"inline" => $inline,];
+		"name" => $name,
+		"value" => $value,
+		"inline" => $inline,];
 	}
+
 	public function setThumbnail(string $url):void{
 		if(!isset($this->data["thumbnail"])){
 			$this->data["thumbnail"]=[];
 		}
 		$this->data["thumbnail"]["url"]=$url;
 	}
+
 	public function setImage(string $url):void{
 		if(!isset($this->data["image"])){
 			$this->data["image"]=[];
 		}
 		$this->data["image"]["url"]=$url;
 	}
+
 	public function setFooter(string $text, string $iconURL=null):void{
 		if(!isset($this->data["footer"])){
 			$this->data["footer"]=[];
@@ -63,6 +87,7 @@ class Embed{
 			$this->data["footer"]["icon_url"]=$iconURL;
 		}
 	}
+
 	public function setTimestamp(string $timestamp):void{
 		$this->data["timestamp"]=$timestamp;
 	}

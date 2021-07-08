@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\listeners;
@@ -25,6 +42,7 @@ use pocketmine\entity\Effect;
 use pocketmine\entity\EffectInstance;
 use pocketmine\math\Vector3;
 use pocketmine\block\Block;
+use pocketmine\event\player\PlayerChangeSkinEvent;
 use pocketmine\level\particle\CriticalParticle;
 use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\event\player\PlayerInteractEvent;
@@ -52,6 +70,7 @@ use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\EmotePacket;
 use pocketmine\network\mcpe\protocol\DisconnectPacket;
+use pocketmine\network\mcpe\protocol\types\inventory\UseItemOnEntityTransactionData;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
 use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use pocketmine\network\mcpe\protocol\PlayerActionPacket;
@@ -63,12 +82,13 @@ use pocketmine\network\mcpe\protocol\ActorEventPacket;
 use pocketmine\event\inventory\CraftItemEvent;
 use Zinkil\Pandaz\tasks\onetime\ChatCooldownTask;
 use Zinkil\Pandaz\tasks\onetime\PearlTask;
+use Zinkil\Pandaz\tasks\onetime\WelcomeTask;
 use Zinkil\Pandaz\tasks\onetime\CloseEntityTask;
 use Zinkil\Pandaz\CorePlayer;
 use Zinkil\Pandaz\Core;
 use Zinkil\Pandaz\Kits;
 use Zinkil\Pandaz\Utils;
-use Zinkil\Pandaz\multiver\MultiVersion;
+use Zinkil\Pandaz\LevelUtils;
 use Zinkil\Pandaz\bossbar\BossBar;
 use Zinkil\Pandaz\discord\{Webhook, Message, Embed};
 
@@ -81,21 +101,15 @@ class PlayerListener implements Listener{
 	public function __construct(Core $plugin){
 		$this->plugin=$plugin;
 	}
-	/**
-	* @priority HIGHEST
-	*/
+
 	function onCreation(PlayerCreationEvent $event){
 		$event->setPlayerClass(CorePlayer::class);
 	}
-	/**
-	* @priority HIGHEST
-	*/
+
 	function onCraft(CraftItemEvent $event){
 		$event->setCancelled();
 	}
-	/**
-	* @priority HIGHEST
-	*/
+
 	public function onPreLogin(PlayerPreLoginEvent $event){
 		$player=$event->getPlayer();
 		if($player instanceof CorePlayer){
@@ -145,9 +159,7 @@ class PlayerListener implements Listener{
 			}
 		}
 	}
-	/**
-	* @priority HIGHEST
-	*/
+
 	public function onJoin(PlayerJoinEvent $event){
 		$player=$event->getPlayer();
 		$bar = new BossBar();
@@ -157,6 +169,19 @@ class PlayerListener implements Listener{
 		$embed=new Embed();
 		if($player instanceof CorePlayer) $player->initializeJoin();
 		$event->setJoinMessage("§f(§a+§f) §a".$player->getDisplayName());
+		//Good solution for the welcome title that doesn't show for low spec devices
+		$this->plugin->getScheduler()->scheduleRepeatingTask(new WelcomeTask($this->plugin, $player), 20);
+		$player->addTitle("§bPandaz", "§fPractice", 20, 100, 80);
+        $player->sendMessage("§r✅§7----------------------------------------");
+        $player->sendMessage("§r");
+        $player->sendMessage("§r✅§b§lPandaz §fPractice§r");
+		$player->sendMessage("§r✅§7» Welcome, §eSeason 1");
+        $player->sendMessage("§r");
+        $player->sendMessage("§r✅§7» Discord: discord.gg/2zt7P5EUuN");
+        $player->sendMessage("§r✅§7» Instagram: @PandazNetwork");
+		$player->sendMessage("§r✅§7» Twitter: @PandazPracticeEU");
+        $player->sendMessage("§r");
+        $player->sendMessage("§r✅§7----------------------------------------");
 		//Discord webhook event
 		$embed->setTitle("Pandaz Notifications");
 		$embed->setColor(0x86F03D);
@@ -164,27 +189,29 @@ class PlayerListener implements Listener{
 		$embed->setFooter(Utils::getTimeExact(), null);
 		$emessage->addEmbed($embed);
 		$webHook->sendAsync($emessage);
-		$bar->setTitle("§l§bPandaz §l§fPractice");    // `
+		$bar->setTitle("§l§bPandaz §l§fPractice");
 		$bar->setSubTitle("§b");
 		$bar->setPercentage(1);
 		$bar->addPlayer($player);
 	}
-	/**
-	* @priority HIGHEST
-	*/
+
 	public function onQuit(PlayerQuitEvent $event){
 		$player=$event->getPlayer();
 		$reason=$event->getQuitReason();
+		if($player instanceof CorePlayer) $player->initializeQuit();
+		//A fix for (Online Players) don't update before sending embed message
+		$removeplayer = 1;
+		$getplayers = count($this->plugin->getServer()->getOnlinePlayers());
+		$allplayers = $getplayers - $removeplayer;
 		//Discord webhook utils
 		$webHook=new Webhook(Core::WEBHOOK);
 		$emessage=new Message();
 		$embed=new Embed();
-		if($player instanceof CorePlayer) $player->initializeQuit();
 		$event->setQuitMessage("§f(§c-§f) §c".$player->getDisplayName());
 		//Discord webhook event
 		$embed->setTitle("Pandaz Notifications");
 		$embed->setColor(0xF71828);
-		$embed->setDescription("Player left: `".$player->getDisplayName()."`\nOnline players: `".count($this->plugin->getServer()->getOnlinePlayers())."`");
+		$embed->setDescription("Player left: `".$player->getDisplayName()."`\nOnline players: `".$allplayers."`");
 		$embed->setFooter(Utils::getTimeExact(), null);
 		$emessage->addEmbed($embed);
 		$webHook->sendAsync($emessage);
@@ -205,9 +232,7 @@ class PlayerListener implements Listener{
 			}
 		}
 	}
-	/**
-	* @priority HIGHEST
-	*/
+
 	public function onDeath(PlayerDeathEvent $event){
 		$player=$event->getPlayer();
 		$finaldamagecause=$player->getLastDamageCause();
@@ -236,43 +261,77 @@ class PlayerListener implements Listener{
 			$duel->setResults($winner, $loser);
 			return;
 		}
-		$cause=$player->getLastDamageCause();
-		if($cause instanceof EntityDamageByEntityEvent and $cause->getDamager()!==null){
-			$killer=$cause->getDamager();
-			$health=$player->getHealth();
-			if($player instanceof Player and $killer instanceof Player){
-				if($killer->isTagged()) $killer->setTagged(false);
-				Utils::spawnLightning($player);
-				$rank=$killer->getRank();
-				$finalhealth=round($killer->getHealth(), 1);
-				$weapon=$killer->getInventory()->getItemInHand()->getName();
-				$playername=$player->getDisplayName();
-				$killername=$killer->getDisplayName();
-				$messages=["quickied", "railed", "ezed", "clapped", "given an L", "smashed", "botted", "utterly defeated", "swept off their feet", "sent to the heavens", "killed", "owned"];
-				$potsA=0;
-				$potsB=0;
-				foreach($player->getInventory()->getContents() as $pots){
-					if($pots instanceof ItemSplashPotion) $potsA++;
-				}
-				foreach($killer->getInventory()->getContents() as $pots){
-					if($pots instanceof ItemSplashPotion) $potsB++;
-				}
-				if($killer->getLevel()->getName()=="nodebuff"){
-					$dm="§l§9Nodebuff §7» §r§b".$player->getDisplayName()." §6[".$potsA." Pots] §7Was ".$messages[array_rand($messages)]." §7By§b ".$killer->getDisplayName()." §6[".$potsB." Pots - ".$finalhealth." HP]";
-				}else{
-					$dm="§l§cPvP §7» §r§b".$player->getDisplayName()." §7Was ".$messages[array_rand($messages)]." §7By§b ".$killer->getDisplayName()." §6[".$finalhealth." HP]";
-				}
-				$event->setDeathMessage($dm);
-				$killer->setHealth($killer->getMaxHealth());
-				if($killer instanceof CorePlayer) Utils::updateStats($killer, 0);
-				if($player instanceof CorePlayer) Utils::updateStats($player, 1);
-				if(Utils::isAutoRekitEnabled($killer)==true) Kits::sendKit($killer, $killer->getLevel()->getName());
-			}
-		}
 	}
-	/**
-	* @priority HIGHEST
-	*/
+
+    public function onFFADeath(EntityDamageEvent $event){
+        if ($event instanceof EntityDamageByEntityEvent){
+            if ($event->getEntity() instanceof Player){
+                if ($event->getDamager() instanceof Player){
+                    $player = $event->getEntity();
+                    $killer = $event->getDamager();
+					if ($this->plugin->getDuelHandler()->isInDuel($player)) return;
+					if ($this->plugin->getDuelHandler()->isInDuel($killer)) return;
+					if ($this->plugin->getDuelHandler()->isInPartyDuel($player)) return;
+					if ($this->plugin->getDuelHandler()->isInPartyDuel($killer)) return;
+                    if ($player->getHealth() - $event->getFinalDamage() <= 0){
+						Utils::spawnPrivateLightning($player, [$killer]);
+						if($player->isTagged()) $player->setTagged(false);
+						if($killer->isTagged()) $killer->setTagged(false);
+						if($player instanceof CorePlayer) $player->sendTo(0, true);
+						$rank=$killer->getRank();
+						$finalhealth=round($killer->getHealth(), 1);
+						$weapon=$killer->getInventory()->getItemInHand()->getName();
+						$playername=$player->getDisplayName();
+						$killername=$killer->getDisplayName();
+						$messages=["quickied", "railed", "ezed", "clapped", "given an L", "smashed", "botted", "utterly defeated", "swept off their feet", "sent to the heavens", "killed", "owned", "kicked to hell", "UwUed", "OwOed"];
+						$potsA=0;
+						$potsB=0;
+						foreach($player->getInventory()->getContents() as $pots){
+							if($pots instanceof ItemSplashPotion) $potsA++;
+						}
+						foreach($killer->getInventory()->getContents() as $pots){
+							if($pots instanceof ItemSplashPotion) $potsB++;
+						}
+						if($killer->getLevel()->getName()=="nodebuff"){
+							$dm="§l§9Nodebuff §7» §r§b".$player->getDisplayName()." §6[".$potsA." Pots] §7Was ".$messages[array_rand($messages)]." §7By§b ".$killer->getDisplayName()." §6[".$potsB." Pots - ".$finalhealth." HP]";
+						}else{
+							$dm="§l§cPvP §7» §r§b".$player->getDisplayName()." §7Was ".$messages[array_rand($messages)]." §7By§b ".$killer->getDisplayName()." §6[".$finalhealth." HP]";
+						}
+						foreach($this->plugin->getServer()->getOnlinePlayers() as $online){
+							$online->sendMessage($dm);
+						}
+						$killer->setHealth($killer->getMaxHealth());
+						if($killer instanceof CorePlayer) Utils::updateStats($killer, 0);
+						if($killer instanceof CorePlayer) LevelUtils::increaseCurrentXp($killer, "kill", false);
+						if($killer instanceof CorePlayer) LevelUtils::checkXp($killer);
+						if($player instanceof CorePlayer) Utils::updateStats($player, 1);
+						if($player instanceof CorePlayer) LevelUtils::increaseCurrentXp($player, "death", false);
+						if($player instanceof CorePlayer) LevelUtils::checkXp($player);
+						if(Utils::isAutoRekitEnabled($killer)==true) Kits::sendKit($killer, $killer->getLevel()->getName());
+						if(Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) >= 5 and Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) < 10){
+							$this->plugin->getServer()->broadcastMessage("§l§eKillStreak §r» §a".$killer->getDisplayName()." §7just got a killstreak of §b".Core::getInstance()->getDatabaseHandler()->getKillstreak($killer));
+						}
+						if(Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) >= 10 and Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) < 20){
+							$this->plugin->getServer()->broadcastMessage("§l§eKillStreak §r» §a".$killer->getDisplayName()." §7just got a killstreak of §a".Core::getInstance()->getDatabaseHandler()->getKillstreak($killer));
+						}
+						if(Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) >= 20 and Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) < 30){
+							$this->plugin->getServer()->broadcastMessage("§l§eKillStreak §r» §a".$killer->getDisplayName()." §7just got a killstreak of §6".Core::getInstance()->getDatabaseHandler()->getKillstreak($killer));
+						}
+						if(Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) >= 30 and Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) < 50){
+							$this->plugin->getServer()->broadcastMessage("§l§eKillStreak §r» §a".$killer->getDisplayName()." §7just got a killstreak of §c".Core::getInstance()->getDatabaseHandler()->getKillstreak($killer));
+						}
+						if(Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) >= 50 and Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) < 75){
+							$this->plugin->getServer()->broadcastMessage("§l§eKillStreak §r» §a".$killer->getDisplayName()." §7just got a killstreak of §d".Core::getInstance()->getDatabaseHandler()->getKillstreak($killer));
+						}
+						if(Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) >= 100){
+							$this->plugin->getServer()->broadcastMessage("§l§eKillStreak §r» §a".$killer->getDisplayName()." §7just got a killstreak of §0".Core::getInstance()->getDatabaseHandler()->getKillstreak($killer));
+						}
+					} 
+                }
+            }
+        }
+    }
+
 	public function onRegainHealth(EntityRegainHealthEvent $event){
 		$entity=$event->getEntity();
 		$reason=$event->getRegainReason();
@@ -280,9 +339,7 @@ class PlayerListener implements Listener{
 		if($reason===2){
 		}
 	}
-	/**
-	* @priority HIGH
-	*/
+
 	public function onLevelChange(EntityLevelChangeEvent $event){
 		$player=$event->getEntity();
 		if(!$player instanceof Player) return;
@@ -301,18 +358,14 @@ class PlayerListener implements Listener{
 		if($level=="knockbackffa") $player->setPlayerLocation(12);
 		if($level=="buildffa") $player->setPlayerLocation(13);
 	}
-	/**
-	* @priority LOW
-	*/
+
 	public function onRespawn(PlayerRespawnEvent $event){
 		$player=$event->getPlayer();
 		$position=new Position(258, 69, 234, $this->plugin->getServer()->getLevelByName(Core::LOBBY));
 		$event->setRespawnPosition($position);
 		if($player instanceof CorePlayer) $player->sendTo(0, true);
 	}
-	/**
-	* @priority LOW
-	*/
+
 	public function onChat(PlayerChatEvent $event){
 		$player=$event->getPlayer();
 		if(Utils::getGlobalMute()===true){
@@ -343,6 +396,7 @@ class PlayerListener implements Listener{
 		
 		$format=Utils::getChatFormat($rank);
 		$format=str_replace("{clan}", $player->getClanTag(), $format);
+		$format=str_replace("{kills}", $this->plugin->getDatabaseHandler()->getKills($player), $format);
 		$format=str_replace("{name}", $player->getDisplayName(), $format);
 		$format=str_replace("{message}", $message, $format);
 		if(!$player->isDisguised()){
@@ -350,6 +404,7 @@ class PlayerListener implements Listener{
 		}else{
 			$default=Utils::getChatFormat("Player");
 			$default=str_replace("{clan}", "", $default);
+			$default=str_replace("{kills}", $this->plugin->getDatabaseHandler()->getKills($player), $default);
 			$default=str_replace("{name}", $player->getDisplayName(), $default);
 			$default=str_replace("{message}", $message, $default);
 			$event->setFormat($default);
@@ -360,7 +415,7 @@ class PlayerListener implements Listener{
 				if($online->hasPermission("Pandaz.access.staffchat")){
 					$msg=str_replace("!", "", $message);
 					$level=$online->getLevel()->getName();
-					$online->sendMessage("§8[STAFF] §4[".$rank."] ".$player->getName().": §f".$msg);
+					$online->sendMessage("§8[STAFF] ".$player->getName().": §f".$msg);
 				}
 			}
 		}
@@ -370,9 +425,7 @@ class PlayerListener implements Listener{
 			$player->getParty()->sendMessage($player->getDisplayName().": ".$msg);
 		}
 	}
-	/**
-	* @priority LOWEST
-	*/
+
 	public function onCommand(PlayerCommandPreprocessEvent $event){
 		$player=$event->getPlayer();
 		$message=$event->getMessage();
@@ -380,9 +433,15 @@ class PlayerListener implements Listener{
 			$event->setCancelled();
 		}
 	}
-	/**
-	* @priority HIGH
-	*/
+
+	public function onExhaust(PlayerExhaustEvent $event) : void{
+		$event->setCancelled();
+		$player = $event->getPlayer();
+		if($player instanceof Player){
+			$player->setFood($player->getMaxFood());
+		}
+	}
+
 	public function onInteract(PlayerInteractEvent $event){
 		$player=$event->getPlayer();
 		$os=$this->plugin->getPlayerOs($player);
@@ -407,16 +466,7 @@ class PlayerListener implements Listener{
 			}
 		}
 	}
-	/**
-	* @priority LOWEST
-	*/
-	public function onExhaust(PlayerExhaustEvent $event){
-		$cause=$event->getCause();
-		$event->setCancelled();
-	}
-	/**
-	* @priority HIGH
-	*/
+
 	public function onEntityDamage(EntityDamageEvent $event){
 		$player=$event->getEntity();
 		$cause=$event->getCause();
@@ -499,7 +549,7 @@ class PlayerListener implements Listener{
 						$duelwinner=Utils::getPlayer($winner);
 						$duelloser=Utils::getPlayer($loser);
 						$botduel->setResults($winner, $loser);
-						if($player instanceof CorePlayer) Utils::spawnLightning($player);
+						if($player instanceof CorePlayer) Utils::spawnPublicLightning($player);
 					}
 				}
 				return;
@@ -529,7 +579,6 @@ class PlayerListener implements Listener{
 				}
 				if($player instanceof CorePlayer and $player->isVanished()){
 					$event->setCancelled();
-					$damager->sendMessage("§cYou cannot damage a vanished player.");
 				}
 				if($damager->isFrozen()){
 					$event->setCancelled();
@@ -542,19 +591,15 @@ class PlayerListener implements Listener{
 			}
 		}
 	}
-	/**
-	* @priority HIGH
-	*/
+
 	public function onEntityDeath(EntityDeathEvent $event){
 		$entity=$event->getEntity();
 		if(!$entity instanceof Player){
-			Utils::spawnLightning($entity);
+			Utils::spawnPublicLightning($entity);
 			$event->setDrops([]);
 		}
 	}
-	/**
-	* @priority LOW
-	*/
+
 	public function onDisconnectPacket(DataPacketSendEvent $event){
 		$packet=$event->getPacket();
 		$player=$event->getPlayer();
@@ -571,13 +616,11 @@ class PlayerListener implements Listener{
 		if($packet instanceof DisconnectPacket and $packet->message==="Server is white-listed"){
 			$packet->message=("§cWe are currently whitelisted, check back shortly.\n§fDiscord: ".Core::DISCORD);
 		}
-		if($packet instanceof DisconnectPacket and $packet->message==="Could not connect: Outdated client!"){
-			$packet->setCancelled(true);
+		if($packet instanceof DisconnectPacket and $packet->message==="generic reason"){
+			$packet->message=("§bServer is restarting...");
 		}
 	}
-	/**
-	* @priority LOW
-	*/
+
 	public function onPacketReceived(DataPacketReceiveEvent $event){
 		$packet=$event->getPacket();
 		$player=$event->getPlayer();
@@ -591,7 +634,7 @@ class PlayerListener implements Listener{
 			}
 		}
 		if($this->plugin->getClickHandler()->isInArray($player)){
-			if($packet::NETWORK_ID===InventoryTransactionPacket::NETWORK_ID and $packet->transactionType===InventoryTransactionPacket::TYPE_USE_ITEM_ON_ENTITY){
+			if($packet instanceof InventoryTransactionPacket and $packet->trData->getTypeId()===InventoryTransactionPacket::TYPE_USE_ITEM_ON_ENTITY){
 				$this->plugin->getClickHandler()->addClick($player);
 			}
 		}
@@ -607,18 +650,15 @@ class PlayerListener implements Listener{
 			$this->plugin->getServer()->broadcastPacket($player->getViewers(), EmotePacket::create($player->getId(), $emoteId, 1 << 0));
 		}
 	}
-	/**
-	* @priority LOWEST
-	*/
+
 	public function onDrop(PlayerDropItemEvent $event){
 		$player=$event->getPlayer();
 		$item=$event->getItem();
 		$level=$player->getLevel()->getName();
 		$event->setCancelled();
+		Utils::cancelSound($player);
 	}
-	/**
-	* @priority LOWEST
-	*/
+
 	public function onConsume(PlayerItemConsumeEvent $event){
 		$player=$event->getPlayer();
 		$item=$event->getItem();
@@ -627,14 +667,14 @@ class PlayerListener implements Listener{
 		$itemInHand=$player->getInventory()->getItemInHand();
 		$effects=$item->getAdditionalEffects();
 		if($item instanceof GoldenApple and $name!=Core::GOLDEN_HEAD){
-			$cooldown=1;
+			$cooldown=2;
 			if(!isset($this->gappleCooldown[$player->getName()])){
 				$this->gappleCooldown[$player->getName()]=time();
 			}else{
 				if($cooldown > time() - $this->gappleCooldown[$player->getName()]){
 					$time=time() - $this->gappleCooldown[$player->getName()];
 					$event->setCancelled();
-					$player->sendMessage("§cYou cannot consume a golden apple that quick.");
+					$player->sendMessage("§cYou cannot eat golden apples that quick.");
 				}else{
 					$this->gappleCooldown[$player->getName()]=time();
 				}
@@ -656,9 +696,7 @@ class PlayerListener implements Listener{
 			$inventory->setItem($inventory->getHeldItemIndex(), Item::get(0));
 		}
 	}
-	/**
-	* @priority LOW
-	*/
+
 	public function onProjectileHit(ProjectileHitEvent $event){
 		$projectile=$event->getEntity();
 		$damager=$projectile->getOwningEntity();
@@ -673,9 +711,7 @@ class PlayerListener implements Listener{
 			}
 		}
 	}
-	/**
-	* @priority LOW
-	*/
+
 	public function onLaunch(ProjectileLaunchEvent $event){
 		$projectile=$event->getEntity();
 		$player=$projectile->getOwningEntity();
@@ -692,11 +728,10 @@ class PlayerListener implements Listener{
 			}
 		}
 	}
-	/**
-	* @priority LOWEST
-	*/
+
 	public function onMove(PlayerMoveEvent $event){
 		$player=$event->getPlayer();
+		$block=$player->getLevel()->getBlock($player->getSide(0));
 		$from=$event->getFrom();
 		$to=$event->getTo();
 		if($player->getLevel()->getName()==Core::LOBBY and $player->getY() <= 0){
@@ -710,11 +745,12 @@ class PlayerListener implements Listener{
 		if(Utils::isAutoSprintEnabled($player)==true){
 			if($from->x!=$to->x and $from->z!=$to->z){
 				if(!$player->isFlying()){
-					if(!$player->isSprinting()){
-						$player->setSprinting(true);
-					}
+					$player->setSprinting(true);
 				}
 			}
+		}
+		if($block->getId() === 165){
+			$player->setMotion(new Vector3(0, mt_rand(25, 40) / 10, 0));
 		}
 	}
 }

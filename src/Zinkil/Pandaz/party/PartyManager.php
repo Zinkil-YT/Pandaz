@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\party;
@@ -18,6 +35,7 @@ class PartyManager{
 		$rank=$p->getRank();
 		if($p->isTrainee() or $p->isHelper() or $p->isMod()) $capacity=18;
 		if($p->isAdmin() or $p->isManager() or $p->isOwner()) $capacity=20;
+		if($p->isMedia()) $capacity=10;
 		if($p->isVip()) $capacity=12;
 		if($p->isElite()) $capacity=14;
 		if($p->isPremium()) $capacity=16;
@@ -28,6 +46,7 @@ class PartyManager{
 		$p->sendMessage("§aYour party was created.");
 		$party->sendMessage("Welcome to your party, use * before your message to type in party chat.");
 	}
+
 	public static function getParty($party){
 		$result=null;
 		foreach(Core::getInstance()->parties as $parties){
@@ -38,6 +57,7 @@ class PartyManager{
 		}
 		return $result;
 	}
+
 	public static function getPartyFromPlayer($player){
 		$result=null;
 		if(isset($player) and !is_null($player)){
@@ -50,6 +70,7 @@ class PartyManager{
 		}
 		return $result;
 	}
+
 	public static function getPartyIndexOf(Party $party){
 		$index=array_search($party, Core::getInstance()->parties);
 		if(is_bool($index) and $index===false){
@@ -57,9 +78,11 @@ class PartyManager{
 		}
 		return $index;
 	}
+
 	public static function doesPartyExist(Party $party):bool{
 		return self::getPartyIndexOf($party) !== -1;
 	}
+
 	public static function invitePlayer($party, $sender, $target){
 		if($sender instanceof Player) $sender=$sender->getName();
 		if($target instanceof Player) $target=$target->getName();
@@ -70,6 +93,7 @@ class PartyManager{
 		$sender->sendMessage("§aYou invited ".$target->getDisplayName()." to your party.");
 		$target->sendMessage("§a".$sender->getDisplayName()." invited you to their party.");
 	}
+
 	public static function getInvite($invite){
 		$result=null;
 		foreach(Core::getInstance()->partyinvites as $invites){
@@ -80,6 +104,7 @@ class PartyManager{
 		}
 		return $result;
 	}
+
 	public static function getInvites($player):array{
 		$result=[];
 		if(isset($player) and !is_null($player)){
@@ -92,6 +117,7 @@ class PartyManager{
 		}
 		return $result;
 	}
+
 	public static function getInvitesFromParty($party):array{
 		$result=[];
 		if(isset($party) and !is_null($party)){
@@ -103,6 +129,7 @@ class PartyManager{
 		}
 		return $result;
 	}
+
 	public static function hasInvite($target, Party $partyA):bool{
 		$result=false;
 		foreach(self::getInvites($target) as $invites){

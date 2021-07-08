@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\duels\groups;
@@ -84,30 +101,44 @@ class PartyDuelGroup{
 		}
 	}
 	
-	public function getQueue():string{ return $this->queue; }
+	public function getQueue():string{
+		return $this->queue; 
+	}
 
-	public function getAllowSpecs():bool{ return $this->allowspecs; }
+	public function getAllowSpecs():bool{
+		return $this->allowspecs; 
+	}
 	
-	public function isCombo():bool{ return $this->queue=="Combo"; }
+	public function isCombo():bool{
+		return $this->queue=="Combo";
+	}
 	
-	public function isSumo():bool{ return $this->queue=="Sumo"; }
+	public function isSumo():bool{
+		return $this->queue=="Sumo";
+	}
 	
-	public function getArena(){ return $this->arena; }
+	public function getArena(){
+		return $this->arena; 
+	}
 	
 	public function isPlayer($player):bool{
 		$p=Utils::getPlayer($player);
 		$name=Utils::getPlayerName($p);
 		return in_array($name, $this->players);
 	}
+
 	public function getParty():?Party{
 		return $this->party;
 	}
+
 	public function getPlayers():array{
 		return $this->players;
 	}
+
 	public function getAlive():int{
 		return $this->alive;
 	}
+
 	public function setAlive(int $int, $p){
 		$this->alive=$int;
 		if($p instanceof Player) $p=$p->getName();
@@ -117,10 +148,12 @@ class PartyDuelGroup{
 			Core::getInstance()->getScoreboardHandler()->updatePartyDuelAlive($player, $int, count($this->players));
 		}
 	}
+
 	public function isAlive($player):bool{
 		if($player instanceof Player) $player=$player->getName();
 		return in_array($player, $this->killed)===false;
 	}
+
 	public function getPlayersOnline():array{
 		$online=[];
 		foreach($this->players as $player){
@@ -131,15 +164,19 @@ class PartyDuelGroup{
 		}
 		return $online;
 	}
+
 	public function getArenaName():string{
 		return $this->arenaName;
 	}
+
 	public function isDuelRunning():bool{
 		return $this->started===true and $this->ended===false;
 	}
+
 	public function isLoadingDuel():bool{
 		return $this->started===false and $this->ended===false;
 	}
+
 	public function didDuelEnd():bool{
 		return $this->started===true and $this->ended===true;
 	}
@@ -168,13 +205,13 @@ class PartyDuelGroup{
 					if(6 > $second){
 						$this->broadcastSound(0);
 						$this->initializePlayers(0);
-						$this->broadcastMessage("§fThe match will start in §b".$second."§f seconds...");
+						$this->broadcastMessage("§eThe match will start in §b".$second."§e seconds...");
 						$this->broadcastTitle("§b".$second);
 					}
 				}else{
 					$this->broadcastSound(1);
 					$this->initializePlayers(1);
-					$this->broadcastMessage("§fThe match has started!");
+					$this->broadcastMessage("§eThe match has started!");
 					$this->broadcastTitle("§l§bDUEL!", "§r§fThe match has started", 5, 5, 5);
 				}
 				
@@ -199,13 +236,6 @@ class PartyDuelGroup{
 			foreach($this->getPlayersOnline() as $player){
 				$player=Server::getInstance()->getPlayerExact($player);
 				if($this->isPlayerBelowCenter($player, 10.0) and $this->isDuelRunning()){
-					/*if($this->getAlive() >= 3){
-						$this->initializeLoss($player);
-					}elseif($this->getAlive()===2){
-						$this->initializeLoss($player);
-						$this->setDuelEnded();
-						return;
-					}*/
 					if($this->getAlive() >= 2){
 						$this->initializeLoss($player);
 					}
@@ -228,6 +258,7 @@ class PartyDuelGroup{
 		}
 		$this->currentTick++;
 	}
+
 	private function endDuel():void{
 		$this->clearBlocks();
 		$this->clearSpectators();
@@ -244,6 +275,7 @@ class PartyDuelGroup{
 		Core::getInstance()->getArenaHandler()->setArenaOpen($this->arenaName);
 		$this->getParty()->setStatus(Party::IDLE);
 	}
+
 	public function endDuelPrematurely(bool $disablePlugin=false):void{
 		$premature=true;
 		if($disablePlugin===true){
@@ -256,10 +288,12 @@ class PartyDuelGroup{
 		}
 		$this->endDuel();
 	}
+
 	private function setDuelEnded(bool $result=true){
 		$this->ended=$result;
 		$this->endTick=$this->endTick == -1 ? $this->currentTick : $this->endTick;
 	}
+
 	private function start(){
 		$this->started=true;
 		foreach($this->getPlayersOnline() as $player){
@@ -267,6 +301,7 @@ class PartyDuelGroup{
 			$player->setImmobile(false);
 		}
 	}
+
 	private function updateScoreboards():void{
 		$duration=$this->getDurationString();
 		foreach($this->getPlayersOnline() as $player){
@@ -274,18 +309,21 @@ class PartyDuelGroup{
 			Core::getInstance()->getScoreboardHandler()->updateDuelDuration($player, $duration);
 		}
 	}
+
 	public function broadcastMessage(string $message):void{
 		foreach($this->getPlayersOnline() as $player){
 			$player=Server::getInstance()->getPlayerExact($player);
 			$player->sendMessage($message);
 		}
 	}
+
 	public function broadcastTitle(string $title, string $subtitle="", int $in=0, int $stay=40, int $out=0):void{
 		foreach($this->getPlayersOnline() as $player){
 			$player=Server::getInstance()->getPlayerExact($player);
 			$player->addTitle($title, $subtitle, $in, $stay, $out);
 		}
 	}
+
 	public function broadcastSound(int $type):void{
 		switch($type){
 			case 0:
@@ -297,7 +335,6 @@ class PartyDuelGroup{
 			case 1:
 			foreach($this->getPlayersOnline() as $player){
 				$player=Server::getInstance()->getPlayerExact($player);
-				//Utils::shootSound($player);
 			}
 			break;
 			default:
@@ -305,6 +342,7 @@ class PartyDuelGroup{
 			break;
 		}
 	}
+
 	public function initializePlayers(int $type):void{
 		switch($type){
 			case 0:
@@ -314,7 +352,6 @@ class PartyDuelGroup{
 				$player->setGamemode(2);
 				$player->getInventory()->clearAll();
 				$player->getArmorInventory()->clearAll();
-				$player->addEffect(new EffectInstance(Effect::getEffect(Effect::BLINDNESS),20 * 4,5));
 				$player->setFood(20);
 				$player->setHealth(20);
 			}
@@ -331,6 +368,7 @@ class PartyDuelGroup{
 			break;
 		}
 	}
+
 	public function initializeWin($player):void{
 		if(Utils::isPlayer($player)){
 			if(!is_null($player)){
@@ -338,6 +376,7 @@ class PartyDuelGroup{
 			}
 		}
 	}
+
 	public function initializeLoss($player):void{
 		if(Utils::isPlayer($player)){
 			if($this->isAlive($player)){
@@ -346,12 +385,13 @@ class PartyDuelGroup{
 				$player->getInventory()->clearAll();
 				$player->getArmorInventory()->clearAll();
 				$player->removeAllEffects();
-				Utils::spawnLightning($player);
+				Utils::spawnPublicLightning($player);
 				$this->setAlive($this->getAlive() - 1, $player->getName());
 				$this->getParty()->sendMessage(Utils::getPlayerDisplayName($player)." was killed.");
 			}
 		}
 	}
+
 	public function clearSpectators(){
 		if(empty($this->spectators)) return;
 		foreach(Core::getInstance()->getServer()->getOnlinePlayers() as $spectators){
@@ -363,15 +403,18 @@ class PartyDuelGroup{
 			}
 		}
 	}
+
 	private function isPlayerBelowCenter(Player $player, float $below):bool{
 		$y=$player->getY();
 		$arena=$this->getArena();
 		$centerY=$arena->getCenterPos()->y;
 		return $y + $below <= $centerY;
     }
+
 	public function arePlayersOnline():bool{
 		return count($this->getPlayersOnline()) > 0;
 	}
+
 	public function getDuration():int{
 		$duration=$this->currentTick - $this->countdownTick;
 		if($this->didDuelEnd()){
@@ -380,6 +423,7 @@ class PartyDuelGroup{
 		}
 		return $duration;
 	}
+
 	public function getDurationString():string{
 		$s="mm:ss";
 		$seconds=Utils::ticksToSeconds($this->getDuration());
@@ -405,23 +449,27 @@ class PartyDuelGroup{
 		}
 		return $s;
 	}
+
 	public function canBuild():bool{
 		return $this->getArena()->canBuild();
 	}
+
 	public function canBreak():bool{
 		return $this->getArena()->canBuild();
 	}
+
 	public function isBlockTooHigh(int $ycoord):bool{
 		$y=$ycoord;
 		$arena=$this->getArena();
 		$centerY=$arena->getCenterPos()->y;
 		return $y >= $centerY + 8;
     }
-	//this is a height limit
+
 	public function canPlaceBlock(Block $against):bool{
 		$count=$this->countPlaced($against);
 		return $count < 50;
 	}
+
 	private function countPlaced(Block $against):int{
 		$count=0;
 		$blAgainst=$against->asVector3();
@@ -433,12 +481,15 @@ class PartyDuelGroup{
 		}
 		return $count;
 	}
+
 	public function isPlacedBlock($block){
 		return $this->indexOfBlock($block) !== -1;
 	}
+
 	public function isBed($block){
 		return $block instanceof Bed;
 	}
+
 	private function indexOfBlock($block):int{
 		$index=-1;
 		if($block instanceof Block or $block instanceof Liquid){
@@ -450,6 +501,7 @@ class PartyDuelGroup{
 		}
 		return $index;
 	}
+
 	private function clearBlocks():void{
 		$level=$this->getArena()->getLevel();
 		$size=count($this->blocks);
@@ -460,26 +512,29 @@ class PartyDuelGroup{
 		}
 		$this->blocks=[];
 	}
+
 	private function replaceBeds():void{
 		$level=$this->getArena()->getLevel();
 		$size=count($this->beds);
 		for($i=0; $i < $size; $i++){
-			$block=$this->beds[$i];//position
+			$block=$this->beds[$i];
 			if($block instanceof Position){
-				//$level->setBlockIdAt($block->x, $block->y, $block->z, Block::BED_BLOCK);
 				Tile::createTile(Tile::BED, $level, TileBed::createNBT($block)); 
 			}
 		}
 		$this->beds=[];
 	}
+
 	public function addBlock($x, $y, $z):void{
 		$pos=new Vector3($x, $y, $z);
 		$this->blocks[]=$pos;
 	}
+
 	public function addBed(Block $position):void{
 		$pos=$position->asVector3();
 		$this->beds[]=$pos;
 	}
+
 	public function removeBlock($x, $y, $z):bool{
 		$result=false;
 		$level=$this->getArena()->getLevel();
@@ -491,10 +546,12 @@ class PartyDuelGroup{
 		}
 		return $result;
 	}
+
 	public function isSpectator($player):bool{
 		$name=Utils::getPlayerName($player);
 		return($name !== null) and isset($this->spectators[$name]);
 	}
+
 	public function addSpectator($spectator):void{
 		$p=Utils::getPlayer($spectator);
 		if(Core::getInstance()->getDuelHandler()->isInDuel($p)) return;
@@ -516,6 +573,7 @@ class PartyDuelGroup{
 		$this->spectators[Utils::getPlayerName($p)]=[];
 		Core::getInstance()->getScoreboardHandler()->sendPartyDuelSpectateScoreboard($p, $this->queue, $this->getParty()->getLeader());
 	}
+
 	public function removeSpectator($spectator, $send=false):void{
 		if($this->isSpectator($spectator)){
 			$p=Utils::getPlayer($spectator);

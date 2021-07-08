@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\handlers;
@@ -16,6 +33,7 @@ class DatabaseHandler{
 	public function __construct(){
 		$this->plugin=Core::getInstance();
 	}
+
 	public function mutePlayer($player, $reason, $duration, $staff){
 		$query=$this->plugin->staff->prepare("INSERT OR REPLACE INTO mutes (player, reason, duration, staff, date) VALUES (:player, :reason, :duration, :staff, :date);");
 		$query->bindValue(":player", Utils::getPlayerName($player));
@@ -25,6 +43,7 @@ class DatabaseHandler{
 		$query->bindValue(":date", Utils::getTime());
 		$query->execute();
 	}
+
 	public function temporaryBanPlayer($player, $reason, $duration, $staff, $givenpoints){
 		$query=$this->plugin->staff->prepare("INSERT OR REPLACE INTO temporarybans (player, reason, duration, staff, givenpoints, date) VALUES (:player, :reason, :duration, :staff, :givenpoints, :date);");
 		$query->bindValue(":player", Utils::getPlayerName($player));
@@ -36,6 +55,7 @@ class DatabaseHandler{
 		$query->execute();
 		$this->setWarnPoints($player, $this->getWarnPoints($player) + $givenpoints);
 	}
+
 	public function permanentlyBanPlayer($player, $reason, $staff){
 		$query=$this->plugin->staff->prepare("INSERT OR REPLACE INTO permanentbans (player, reason, staff, date) VALUES (:player, :reason, :staff, :date);");
 		$query->bindValue(":player", Utils::getPlayerName($player));
@@ -48,70 +68,87 @@ class DatabaseHandler{
 		$query->bindValue(":date", Utils::getTime());
 		$query->execute();
 	}
+
 	public function setTimesJoined($player, $int){
 		$query=$this->plugin->staff->exec("UPDATE staffstats SET timesjoined='$int' WHERE player='".Utils::getPlayerName($player)."';");
 	}
+
 	public function setTimesLeft($player, $int){
 		$query=$this->plugin->staff->exec("UPDATE staffstats SET timesleft='$int' WHERE player='".Utils::getPlayerName($player)."';");
 	}
+
 	public function setPointsGiven($player, $int){
 		$query=$this->plugin->staff->exec("UPDATE staffstats SET pointsgiven='$int' WHERE player='".Utils::getPlayerName($player)."';");
 	}
+
 	public function setMutesIssued($player, $int){
 		$query=$this->plugin->staff->exec("UPDATE staffstats SET mutesissued='$int' WHERE player='".Utils::getPlayerName($player)."';");
 	}
+
 	public function setKicksIssued($player, $int){
 		$query=$this->plugin->staff->exec("UPDATE staffstats SET kicksissued='$int' WHERE player='".Utils::getPlayerName($player)."';");
 	}
+
 	public function setTemporaryBansIssued($player, $int){
 		$query=$this->plugin->staff->exec("UPDATE staffstats SET temporarybansissued='$int' WHERE player='".Utils::getPlayerName($player)."';");
 	}
+
 	public function setPermanentBansIssued($player, $int){
 		$query=$this->plugin->staff->exec("UPDATE staffstats SET permanentbansissued='$int' WHERE player='".Utils::getPlayerName($player)."';");
 	}
+
 	public function setWarnPoints($player, $int){
 		$query=$this->plugin->staff->exec("UPDATE warnpoints SET points='$int' WHERE player='".Utils::getPlayerName($player)."';");
 	}
+
 	public function getTimesJoined($player){
 		$query=$this->plugin->staff->query("SELECT timesjoined FROM staffstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["timesjoined"];
 	}
+
 	public function getTimesLeft($player){
 		$query=$this->plugin->staff->query("SELECT timesleft FROM staffstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["timesleft"];
 	}
+
 	public function getPointsGiven($player){
 		$query=$this->plugin->staff->query("SELECT pointsgiven FROM staffstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["pointsgiven"];
 	}
+
 	public function getMutesIssued($player){
 		$query=$this->plugin->staff->query("SELECT mutesissued FROM staffstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["mutesissued"];
 	}
+
 	public function getKicksIssued($player){
 		$query=$this->plugin->staff->query("SELECT kicksissued FROM staffstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["kicksissued"];
 	}
+
 	public function getTemporaryBansIssued($player){
 		$query=$this->plugin->staff->query("SELECT temporarybansissued FROM staffstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["temporarybansissued"];
 	}
+
 	public function getPermanentBansIssued($player){
 		$query=$this->plugin->staff->query("SELECT permanentbansissued FROM staffstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["permanentbansissued"];
 	}
+
 	public function getWarnPoints($player){
 		$query=$this->plugin->staff->query("SELECT points FROM warnpoints WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["points"];
 	}
+
 	public function warnPointsAdd($player){
 		$check=$this->plugin->staff->query("SELECT player FROM warnpoints WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$check->fetchArray(SQLITE3_ASSOC);
@@ -122,24 +159,24 @@ class DatabaseHandler{
 			$query->execute();
 		}
 	}
+
 	public function isMuted($player):bool{
 		$query=$this->plugin->staff->query("SELECT player FROM mutes WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return empty($result)==false;
 	}
+
 	public function isTemporarilyBanned($player):bool{
 		$query=$this->plugin->staff->query("SELECT player FROM temporarybans WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return empty($result)==false;
 	}
+
 	public function isPermanentlyBanned($player):bool{
 		$query=$this->plugin->staff->query("SELECT player FROM permanentbans WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return empty($result)==false;
 	}
-	
-	
-	
 	
 	public function rankAdd($player){
 		$check=$this->plugin->main->query("SELECT player FROM rank WHERE player='".Utils::getPlayerName($player)."';");
@@ -151,6 +188,7 @@ class DatabaseHandler{
 			$query->execute();
 		}
 	}
+
 	public function voteAccessCreate($player, $bool){
 		$now=time();
 		$hour=24 * 3600;
@@ -160,6 +198,7 @@ class DatabaseHandler{
 		$query->bindValue(":duration", $duration);
 		$query->execute();
 	}
+
 	public function temporaryRankCreate($player, $temprank, $duration, $oldrank){
 		$query=$this->plugin->main->prepare("INSERT OR REPLACE INTO temporaryranks (player, temprank, duration, oldrank) VALUES (:player, :temprank, :duration, :oldrank);");
 		$query->bindValue(":player", Utils::getPlayerName($player));
@@ -168,6 +207,7 @@ class DatabaseHandler{
 		$query->bindValue(":oldrank", $oldrank);
 		$query->execute();
 	}
+
 	public function levelsAdd($player){
 		$check=$this->plugin->main->query("SELECT player FROM levels WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$check->fetchArray(SQLITE3_ASSOC);
@@ -181,6 +221,7 @@ class DatabaseHandler{
 			$query->execute();
 		}
 	}
+
 	public function matchStatsAdd($player){
 		$check=$this->plugin->main->query("SELECT player FROM matchstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$check->fetchArray(SQLITE3_ASSOC);
@@ -195,6 +236,7 @@ class DatabaseHandler{
 			$query->execute();
 		}
 	}
+
 	public function essentialStatsAdd($player){
 		$check=$this->plugin->main->query("SELECT player FROM essentialstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$check->fetchArray(SQLITE3_ASSOC);
@@ -211,6 +253,7 @@ class DatabaseHandler{
 			$query->execute();
 		}
 	}
+
 	public function tempStatisticsAdd($player){
 		$check=$this->plugin->main->query("SELECT player FROM temporary WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$check->fetchArray(SQLITE3_ASSOC);
@@ -222,146 +265,179 @@ class DatabaseHandler{
 			$query->execute();
 		}
 	}
+
 	public function setRank($player, $rank){
 		$this->plugin->main->exec("UPDATE rank SET rank='$rank' WHERE player='".Utils::getPlayerName($player)."'");
 		$player=Utils::getPlayer($player);
 		if($player!==null) $this->plugin->getPermissionHandler()->addPermission($player, $rank);
 	}
+
 	public function getRank($player){
 		$query=$this->plugin->main->query("SELECT rank FROM rank WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return $result["rank"];
 	}
+
 	public function countWithRank($type){
 		$query=$this->plugin->main->query("SELECT COUNT (player) as count FROM rank WHERE rank='$type';");
 		$number=$query->fetchArray();
 		return $number['count'];
 	}
+
 	public function voteAccessExists($player):bool{
 		$query=$this->plugin->main->query("SELECT player FROM voteaccess WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return empty($result)==false;
 	}
+
 	public function setLevel($player, $int){
 		$this->plugin->main->exec("UPDATE levels SET level='$int' WHERE player='".Utils::getPlayerName($player)."'");
 	}
+
 	public function setNeededXp($player, $int){
 		$this->plugin->main->exec("UPDATE levels SET neededxp='$int' WHERE player='".Utils::getPlayerName($player)."'");
 	}
+
 	public function setCurrentXp($player, $int){
 		$this->plugin->main->exec("UPDATE levels SET currentxp='$int' WHERE player='".Utils::getPlayerName($player)."'");
 	}
+
 	public function setTotalXp($player, $int){
 		$this->plugin->main->exec("UPDATE levels SET totalxp='$int' WHERE player='".Utils::getPlayerName($player)."'");
 	}
+
 	public function getLevel($player){
 		$query=$this->plugin->main->query("SELECT level FROM levels WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["level"];
 	}
+
 	public function getNeededXp($player){
 		$query=$this->plugin->main->query("SELECT neededxp FROM levels WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["neededxp"];
 	}
+
 	public function getCurrentXp($player){
 		$query=$this->plugin->main->query("SELECT currentxp FROM levels WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["currentxp"];
 	}
+
 	public function getTotalXp($player){
 		$query=$this->plugin->main->query("SELECT totalxp FROM levels WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["totalxp"];
 	}
+
 	public function setRankedElo($player, $int){
 		$this->plugin->main->exec("UPDATE matchstats SET elo='$int' WHERE player='".Utils::getPlayerName($player)."'");
-		$this->plugin->getScoreboardHandler()->updateMainLineKdrElo($player);
+		$this->plugin->getScoreboardHandler()->updateMainLineElo($player);
 	}
+
 	public function setWins($player, $int){
 		$this->plugin->main->exec("UPDATE matchstats SET wins='$int' WHERE player='".Utils::getPlayerName($player)."'");
 	}
+	
 	public function setLosses($player, $int){
 		$this->plugin->main->exec("UPDATE matchstats SET losses='$int' WHERE player='".Utils::getPlayerName($player)."'");
 	}
+
 	public function setEloGained($player, $int){
 		$this->plugin->main->exec("UPDATE matchstats SET elogained='$int' WHERE player='".Utils::getPlayerName($player)."'");
 	}
+
 	public function setEloLost($player, $int){
 		$this->plugin->main->exec("UPDATE matchstats SET elolost='$int' WHERE player='".Utils::getPlayerName($player)."'");
 	}
+
 	public function getRankedElo($player){
 		$query=$this->plugin->main->query("SELECT elo FROM matchstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return $result["elo"];
 	}
+
 	public function getWins($player){
 		$query=$this->plugin->main->query("SELECT wins FROM matchstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return $result["wins"];
 	}
+
 	public function getLosses($player){
 		$query=$this->plugin->main->query("SELECT losses FROM matchstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return $result["losses"];
 	}
+
 	public function getEloGained($player){
 		$query=$this->plugin->main->query("SELECT elogained FROM matchstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return $result["elogained"];
 	}
+
 	public function getEloLost($player){
 		$query=$this->plugin->main->query("SELECT elolost FROM matchstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return $result["elolost"];
 	}
+
 	public function setKills($player, $int){
 		$this->plugin->main->exec("UPDATE essentialstats SET kills='$int' WHERE player='".Utils::getPlayerName($player)."';");
 		$this->updateKdr($player);
-		$this->plugin->getScoreboardHandler()->updateMainLineKills($player);
+		$this->plugin->getScoreboardHandler()->updateFFALineKillsDeaths($player);
 	}
+
 	public function setDeaths($player, $int){
 		$this->plugin->main->exec("UPDATE essentialstats SET deaths='$int' WHERE player='".Utils::getPlayerName($player)."';");
 		$newdeaths=$this->getDeaths($player);
 		$this->updateKdr($player);
+		$this->plugin->getScoreboardHandler()->updateFFALineKillsDeaths($player);
 	}
+
 	public function updateKdr($player){
 		$deaths=$this->getDeaths($player->getName());
 		$kills=$this->getKills($player->getName());
-			if($deaths!==0){
-				$kdr=$kills/$deaths;
+		if($deaths!==0){
+			$kdr=$kills/$deaths;
+			$this->plugin->main->exec("UPDATE essentialstats SET kdr='$kdr' WHERE player='".Utils::getPlayerName($player)."';");
+			if($kdr!==0){
+				$kdr=number_format($kdr, 2);
 				$this->plugin->main->exec("UPDATE essentialstats SET kdr='$kdr' WHERE player='".Utils::getPlayerName($player)."';");
-				if($kdr!==0){
-					$kdr=number_format($kdr, 2);
-					$this->plugin->main->exec("UPDATE essentialstats SET kdr='$kdr' WHERE player='".Utils::getPlayerName($player)."';");
-				//}
 			}
 		}
+		$this->plugin->getScoreboardHandler()->updateFFALineKDR($player);
 	}
+
 	public function setKillstreak($player, $int){
 		$this->plugin->main->exec("UPDATE essentialstats SET killstreak='$int' WHERE player='".Utils::getPlayerName($player)."';");
-		$this->plugin->getScoreboardHandler()->updateMainLineKillstreak($player);
+		$this->plugin->getScoreboardHandler()->updateFFALineKillstreak($player);
 	}
+
 	public function setBestKillstreak($player, $int){
 		$this->plugin->main->exec("UPDATE essentialstats SET bestkillstreak='$int' WHERE player='".Utils::getPlayerName($player)."';");
+		$this->plugin->getScoreboardHandler()->updateFFALineKillstreak($player);
 	}
+
 	public function setCoins($player, $int){
 		$this->plugin->main->exec("UPDATE essentialstats SET coins='$int' WHERE player='".Utils::getPlayerName($player)."';");
 	}
+
 	public function setElo($player, $int){
 		$this->plugin->main->exec("UPDATE essentialstats SET elo='$int' WHERE player='".Utils::getPlayerName($player)."';");
-		$this->plugin->getScoreboardHandler()->updateMainLineElo($player);
 	}
+
 	public function getKills($player){
 		$query=$this->plugin->main->query("SELECT kills FROM essentialstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["kills"];
 	}
+
 	public function getDeaths($player){
 		$query=$this->plugin->main->query("SELECT deaths FROM essentialstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["deaths"];
 	}
+
 	public function getKdr($player){
 		if($player instanceof Player){
 			$player=$player->getName();
@@ -378,21 +454,25 @@ class DatabaseHandler{
 		}
 		return $kills.".0";
 	}
+
 	public function getKillstreak($player){
 		$query=$this->plugin->main->query("SELECT killstreak FROM essentialstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["killstreak"];
 	}
+
 	public function getBestKillstreak($player){
 		$query=$this->plugin->main->query("SELECT bestkillstreak FROM essentialstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["bestkillstreak"];
 	}
+
 	public function getCoins($player){
 		$query=$this->plugin->main->query("SELECT coins FROM essentialstats WHERE player='".Utils::getPlayerName($player)."';");
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["coins"];
 	}
+
 	public function getElo($player){
 		if($player instanceof Player){
 			$player=$player->getName();
@@ -403,6 +483,7 @@ class DatabaseHandler{
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["elo"];
 	}
+
 	public function setDailyKills($player, int $int){
 		if($player instanceof Player){
 			$player=$player->getName();
@@ -411,6 +492,7 @@ class DatabaseHandler{
 		}
 		$this->plugin->main->exec("UPDATE temporary SET dailykills='$int' WHERE player='".Utils::getPlayerName($player)."';");
 	}
+
 	public function setDailyDeaths($player, int $int){
 		if($player instanceof Player){
 			$player=$player->getName();
@@ -419,6 +501,7 @@ class DatabaseHandler{
 		}
 		$this->plugin->main->exec("UPDATE temporary SET dailydeaths='$int' WHERE player='".Utils::getPlayerName($player)."';");
 	}
+
 	public function getDailyKills($player){
 		if($player instanceof Player){
 			$player=$player->getName();
@@ -429,6 +512,7 @@ class DatabaseHandler{
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["dailykills"];
 	}
+
 	public function getDailyDeaths($player){
 		if($player instanceof Player){
 			$player=$player->getName();
@@ -439,10 +523,7 @@ class DatabaseHandler{
 		$result=$query->fetchArray(SQLITE3_ASSOC);
 		return (int) $result["dailydeaths"];
 	}
-	
-	
-	
-	
+
 	public function topLevels(string $viewer){
 		$query=$this->plugin->main->query("SELECT * FROM levels ORDER BY level DESC LIMIT 10;");
 		$message="";
@@ -469,6 +550,7 @@ class DatabaseHandler{
 		}
 		return "§3You - ".$this->getLevel($viewer)."§r\n".$message;
 	}
+
 	public function topElo(string $viewer){
 		$query=$this->plugin->main->query("SELECT * FROM matchstats ORDER BY elo DESC LIMIT 10;");
 		$message="";
@@ -495,6 +577,7 @@ class DatabaseHandler{
 		}
 		return "§3You - ".$this->getRankedElo($viewer)."§r\n".$message;
 	}
+
 	public function topWins(string $viewer){
 		$query=$this->plugin->main->query("SELECT * FROM matchstats ORDER BY wins DESC LIMIT 10;");
 		$message="";
@@ -521,6 +604,7 @@ class DatabaseHandler{
 		}
 		return "§3You - ".$this->getWins($viewer)."§r\n".$message;
 	}
+
 	public function topLosses(string $viewer){
 		$query=$this->plugin->main->query("SELECT * FROM matchstats ORDER BY losses DESC LIMIT 10;");
 		$message="";
@@ -547,6 +631,7 @@ class DatabaseHandler{
 		}
 		return "§3You - ".$this->getLosses($viewer)."§r\n".$message;
 	}
+
 	public function topKills(string $viewer){
 		$query=$this->plugin->main->query("SELECT * FROM essentialstats ORDER BY kills DESC LIMIT 10;");
 		$message="";
@@ -573,6 +658,7 @@ class DatabaseHandler{
 		}
 		return "§3You - ".$this->getKills($viewer)."§r\n".$message;
 	}
+
 	public function topDeaths(string $viewer){
 		$query=$this->plugin->main->query("SELECT * FROM essentialstats ORDER BY deaths DESC LIMIT 10;");
 		$message="";
@@ -599,6 +685,7 @@ class DatabaseHandler{
 		}
 		return "§3You - ".$this->getDeaths($viewer)."§r\n".$message;
 	}
+
 	public function topKdr(string $viewer){
 		$query=$this->plugin->main->query("SELECT * FROM essentialstats ORDER BY kdr DESC LIMIT 10;");
 		$message="";
@@ -625,6 +712,7 @@ class DatabaseHandler{
 		}
 		return "§3You - ".$this->getKdr($viewer)."§r\n".$message;
 	}
+
 	public function topKillstreaks(string $viewer){
 		$query=$this->plugin->main->query("SELECT * FROM essentialstats ORDER BY bestkillstreak DESC LIMIT 10;");
 		$message="";
@@ -651,6 +739,7 @@ class DatabaseHandler{
 		}
 		return "§3You - ".$this->getBestKillstreak($viewer)."§r\n".$message;
 	}
+
 	public function topDailyKills(string $viewer){
 		$query=$this->plugin->main->query("SELECT * FROM temporary ORDER BY dailykills DESC LIMIT 10;");
 		$message="";
@@ -677,6 +766,7 @@ class DatabaseHandler{
 		}
 		return "§3You - ".$this->getDailyKills($viewer)."§r\n".$message;
 	}
+
 	public function topDailyDeaths(string $viewer){
 		$query=$this->plugin->main->query("SELECT * FROM temporary ORDER BY dailydeaths DESC LIMIT 10;");
 		$message="";

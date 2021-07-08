@@ -1,10 +1,26 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\listeners;
 
-use pocketmine\utils\TextFormat as C;
 use pocketmine\entity\Entity;
 use pocketmine\entity\Skin;
 use pocketmine\event\Listener;
@@ -23,9 +39,7 @@ use Zinkil\Pandaz\Utils;
 class CapeListener implements Listener{
 
     public $plugin;
-
     public $skins;
-
     protected $skin = [];
   
     public function __construct(){
@@ -44,7 +58,7 @@ class CapeListener implements Listener{
         $player = $event->getPlayer();
         $p = Utils::getPlayer($player);
         $this->skin[$player->getName()] = $player->getSkin();
-        if($p->isAdmin() or $p->isManager() or $p->isOwner()){
+        if($p->isOwner()){
         $oldSkin = $player->getSkin();
         $capeData = $this->createCape("owner");
         $setCape = new Skin($oldSkin->getSkinId(), $oldSkin->getSkinData(), $capeData, $oldSkin->getGeometryName(), $oldSkin->getGeometryData());
@@ -52,7 +66,7 @@ class CapeListener implements Listener{
         $player->sendSkin();
         }
 
-        if($p->isTrainee() or $p->isHelper() or $p->isMod() or $p->isHeadMod()){
+        if($p->isTrainee() or $p->isHelper() or $p->isMod() or $p->isHeadMod() or $p->isAdmin() or $p->isManager()){
         $oldSkin = $player->getSkin();
         $capeData = $this->createCape("staff");
         $setCape = new Skin($oldSkin->getSkinId(), $oldSkin->getSkinData(), $capeData, $oldSkin->getGeometryName(), $oldSkin->getGeometryData());
@@ -68,7 +82,7 @@ class CapeListener implements Listener{
         $player->sendSkin();
         }
 
-        if($p->isElite() or $p->isPremium()){
+        if($p->isVip() or $p->isElite() or $p->isPremium()){
         $oldSkin = $player->getSkin();
         $capeData = $this->createCape("paid");
         $setCape = new Skin($oldSkin->getSkinId(), $oldSkin->getSkinData(), $capeData, $oldSkin->getGeometryName(), $oldSkin->getGeometryData());
@@ -89,45 +103,6 @@ class CapeListener implements Listener{
         $player = $event->getPlayer();
         $p = Utils::getPlayer($player);
         $this->skin[$player->getName()] = $player->getSkin();
-        if($p->isAdmin() or $p->isManager() or $p->isOwner()){
-        $oldSkin = $player->getSkin();
-        $capeData = $this->createCape("owner");
-        $setCape = new Skin($oldSkin->getSkinId(), $oldSkin->getSkinData(), $capeData, $oldSkin->getGeometryName(), $oldSkin->getGeometryData());
-        $player->setSkin($setCape);
-        $player->sendSkin();
-        }
-
-        if($p->isTrainee() or $p->isHelper() or $p->isMod() or $p->isHeadMod()){
-        $oldSkin = $player->getSkin();
-        $capeData = $this->createCape("staff");
-        $setCape = new Skin($oldSkin->getSkinId(), $oldSkin->getSkinData(), $capeData, $oldSkin->getGeometryName(), $oldSkin->getGeometryData());
-        $player->setSkin($setCape);
-        $player->sendSkin();
-        }
-
-        if($p->isYoutube() or $p->isFamous()){
-        $oldSkin = $player->getSkin();
-        $capeData = $this->createCape("youtube");
-        $setCape = new Skin($oldSkin->getSkinId(), $oldSkin->getSkinData(), $capeData, $oldSkin->getGeometryName(), $oldSkin->getGeometryData());
-        $player->setSkin($setCape);
-        $player->sendSkin();
-        }
-
-        if($p->isElite() or $p->isPremium()){
-        $oldSkin = $player->getSkin();
-        $capeData = $this->createCape("paid");
-        $setCape = new Skin($oldSkin->getSkinId(), $oldSkin->getSkinData(), $capeData, $oldSkin->getGeometryName(), $oldSkin->getGeometryData());
-        $player->setSkin($setCape);
-        $player->sendSkin();
-        }
-
-        if($p->isPlayer()){
-        $oldSkin = $player->getSkin();
-        $capeData = $this->createCape("guest");
-        $setCape = new Skin($oldSkin->getSkinId(), $oldSkin->getSkinData(), $capeData, $oldSkin->getGeometryName(), $oldSkin->getGeometryData());
-        $player->setSkin($setCape);
-        $player->sendSkin();
-        }
     }
     
     public function createCape($capeName) {

@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\handlers;
@@ -16,6 +33,7 @@ class PermissionHandler{
 	public function __construct(){
 		$this->plugin=Core::getInstance();
 	}
+
 	public function addPermission(Player $player, string $rank){
 		switch($rank){
 			case "Player":
@@ -24,11 +42,13 @@ class PermissionHandler{
 			case "Voter":
 			$player->addAttachment($this->plugin, "Pandaz.command.fly", true);
 			break;
+			case "VIP":
+			$player->addAttachment($this->plugin, "Pandaz.command.fly", true);
+			break;
 			case "Elite":
 			$player->addAttachment($this->plugin, "Pandaz.command.fly", true);
 			break;
 			case "Premium":
-			$player->addAttachment($this->plugin, "Pandaz.command.disguise", true);
 			$player->addAttachment($this->plugin, "Pandaz.command.fly", true);
 			break;
 			case "Booster":
@@ -47,9 +67,6 @@ class PermissionHandler{
 			$player->addAttachment($this->plugin, "Pandaz.command.gm", true);
 			$player->addAttachment($this->plugin, "Pandaz.can.build", true);
 			$player->addAttachment($this->plugin, "Pandaz.can.break", true);
-			$player->addAttachment($this->plugin, "Pandaz.bypass.advertising", true);
-			$player->addAttachment($this->plugin, "Pandaz.bypass.swearing", true);
-			$player->addAttachment($this->plugin, "Pandaz.bypass.toxic", true);
 			break;
 			case "Trainee":
 			$player->addAttachment($this->plugin, "Pandaz.command.staff", true);
@@ -59,8 +76,6 @@ class PermissionHandler{
 			$player->addAttachment($this->plugin, "Pandaz.command.mute", true);
 			$player->addAttachment($this->plugin, "Pandaz.command.freeze", true);
 			$player->addAttachment($this->plugin, "Pandaz.staff.cheatalerts", true);
-			$player->addAttachment($this->plugin, "Pandaz.bypass.advertising", true);
-			$player->addAttachment($this->plugin, "Pandaz.bypass.swearing", true);
 			$player->addAttachment($this->plugin, "Pandaz.bypass.toxic", true);
 			break;
 			case "Helper":
@@ -77,6 +92,7 @@ class PermissionHandler{
 			$player->addAttachment($this->plugin, "Pandaz.bypass.advertising", true);
 			$player->addAttachment($this->plugin, "Pandaz.bypass.swearing", true);
 			$player->addAttachment($this->plugin, "Pandaz.bypass.toxic", true);
+			$player->addAttachment($this->plugin, "Pandaz.command.kick", true);
 			break;
 			case "Mod":
 			$player->addAttachment($this->plugin, "Pandaz.command.alias", true);
@@ -96,6 +112,7 @@ class PermissionHandler{
 			$player->addAttachment($this->plugin, "Pandaz.bypass.advertising", true);
 			$player->addAttachment($this->plugin, "Pandaz.bypass.swearing", true);
 			$player->addAttachment($this->plugin, "Pandaz.bypass.toxic", true);
+			$player->addAttachment($this->plugin, "Pandaz.command.kick", true);
 			break;
 			case "HeadMod":
 			$player->addAttachment($this->plugin, "Pandaz.command.alias", true);
@@ -119,6 +136,8 @@ class PermissionHandler{
 			$player->addAttachment($this->plugin, "Pandaz.bypass.advertising", true);
 			$player->addAttachment($this->plugin, "Pandaz.bypass.swearing", true);
 			$player->addAttachment($this->plugin, "Pandaz.bypass.toxic", true);
+			$player->addAttachment($this->plugin, "Pandaz.command.kick", true);
+			$player->addAttachment($this->plugin, "Pandaz.command.sudo", true);
 			break;
 			case "Admin":
 			$player->addAttachment($this->plugin, "Pandaz.command.alias", true);
@@ -150,6 +169,9 @@ class PermissionHandler{
 			$player->addAttachment($this->plugin, "Pandaz.bypass.advertising", true);
 			$player->addAttachment($this->plugin, "Pandaz.bypass.swearing", true);
 			$player->addAttachment($this->plugin, "Pandaz.bypass.toxic", true);
+			$player->addAttachment($this->plugin, "Pandaz.command.kick", true);
+			$player->addAttachment($this->plugin, "Pandaz.command.restart", true);
+			$player->addAttachment($this->plugin, "Pandaz.command.sudo", true);
 			break;
 			case "Manager":
 			$player->addAttachment($this->plugin, "Pandaz.command.mutechat", true);
@@ -186,11 +208,11 @@ class PermissionHandler{
 			$player->addAttachment($this->plugin, "Pandaz.bypass.advertising", true);
 			$player->addAttachment($this->plugin, "Pandaz.bypass.swearing", true);
 			$player->addAttachment($this->plugin, "Pandaz.bypass.toxic", true);
+			$player->addAttachment($this->plugin, "Pandaz.command.kick", true);
+			$player->addAttachment($this->plugin, "Pandaz.command.restart", true);
+			$player->addAttachment($this->plugin, "Pandaz.command.sudo", true);
 			break;
 			case "Owner":
-			return;
-			break;
-			case "Founder":
 			return;
 			break;
 		}

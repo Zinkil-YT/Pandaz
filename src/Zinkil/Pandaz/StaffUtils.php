@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz;
@@ -43,6 +60,7 @@ class StaffUtils{
 			}
 		}
 	}
+
 	public function vanish(Player $player, $bool=false){
 		if($bool===true){
 			$player->setVanished(true);
@@ -73,24 +91,27 @@ class StaffUtils{
 			}
 		}
 	}
+
 	public function messages(Player $player, $bool=false){
 		if($bool===true){
 			$player->setMessages(true);
 			$player->sendMessage("§aYou will now see private messages.");
 		}else{
 			$player->setMessages(false);
-			$player->sendMessage("§aYou will no longer see private messages.");
+			$player->sendMessage("§cYou will no longer see private messages.");
 		}
 	}
+
 	public function anticheat(Player $player, $bool=false){
 		if($bool===true){
 			$player->setAntiCheat(true);
 			$player->sendMessage("§aYou will now see the anti-cheat.");
 		}else{
 			$player->setAntiCheat(false);
-			$player->sendMessage("§aYou will no longer see the anti-cheat.");
+			$player->sendMessage("§cYou will no longer see the anti-cheat.");
 		}
 	}
+
 	public function coords(Player $player, $bool=false){
 		if($bool===true){
 			$player->setCoordins(true);
@@ -103,9 +124,10 @@ class StaffUtils{
 			$packet=new GameRulesChangedPacket();
 			$packet->gameRules=["showcoordinates" => [1, false]];
 			$player->dataPacket($packet);
-			$player->sendMessage("§aYou will no longer see your coords.");
+			$player->sendMessage("§cYou will no longer see your coords.");
 		}
 	}
+
 	public function sendStaffNoti($type){
 		switch($type){
 			case "temprankchange":
@@ -212,36 +234,38 @@ class StaffUtils{
 			$message="§o§7[§b{target}: §7automatic permanent ban, player reached the maximum warn points]";
 			return $message;
 			break;
+			case "sudo":
+			$message="§o§7[§b{name}: §7excuted command as {target}]";
+			return $message;
+			break;
+			case "kick":
+			$message="§o§7[§b{name}: §7kicked {target} for {reason}]";
+			return $message;
+			break;
 			default:
 			return;
 		}
 	}
+
 	public function sendStaffAlert($type){
 		switch($type){
 			case "autoclick":
-			$message="§8[STAFF] §b{name} §eflagged for §4AUTO-CLICK. §f(§6{details} CPS§f)";
+			$message="§l§4Alert » §r§e{name} Is Getting §c{details} §eCPS !";
 			return $message;
 			break;
 			case "ping":
-			$message="§8[STAFF] §b{name} §ekicked for a long period of §4HIGH PING. §f(§6{details}ms§f)";
+			$message="§l§4Alert » §r§e{name} Kicked For High Ping §c{details}ms !";
 			return $message;
 			break;
 			case "reach":
-			$message="§8[STAFF] §b{name} §eflagged for §4REACH. §f(§6{details} blocks§f)";
-			return $message;
-			break;
-			case "highjump":
-			$message="§8[STAFF] §b{name} flagged for HIGHJUMP.";
-			return $message;
-			break;
-			case "killaura":
-			$message="§8[STAFF] §b{name} flagged for KILLAURA.";
+			$message="§l§4Alert » §r§e{name} §eIs Hitting From §c{details} §eBlocks !";
 			return $message;
 			break;
 			default:
 			return;
 		}
 	}
+
 	public function teleportForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -352,7 +376,7 @@ class StaffUtils{
 				$details9="Players: ".count($buildffa->getPlayers())." Status: §aOnline";
 				$c9="buildffa";
 		}
-		$form->setTitle("§l§cTeleport");
+		$form->setTitle("§l§eTeleport");
 		$form->setContent("§3There are ".count(Core::getInstance()->getServer()->getOnlinePlayers())." player(s) online.");
 		$form->addButton("Lobby\n".$details4, 0, "textures/ui/worldsIcon", $c4);
 		$form->addButton("NoDebuff\n".$details1, 0, "textures/ui/worldsIcon", $c1);
@@ -365,6 +389,7 @@ class StaffUtils{
 		$form->addButton("BuildFFA\n".$details9, 0, "textures/ui/worldsIcon", $c9);
 		$player->sendForm($form);
 	}
+
 	public function staffPortalForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -385,7 +410,7 @@ class StaffUtils{
 				break;
 			}
 		});
-		$form->setTitle("§l§cStaff Portal");
+		$form->setTitle("§l§eStaff Portal");
 		if($player->hasPermission("Pandaz.command.pban")){
 			$form->addButton("Permanently Ban a Player", -1, "", "pban");
 		}
@@ -397,6 +422,7 @@ class StaffUtils{
 		}
 		$player->sendForm($form);
 	}
+
 	public function permanentBanHomeForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -414,7 +440,7 @@ class StaffUtils{
 				break;
 			}
 		});
-		$form->setTitle("§l§cPermanent Ban");
+		$form->setTitle("§l§ePermanent Ban");
 		$form->addButton("Online Players", -1, "", "online");
 		$form->addButton("Search For a Player", -1, "", "search");
 		$form->addButton("Existing Punishments", -1, "", "existing");
@@ -422,6 +448,7 @@ class StaffUtils{
 		$player->sendForm($form);
 		$player->removeAllWindows();
 	}
+
 	public function temporaryBanHomeForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -439,13 +466,14 @@ class StaffUtils{
 				break;
 			}
 		});
-		$form->setTitle("§l§cTemporary Ban");
+		$form->setTitle("§l§eTemporary Ban");
 		$form->addButton("Online Players", -1, "", "online");
 		$form->addButton("Search For a Player", -1, "", "search");
 		$form->addButton("Existing Punishments", -1, "", "existing");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function muteHomeForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -463,13 +491,14 @@ class StaffUtils{
 				break;
 			}
 		});
-		$form->setTitle("§l§cMute");
+		$form->setTitle("§l§eMute");
 		$form->addButton("Online Players", -1, "", "online");
 		$form->addButton("Search For a Player", -1, "", "search");
 		$form->addButton("Existing Punishments", -1, "", "existing");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function playerListForm(Player $player, string $type):void{
 		$this->type=$type;
 		$form=new SimpleForm(function(Player $player, $data=null):void{
@@ -527,13 +556,14 @@ class StaffUtils{
 				break;
 			}
 		});
-		$form->setTitle("§l§cOnline Players");
+		$form->setTitle("§l§eOnline Players");
 		foreach(Core::getInstance()->getServer()->getOnlinePlayers() as $players){
 			$form->addButton($players->getName(), -1, "", $players->getName());
 		}
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function playerFindForm(Player $player, string $type):void{
 		$this->type=$type;
 		$form=new CustomForm(function(Player $player, $data=null):void{
@@ -566,10 +596,11 @@ class StaffUtils{
 					return;
 				}
 		});
-		$form->setTitle("§l§cFind a Player");
+		$form->setTitle("§l§eFind a Player");
 		$form->addInput("Exact Name", "", null, null);
 		$player->sendForm($form);
 	}
+
 	public function permanentBanForm(Player $player):void{
 		$form=new SimpleForm(function (Player $player, $data=null):void{
 			switch($data){
@@ -599,11 +630,12 @@ class StaffUtils{
 			}
 			unset($this->targetPlayer[Utils::getPlayerName($player)]);
 		});
-		$form->setTitle("§l§cPermanently ban ".$this->targetPlayer[Utils::getPlayerName($player)]);
+		$form->setTitle("§l§ePermanently ban ".$this->targetPlayer[Utils::getPlayerName($player)]);
 		$form->addButton("Confirm", -1, "", "confirm");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function temporaryBanForm(Player $player):void{
 		$form=new SimpleForm(function (Player $player, $data=null):void{
 			switch($data){
@@ -806,7 +838,7 @@ class StaffUtils{
 			}
 			unset($this->targetPlayer[Utils::getPlayerName($player)]);
 		});
-		$form->setTitle("§l§cAction for §r".$this->targetPlayer[Utils::getPlayerName($player)]);
+		$form->setTitle("§l§eAction for §r".$this->targetPlayer[Utils::getPlayerName($player)]);
 		$form->addButton("Unfair Advantage", -1, "", "unfairadvantage");
 		$form->addButton("Punishment Evasion", -1, "", "evasion");
 		$form->addButton("Excessive Toxicity", -1, "", "excessivetoxicity");
@@ -817,6 +849,7 @@ class StaffUtils{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function muteForm(Player $player):void{
 		$form=new SimpleForm(function (Player $player, $data=null):void{
 			switch($data){
@@ -898,13 +931,14 @@ class StaffUtils{
 			}
 			unset($this->targetPlayer[Utils::getPlayerName($player)]);
 		});
-		$form->setTitle("§l§cAction for §r".$this->targetPlayer[Utils::getPlayerName($player)]);
+		$form->setTitle("§l§eAction for §r".$this->targetPlayer[Utils::getPlayerName($player)]);
 		$form->addButton("Excessive Toxicity", -1, "", "excessivetoxicity");
 		$form->addButton("Impersonation", -1, "", "impersonation");
 		$form->addButton("Advertisement", -1, "", "advertisement");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function searchedPermanentBanForm(Player $player, $searchedtarget):void{
 		$this->searchedtarget=$searchedtarget;
 		$form=new SimpleForm(function (Player $player, $data=null):void{
@@ -934,11 +968,12 @@ class StaffUtils{
 				break;
 			}
 		});
-		$form->setTitle("§l§cPermanently ban §r".$this->searchedtarget);
+		$form->setTitle("§l§ePermanently ban §r".$this->searchedtarget);
 		$form->addButton("Confirm", -1, "", "confirm");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function searchedTemporaryBanForm(Player $player, $searchedtarget):void{
 		$this->searchedtarget=$searchedtarget;
 		$form=new SimpleForm(function (Player $player, $data=null):void{
@@ -1141,7 +1176,7 @@ class StaffUtils{
 				}
 			}
 		});
-		$form->setTitle("§l§cAction for §r".$this->searchedtarget);
+		$form->setTitle("§l§eAction for §r".$this->searchedtarget);
 		$form->addButton("Unfair Advantage", -1, "", "unfairadvantage");
 		$form->addButton("Punishment Evasion", -1, "", "evasion");
 		$form->addButton("Excessive Toxicity", -1, "", "excessivetoxicity");
@@ -1152,6 +1187,7 @@ class StaffUtils{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function searchedMuteForm(Player $player, $searchedtarget):void{
 		$this->searchedtarget=$searchedtarget;
 		$form=new SimpleForm(function (Player $player, $data=null):void{
@@ -1233,13 +1269,14 @@ class StaffUtils{
 				break;
 			}
 		});
-		$form->setTitle("§l§cAction for §r".$this->searchedtarget);
+		$form->setTitle("§l§eAction for §r".$this->searchedtarget);
 		$form->addButton("Excessive Toxicity", -1, "", "excessivetoxicity");
 		$form->addButton("Impersonation", -1, "", "impersonation");
 		$form->addButton("Advertisement", -1, "", "advertisement");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function existingPermanentBansForm(Player $player):void{
 		$form=new SimpleForm(function (Player $player, $data=null):void{
 			if($data===null){
@@ -1269,6 +1306,7 @@ class StaffUtils{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function permanentBanInfoForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 		if($data===null){
@@ -1308,10 +1346,11 @@ class StaffUtils{
 		}
 		$form->setTitle($target);
 		$form->setContent("§7Reason: §f".$reason."\n§7Date: §f".$date."\n\n§7Action by ".$staff);
-		$form->addButton("Lift Punishment", -1, "", "unban");
+		$form->addButton("Unban Player", -1, "", "unban");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function existingTemporaryBansForm(Player $player):void{
 		$form=new SimpleForm(function (Player $player, $data=null):void{
 			if($data===null){
@@ -1341,6 +1380,7 @@ class StaffUtils{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function temporaryBanInfoForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 		if($data===null){
@@ -1391,10 +1431,11 @@ class StaffUtils{
 		}
 		$form->setTitle($target);
 		$form->setContent("§7Day(s): §f".$day."\n§7Hour(s): §f".$hour."\n§7Minute(s): §f".$minute."\n§7Second(s): §f".$second."\n§7Reason: §f".$reason."\n§7Points: §f".$givenpoints."\n§7Date: §f".$date."\n\n§7Action by ".$staff);
-		$form->addButton("Lift Punishment", -1, "", "unban");
+		$form->addButton("Unban Player", -1, "", "unban");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function existingMutesForm(Player $player):void{
 		$form=new SimpleForm(function (Player $player, $data=null):void{
 			if($data===null){
@@ -1424,6 +1465,7 @@ class StaffUtils{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function muteInfoForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 		if($data===null){
@@ -1477,7 +1519,7 @@ class StaffUtils{
 		}
 		$form->setTitle($target);
 		$form->setContent("§7Day(s): §f".$day."\n§7Hour(s): §f".$hour."\n§7Minute(s): §f".$minute."\n§7Second(s): §f".$second."\n§7Reason: §f".$reason."\n§7Date: §f".$date."\n\n§7Action by ".$staff);
-		$form->addButton("Lift Punishment", -1, "", "unmute");
+		$form->addButton("Unmute Player", -1, "", "unmute");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}

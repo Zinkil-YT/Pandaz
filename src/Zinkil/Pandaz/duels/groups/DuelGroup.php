@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\duels\groups;
@@ -18,6 +35,7 @@ use pocketmine\Server;
 use Zinkil\Pandaz\Core;
 use Zinkil\Pandaz\CorePlayer;
 use Zinkil\Pandaz\Utils;
+use Zinkil\Pandaz\LevelUtils;
 use Zinkil\Pandaz\Kits;
 use Zinkil\Pandaz\duels\DuelHit;
 use pocketmine\entity\Effect;
@@ -92,11 +110,11 @@ class DuelGroup{
 		
 		$this->playerHits=[];
 		$this->oppHits=[];
-		$this->acCorePlayerSwings=0;
+		$this->accPlayerSwings=0;
 		$this->accOppSwings=0;
-		$this->acCorePlayerHits=0;
+		$this->accPlayerHits=0;
 		$this->accOppHits=0;
-		$this->acCorePlayerMisses=0;
+		$this->accPlayerMisses=0;
 		$this->accOppMisses=0;
 		$this->playerPots=0;
 		$this->oppPots=0;
@@ -106,19 +124,34 @@ class DuelGroup{
 		
 		$this->arena=Core::getInstance()->getArenaHandler()->getDuelArena($arena);
 	}
-	public function isRanked():bool{ return $this->ranked; }
+
+	public function isRanked():bool{
+		return $this->ranked;
+	}
 	
-	public function getQueue():string{ return $this->queue; }
+	public function getQueue():string{
+		return $this->queue;
+	}
 	
-	public function isCombo():bool{ return $this->queue=="Combo"; }
+	public function isCombo():bool{
+		return $this->queue=="Combo";
+	}
 	
-	public function isSumo():bool{ return $this->queue=="Sumo"; }
+	public function isSumo():bool{
+		return $this->queue=="Sumo";
+	}
 	
-	public function isLine():bool{ return $this->queue=="Line"; }
+	public function isLine():bool{
+		return $this->queue=="Line";
+	}
 	
-	public function isBedwars():bool{ return $this->queue=="Bedwars"; }
+	public function isBedwars():bool{
+		return $this->queue=="Bedwars";
+	}
 	
-	public function getArena(){ return $this->arena; }
+	public function getArena(){
+		return $this->arena;
+	}
 	
 	public function isPlayer($player):bool{
 		$result=false;
@@ -127,6 +160,7 @@ class DuelGroup{
 		$result=$name===$this->playerName;
 		return $result;
 	}
+
 	public function isOpponent($player):bool{
 		$result=false;
 		$p=Utils::getPlayer($player);
@@ -134,27 +168,35 @@ class DuelGroup{
 		$result=$name===$this->opponentName;
 		return $result;
 	}
+
 	public function getPlayer(){
 		return Utils::getPlayer($this->playerName);
 	}
+
 	public function getOpponent(){
 		return Utils::getPlayer($this->opponentName);
 	}
+
 	public function getPlayerName():string{
 		return $this->playerName;
 	}
+
 	public function getOpponentName():string{
 		return $this->opponentName;
 	}
+
 	public function getArenaName():string{
 		return $this->arenaName;
 	}
+
 	public function isDuelRunning():bool{
 		return $this->started===true and $this->ended===false;
 	}
+
 	public function isLoadingDuel():bool{
 		return $this->started===false and $this->ended===false;
 	}
+
 	public function didDuelEnd():bool{
 		return $this->started===true and $this->ended===true;
 	}
@@ -195,13 +237,13 @@ class DuelGroup{
 					if(6 > $second){
 						$this->broadcastSound(0);
 						$this->initializePlayers(0);
-						$this->broadcastMessage("§fThe match will start in §b".$second."§f seconds...");
+						$this->broadcastMessage("§eThe match will start in §b".$second."§e seconds...");
 						$this->broadcastTitle("§b".$second);
 					}
 				}else{
 					$this->broadcastSound(1);
 					$this->initializePlayers(1);
-					$this->broadcastMessage("§fThe match has started!");
+					$this->broadcastMessage("§eThe match has started!");
 					$this->broadcastTitle("§l§bDUEL!", "§r§fThe match has started", 5, 5, 5);
 				}
 				
@@ -244,24 +286,29 @@ class DuelGroup{
 		}
 		$this->currentTick++;
 	}
+
 	public function setResults($winner=self::NONE, $loser=self::NONE){
-		//if($this->didDuelEnd()) return;
 		$this->winnerName=$winner;
 		$this->loserName=$loser;
 		if($winner!==self::NONE and $loser!==self::NONE){
 			$player=Utils::getPlayer($winner);
 			$opponent=Utils::getPlayer($loser);
-			if(!is_null($opponent)) Utils::spawnLightning($opponent);
+			if(!is_null($opponent)) Utils::spawnPublicLightning($opponent);
 			if($this->isRanked()===true){
+				if(!is_null($opponent)){
 				Core::getInstance()->getServer()->broadcastMessage("§a".Utils::getPlayerDisplayName($this->winnerName)."§e won a Ranked ".$this->getQueue()." match against §c".Utils::getPlayerDisplayName($this->loserName)."!");
+				}
 			}else{
+				if(!is_null($opponent)){
 				Core::getInstance()->getServer()->broadcastMessage("§a".Utils::getPlayerDisplayName($this->winnerName)."§e won an Unranked ".$this->getQueue()." match against §c".Utils::getPlayerDisplayName($this->loserName)."!");
+				}
 			}
 			$this->initializeWin($player);
 			$this->initializeLoss($opponent);
 		}
 		$this->setDuelEnded();
 	}
+
 	private function endDuel(bool $endPrematurely=false, bool $disablePlugin=false, $win=false):void{
 		if($this->isBedwars()) $this->replaceBeds();
 		$this->clearBlocks();
@@ -300,6 +347,14 @@ class DuelGroup{
 		if($opponent instanceof CorePlayer) $opponent->setTagged(false);
 		if($win===true){
 			if($winner!==self::NONE and $loser!==self::NONE){
+				if($ranked === true){
+					LevelUtils::increaseCurrentXp($winner, "kill", true);
+					LevelUtils::checkXp($winner);
+
+				}else{
+					LevelUtils::increaseCurrentXp($winner, "kill", false);
+					LevelUtils::checkXp($winner);
+				}
 				if(!Core::getInstance()->getDuelHandler()->isPlayerInQueue($winner)){
 					if(Utils::isAutoRequeueEnabled($winner)==true){
 						Core::getInstance()->getDuelHandler()->addPlayerToQueue($winner, $queue, $ranked);
@@ -316,6 +371,7 @@ class DuelGroup{
 		Core::getInstance()->getDuelHandler()->endDuel($this);
 		Core::getInstance()->getArenaHandler()->setArenaOpen($this->arenaName);
 	}
+
 	public function endDuelPrematurely(bool $disablePlugin=false):void{
 		$winner=self::NONE;
 		$loser=self::NONE;
@@ -335,10 +391,12 @@ class DuelGroup{
 		$this->loserName=$loser;
 		$this->endDuel($premature, $disablePlugin);
 	}
+
 	private function setDuelEnded(bool $result=true){
 		$this->ended=$result;
 		$this->endTick=$this->endTick == -1 ? $this->currentTick : $this->endTick;
 	}
+
 	private function start(){
 		$this->started=true;
 		if($this->arePlayersOnline()){
@@ -348,6 +406,7 @@ class DuelGroup{
 			$opponent->setImmobile(false);
 		}
 	}
+
 	private function updateScoreboards():void{
 		$duration=$this->getDurationString();
 		if($this->isPlayerOnline()){
@@ -359,6 +418,7 @@ class DuelGroup{
 			Core::getInstance()->getScoreboardHandler()->updateDuelDuration($opponent, $duration);
 		}
 	}
+
 	public function broadcastMessage(string $message):void{
 		if($this->isOpponentOnline()){
 			$opponent=$this->getOpponent();
@@ -369,6 +429,7 @@ class DuelGroup{
 			$player->sendMessage($message);
 		}
 	}
+
 	public function broadcastTitle(string $title, string $subtitle="", int $in=0, int $stay=40, int $out=0):void{
 		if($this->isOpponentOnline()){
 			$opponent=$this->getOpponent();
@@ -379,12 +440,12 @@ class DuelGroup{
 			$player->addTitle($title, $subtitle, $in, $stay, $out);
 		}
 	}
+
 	public function broadcastSound(int $type):void{
 		switch($type){
 			case 0:
 			if($this->isOpponentOnline()){
 				$opponent=$this->getOpponent();
-				//Utils::playSound($opponent, 50);
 				Utils::clickSound($opponent);
 			}
 			if($this->isPlayerOnline()){
@@ -395,11 +456,9 @@ class DuelGroup{
 			case 1:
 			if($this->isOpponentOnline()){
 				$opponent=$this->getOpponent();
-				//Utils::shootSound($opponent);
 			}
 			if($this->isPlayerOnline()){
 				$player=$this->getPlayer();
-				//Utils::shootSound($player);
 			}
 			break;
 			default:
@@ -407,6 +466,7 @@ class DuelGroup{
 			break;
 		}
 	}
+
 	public function initializePlayers(int $type):void{
 		switch($type){
 			case 0:
@@ -451,6 +511,7 @@ class DuelGroup{
 			break;
 		}
 	}
+
 	public function initializeWin($player):void{
 		if(Utils::isPlayer($player)){
 			if(!is_null($player)){
@@ -465,6 +526,7 @@ class DuelGroup{
 			}
 		}
 	}
+
 	public function initializeLoss($player):void{
 		if(Utils::isPlayer($player)){
 			if(!is_null($player)){
@@ -483,6 +545,7 @@ class DuelGroup{
 			}
 		}
 	}
+
 	public function clearSpectators(){
 		if(empty($this->spectators)) return;
 		foreach(Core::getInstance()->getServer()->getOnlinePlayers() as $spectators){
@@ -494,12 +557,14 @@ class DuelGroup{
 			}
 		}
 	}
+
 	private function isPlayerBelowCenter(Player $player, float $below):bool{
 		$y=$player->getY();
 		$arena=$this->getArena();
 		$centerY=$arena->getCenterPos()->y;
 		return $y + $below <= $centerY;
     }
+
 	public function arePlayersOnline():bool{
 		$result=false;
 		if(Utils::isPlayer($this->opponentName) and Utils::isPlayer($this->playerName)){
@@ -509,6 +574,7 @@ class DuelGroup{
 		}
 		return $result;
 	}
+
 	public function isPlayerOnline():bool{
 		$result=false;
 		if(Utils::isPlayer($this->playerName)){
@@ -517,6 +583,7 @@ class DuelGroup{
 		}
 		return $result;
 	}
+
 	public function isOpponentOnline():bool{
 		$result=false;
 		if(Utils::isPlayer($this->opponentName)){
@@ -525,6 +592,7 @@ class DuelGroup{
 		}
 		return $result;
 	}
+
 	public function getDuration():int{
 		$duration=$this->currentTick - $this->countdownTick;
 		if($this->didDuelEnd()){
@@ -533,6 +601,7 @@ class DuelGroup{
 		}
 		return $duration;
 	}
+
 	public function getDurationString():string{
 		$s="mm:ss";
 		$seconds=Utils::ticksToSeconds($this->getDuration());
@@ -558,6 +627,7 @@ class DuelGroup{
 		}
 		return $s;
 	}
+
 	private function getOfflinePlayers():array{
 		$result=["winner" => self::NONE, "loser" => self::NONE];
 		if(!$this->arePlayersOnline()){
@@ -571,6 +641,7 @@ class DuelGroup{
 		}
 		return $result;
 	}
+
 	public function addHitFor($player){
 		if($this->isPlayer($player)){
 			$hit=new DuelHit($this->playerName, $this->currentTick);
@@ -598,41 +669,47 @@ class DuelGroup{
 			if($add===true) $this->oppHits[]=$hit;
 		}
 	}
+
 	public function addAccHitFor($player){
 		if($this->isPlayer($player)){
-			$this->acCorePlayerHits++;
-			$this->acCorePlayerSwings++;
+			$this->accPlayerHits++;
+			$this->accPlayerSwings++;
 		}elseif($this->isOpponent($player)){
 			$this->accOppHits++;
 			$this->accOppSwings++;
 		}
 	}
+
 	public function addAccMissFor($player){
 		if($this->isPlayer($player)){
-			$this->acCorePlayerMisses++;
-			$this->acCorePlayerSwings++;
+			$this->accPlayerMisses++;
+			$this->accPlayerSwings++;
 		}elseif($this->isOpponent($player)){
 			$this->accOppMisses++;
 			$this->accOppSwings++;
 		}
 	}
+
 	public function canBuild():bool{
 		return $this->getArena()->canBuild();
 	}
+
 	public function canBreak():bool{
 		return $this->getArena()->canBuild();
 	}
+
 	public function isBlockTooHigh(int $ycoord):bool{
 		$y=$ycoord;
 		$arena=$this->getArena();
 		$centerY=$arena->getCenterPos()->y;
 		return $y >= $centerY + 8;
     }
-	//this is a height limit
+
 	public function canPlaceBlock(Block $against):bool{
 		$count=$this->countPlaced($against);
 		return $count < 50;
 	}
+
 	private function countPlaced(Block $against):int{
 		$count=0;
 		$blAgainst=$against->asVector3();
@@ -644,12 +721,15 @@ class DuelGroup{
 		}
 		return $count;
 	}
+
 	public function isPlacedBlock($block){
 		return $this->indexOfBlock($block) !== -1;
 	}
+
 	public function isBed($block){
 		return $block instanceof Bed;
 	}
+
 	private function indexOfBlock($block):int{
 		$index=-1;
 		if($block instanceof Block or $block instanceof Liquid){
@@ -661,6 +741,7 @@ class DuelGroup{
 		}
 		return $index;
 	}
+
 	private function clearBlocks():void{
 		$level=$this->getArena()->getLevel();
 		$size=count($this->blocks);
@@ -671,26 +752,29 @@ class DuelGroup{
 		}
 		$this->blocks=[];
 	}
+
 	private function replaceBeds():void{
 		$level=$this->getArena()->getLevel();
 		$size=count($this->beds);
 		for($i=0; $i < $size; $i++){
-			$block=$this->beds[$i];//position
+			$block=$this->beds[$i];
 			if($block instanceof Position){
-				//$level->setBlockIdAt($block->x, $block->y, $block->z, Block::BED_BLOCK);
 				Tile::createTile(Tile::BED, $level, TileBed::createNBT($block)); 
 			}
 		}
 		$this->beds=[];
 	}
+
 	public function addBlock($x, $y, $z):void{
 		$pos=new Vector3($x, $y, $z);
 		$this->blocks[]=$pos;
 	}
+
 	public function addBed(Block $position):void{
 		$pos=$position->asVector3();
 		$this->beds[]=$pos;
 	}
+
 	public function removeBlock($x, $y, $z):bool{
 		$result=false;
 		$level=$this->getArena()->getLevel();
@@ -702,10 +786,12 @@ class DuelGroup{
 		}
 		return $result;
 	}
+
 	public function isSpectator($player):bool{
 		$name=Utils::getPlayerName($player);
 		return($name !== null) and isset($this->spectators[$name]);
 	}
+
 	public function addSpectator($spectator):void{
 		$p=Utils::getPlayer($spectator);
 		if(Core::getInstance()->getDuelHandler()->isInDuel($p)) return;
@@ -713,7 +799,6 @@ class DuelGroup{
 		$center=$this->getArena()->getSpawnPosition();
 		$spectator->teleport($center);
 		$name=Utils::getPlayerName($p);
-		//$this->spectators[$name]=$spectator;
 		
 		$player=$this->getPlayer();
 		$opponent=$this->getOpponent();
@@ -738,6 +823,7 @@ class DuelGroup{
 			Core::getInstance()->getScoreboardHandler()->sendDuelSpectateScoreboard($p, "Unranked", $this->queue, $playerDS, $opponentDS);
 		}
 	}
+
 	public function removeSpectator($spectator, $send=false):void{
 		if($this->isSpectator($spectator)){
 			$p=Utils::getPlayer($spectator);
@@ -764,6 +850,7 @@ class DuelGroup{
 			}
 		}
 	}
+
 	private function getSpectators():array{
 		$result=[];
 		$keys=array_keys($this->spectators);

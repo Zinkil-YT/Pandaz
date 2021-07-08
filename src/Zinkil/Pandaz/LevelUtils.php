@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz;
@@ -17,6 +34,7 @@ class LevelUtils{
 		$level=Core::getInstance()->getDatabaseHandler()->getLevel(Utils::getPlayerName($player));
 		$player=Utils::getPlayer($player);
 		if($player instanceof Player){
+			$player->sendMessage("§3You are now level §b".$level."§3!");
 		}
 	}
 	public static function increaseCurrentXp($player, $reason, $ranked=false, $xpday=false){
@@ -34,19 +52,19 @@ class LevelUtils{
 			if($rank=="VIP"){
 				$boost=8;
 			}
-			if($rank=="MVP"){
+			if($rank=="Elite"){
 				$boost=10;
 			}
-			if($rank=="Legend"){
+			if($rank=="Premium"){
 				$boost=13;
 			}
-			if($rank=="Nitro"){
+			if($rank=="Booster"){
 				$boost=11;
 			}
-			if($rank=="YouTube Mini" or $rank=="Youtube" or $rank=="Famous"){
+			if($rank=="Youtube" or $rank=="Famous"){
 				$boost=4;
 			}
-			if($rank=="Trainee" or $rank=="Helper" or $rank=="Mod"){
+			if($rank=="Trainee" or $rank=="Helper" or $rank=="Mod" or $rank=="HeadMod"){
 				$boost=8;
 			}
 			if($rank=="Admin" or $rank=="Manager" or $rank=="Owner"){
@@ -73,6 +91,21 @@ class LevelUtils{
 				Core::getInstance()->getDatabaseHandler()->setCurrentXp(Utils::getPlayerName($player), $currentxp + $total);
 				Core::getInstance()->getDatabaseHandler()->setTotalXp(Utils::getPlayerName($player), $totalxp + $total);
 			}
+			$currentxpnew=Core::getInstance()->getDatabaseHandler()->getCurrentXp(Utils::getPlayerName($player));
+			$progress=round($currentxpnew / $neededxp * 100, 1);
+			$pc='%';
+			$player=Utils::getPlayer($player);
+			if($player instanceof Player){
+				if($level>=246){
+					$player->sendMessage("§aLevel Progress: ".Utils::formatLevel($level)." §7- MAX");
+					return;
+				}
+				if($currentxpnew>=$neededxp){
+					$player->sendMessage("§aLevel Progress: ".Utils::formatLevel($level)." §7- ".$neededxp."/".$neededxp." (100".$pc.")");
+				}else{
+					$player->sendMessage("§aLevel Progress: ".Utils::formatLevel($level)." §7- ".$currentxpnew."/".$neededxp." (".$progress.$pc.")");
+				}
+			}
 			break;
 			case "death":
 			$rand=mt_rand(10, 20);
@@ -85,19 +118,19 @@ class LevelUtils{
 			if($rank=="VIP"){
 				$boost=4;
 			}
-			if($rank=="MVP"){
+			if($rank=="Elite"){
 				$boost=5;
 			}
-			if($rank=="Legend"){
+			if($rank=="Premium"){
 				$boost=6;
 			}
-			if($rank=="Nitro"){
+			if($rank=="Booster"){
 				$boost=5;
 			}
-			if($rank=="YouTube Mini" or $rank=="Youtube" or $rank=="Famous"){
+			if($rank=="Youtube" or $rank=="Famous"){
 				$boost=4;
 			}
-			if($rank=="Trainee" or $rank=="Helper" or $rank=="Mod"){
+			if($rank=="Trainee" or $rank=="Helper" or $rank=="Mod" or $rank=="HeadMod"){
 				$boost=4;
 			}
 			if($rank=="Admin" or $rank=="Manager" or $rank=="Owner"){
@@ -123,6 +156,21 @@ class LevelUtils{
 			}else{
 				Core::getInstance()->getDatabaseHandler()->setCurrentXp(Utils::getPlayerName($player), $currentxp + $total);
 				Core::getInstance()->getDatabaseHandler()->setTotalXp(Utils::getPlayerName($player), $totalxp + $total);
+			}
+			$currentxpnew=Core::getInstance()->getDatabaseHandler()->getCurrentXp(Utils::getPlayerName($player));
+			$progress=round($currentxpnew / $neededxp * 100, 1);
+			$pc='%';
+			$player=Utils::getPlayer($player);
+			if($player instanceof Player){
+				if($level>=246){
+					$player->sendMessage("§cLevel Progress: ".Utils::formatLevel($level)." §7- MAX");
+					return;
+				}
+				if($currentxpnew>=$neededxp){
+					$player->sendMessage("§cLevel Progress: ".Utils::formatLevel($level)." §7- ".$neededxp."/".$neededxp." (100".$pc.")");
+				}else{
+					$player->sendMessage("§cLevel Progress: ".Utils::formatLevel($level)." §7- ".$currentxpnew."/".$neededxp." (".$progress.$pc.")");
+				}
 			}
 			break;
 			default:

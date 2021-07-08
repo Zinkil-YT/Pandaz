@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz;
@@ -27,6 +44,7 @@ use pocketmine\level\particle\FloatingTextParticle;
 use pocketmine\level\particle\HugeExplodeParticle;
 use pocketmine\level\particle\ExplodeParticle;
 use pocketmine\level\particle\DustParticle;
+use pocketmine\level\particle\FlameParticle;
 use pocketmine\network\mcpe\protocol\AnimatePacket;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use pocketmine\network\mcpe\protocol\AddActorPacket;
@@ -40,14 +58,16 @@ use Zinkil\Pandaz\Utils;
 use Zinkil\Pandaz\CorePlayer;
 use Zinkil\Pandaz\Kits;
 use Zinkil\Pandaz\entities\Hook;
-use Zinkil\Pandaz\PandazChunkLoader;
-use Zinkil\Pandaz\multiver\MultiVersion;
 use Zinkil\Pandaz\forms\{SimpleForm, CustomForm, ModalForm};
 use Zinkil\Pandaz\bots\{EasyBot, MediumBot, HardBot, HackerBot};
 
 class Utils{
 	
-	const SWISH_SOUNDS=[LevelSoundEventPacket::SOUND_ATTACK => true, LevelSoundEventPacket::SOUND_ATTACK_STRONG => true];
+    const SWISH_SOUNDS = [
+        LevelSoundEventPacket::SOUND_ATTACK => true,
+        LevelSoundEventPacket::SOUND_ATTACK_NODAMAGE => true,
+        LevelSoundEventPacket::SOUND_ATTACK_STRONG => true
+    ];
 	
 	public static function resetStats($player){
 		Core::getInstance()->main->exec("UPDATE essentialstats SET kills=0 WHERE player='".$player."';");
@@ -67,6 +87,7 @@ class Utils{
 		Core::getInstance()->main->exec("UPDATE temporary SET dailykills=0 WHERE player='".$player."';");
 		Core::getInstance()->main->exec("UPDATE temporary SET dailydeaths=0 WHERE player='".$player."';");
 	}
+
 	public static function createPotion($player){
 		$motion=$player->getDirectionVector();
 		$nbt=Entity::createBaseNBT($player->add(0, 0, 0), $motion);
@@ -96,6 +117,7 @@ class Utils{
 			}
 		}
 	}
+
 	public static function createPearl($player){
 		$motion=$player->getDirectionVector();
 		$nbt=Entity::createBaseNBT($player->add(0, 0, 0), $motion);
@@ -110,6 +132,7 @@ class Utils{
 			}
 		}
 	}
+
 	public static function createBot($player, string $type, float $x, float $y, float $z, Level $level){
 		$player=self::getPlayer($player);
 		if($player===null) return;
@@ -164,6 +187,7 @@ class Utils{
 			break;
 		}
 	}
+
 	public static function broadcastPacketToViewers(CorePlayer $inPlayer, DataPacket $packet, ?callable $callable=null, ?array $viewers=null):void{
 		$viewers=$viewers ?? $inPlayer->getLevelNonNull()->getViewersForPosition($inPlayer->asVector3());
 		foreach($viewers as $viewer){
@@ -175,6 +199,15 @@ class Utils{
 			}
 		}
 	}
+
+	public static function sendChangelogForm(Player $player):void{
+		$form=new SimpleForm(function(Player $player, $data=null):void{
+		});
+		$form->setTitle("ChangeLogs");
+		$form->setContent("§bWhat is new in this update?\n\n§f"."\n1- Added real pots and pearls to Bots\n2- The lightning strike and sound will now only show for (Player and Killer)\n3- Made Anti-Toolbox more accurate"."\n\n\n§3Have questions or concerns? Join our discord at ".Core::DISCORD." !");
+		$player->sendForm($form);
+	}
+
 	public static function transferPlayers(array $players){
 		foreach($players as $player){
 			$player->transfer(Core::IP, 19132, "");
@@ -182,35 +215,43 @@ class Utils{
 		}
 		Core::getInstance()->getLogger()->notice("All players have been transferred.");
 	}
+
 	public static function currentTimeMillis():float{
 		$time=microtime(true);
 		return $time * 1000;
 	}
+
 	public static function secondsToTicks(int $seconds):int{
 		return $seconds * 20;
 	}
+
 	public static function minutesToTicks(int $minutes):int{
 		return $minutes * 1200;
 	}
 	public static function hoursToTicks(int $hours):int{
 		return $hours * 72000;
 	}
+
 	public static function ticksToSeconds(int $tick):int{
 		return intval($tick / 20);
 	}
+
 	public static function ticksToMinutes(int $tick):int{
 		return intval($tick / 1200);
 	}
+
 	public static function ticksToHours(int $tick):int{
 		return intval($tick / 72000);
 	}
+
 	public static function onChunkGenerated(Level $level, int $x, int $z, callable $callable):void{
 		if($level->isChunkPopulated($x, $z)){
 			$callable();
 			return;
 		}
-		$level->registerChunkLoader(new PracticeChunkLoader($level, $x, $z, $callable), $x, $z, true);
+		$level->registerChunkLoader(new PandazChunkLoader($level, $x, $z, $callable), $x, $z, true);
 	}
+
 	public static function str_contains(string $needle, string $haystack, bool $use_mb=false):bool{
 		$result=false;
 		$type=($use_mb === true) ? mb_strpos($haystack, $needle) : strpos($haystack, $needle);
@@ -221,6 +262,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function str_replace(string $haystack, array $values):string{
 		$result=$haystack;
 		$keys=array_keys($values);
@@ -233,12 +275,14 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function clearEntities(Level $level, bool $proj=false, bool $all=false):void{
 		$entities=$level->getEntities();
 		foreach($entities as $entity){
 			if(!$entity instanceof CorePlayer) $entity->close();	
 		}
 	}
+
 	public static function formatLevel($level){
 		$format="§8".$level;
 		if($level>=0){
@@ -271,6 +315,7 @@ class Utils{
 		}
 		return $format;
 	}
+
 	public static function getClass($elo){
 		$format="§6Rookie I";
 		if($elo>=1000 && $elo<1200){
@@ -290,6 +335,7 @@ class Utils{
 		}
 		return $format;
 	}
+
 	public static function testPots(Player $player){
 		if(is_null($player)) return;
 		$directionVector=$player->getDirectionVector();
@@ -310,12 +356,15 @@ class Utils{
 			$entity->spawnToAll();
 		}
 	}
+
 	public static function setGlobalMute(bool $bool){
 		Core::getInstance()->globalMute=$bool;
 	}
+
 	public static function getGlobalMute():bool{
 		return Core::getInstance()->globalMute;
 	}
+
 	public static function initPlayer($player){
 		if(is_null($player)) return;
 		$ip=$player->getAddress();
@@ -338,8 +387,8 @@ class Utils{
 			'auto-requeue' => false,
 			'auto-rekit' => false,
 			'auto-sprint' => false,
-			'pvp-counter'=> true,
-			'swing-sounds'=> false,
+			'cps-counter'=> true,
+			'swing-sounds'=> true,
 			'pot-splash-color' => "default",
 			'particle-mod' => 'off',
 			'preferred-pot' => 'default',
@@ -409,8 +458,8 @@ class Utils{
 				$data['auto-sprint']=false;
 				$edit=true;
 			}
-			if(!isset($data['pvp-counter'])){
-				$data['pvp-counter']=true;
+			if(!isset($data['cps-counter'])){
+				$data['cps-counter']=true;
 				$edit=true;
 			}
 			if(!isset($data['swing-sounds'])){
@@ -438,6 +487,7 @@ class Utils{
 			}
 		}
 	}
+
 	public static function isScoreboardEnabled($player):bool{
 		$result=true;
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
@@ -449,6 +499,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function isPotFeedbackEnabled($player):bool{
 		$result=true;
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
@@ -460,6 +511,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function isShowInLeaderboardsEnabled($player):bool{
 		$result=true;
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
@@ -471,6 +523,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function isAutoRequeueEnabled($player):bool{
 		$result=true;
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
@@ -482,6 +535,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function isAutoRekitEnabled($player):bool{
 		$result=true;
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
@@ -493,6 +547,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function isAutoSprintEnabled($player):bool{
 		$result=true;
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
@@ -504,17 +559,19 @@ class Utils{
 		}
 		return $result;
 	}
-	public static function isPvPUtilsCounterEnabled($player):bool{
+
+	public static function isCpsCounterEnabled($player):bool{
 		$result=true;
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
 		if(file_exists($path)){
 			$data=yaml_parse_file($path, 0);
-			if(is_array($data) and isset($data['pvp-counter'])){
-				$result=boolval($data['pvp-counter']);
+			if(is_array($data) and isset($data['cps-counter'])){
+				$result=boolval($data['cps-counter']);
 			}
 		}
 		return $result;
 	}
+
 	public static function isSwingSoundEnabled($player):bool{
 		$result=true;
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
@@ -526,6 +583,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function potSplashColor($player){
 		$result="default";
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
@@ -537,6 +595,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function particleMod($player){
 		$result="off";
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
@@ -548,6 +607,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function preferredPot($player){
 		$result="default";
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
@@ -559,6 +619,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function clanTag($player){
 		$result="";
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
@@ -570,6 +631,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function sendExtraParticles($player, $hit, int $multiplier){
 		switch($multiplier){
 			case 1:
@@ -615,6 +677,7 @@ class Utils{
 			break;
 		}
 	}
+
 	public static function getTags($player){
 		return self::getPlayerData(self::getPlayerName($player))['tags'];
 	}
@@ -630,9 +693,11 @@ class Utils{
 			yaml_emit_file($path, $data);
 		}
 	}
+
 	public static function getCustomTags($player){
 		return self::getPlayerData(self::getPlayerName($player))['custom-tags'];
 	}
+
 	public static function setCustomTags($player, string $value){
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
 		if(file_exists($path)){
@@ -645,9 +710,11 @@ class Utils{
 			yaml_emit_file($path, $data);
 		}
 	}
+
 	public static function getTagSlots($player){
 		return self::getPlayerData(self::getPlayerName($player))['tag-slots'];
 	}
+
 	public static function setTagSlots($player, string $value){
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
 		if(file_exists($path)){
@@ -660,15 +727,19 @@ class Utils{
 			yaml_emit_file($path, $data);
 		}
 	}
+
 	public static function getCapes($player){
 		return self::getPlayerData(self::getPlayerName($player))['capes'];
 	}
+
 	public static function getSelectedCape($player){
 		return self::getPlayerData(self::getPlayerName($player))['selected-cape'];
 	}
+
 	public static function setSelectedCape($player, $value):void{
 		self::setPlayerData(self::getPlayerName($player), 'selected-cape', $value);
 	}
+
 	public static function setCapes($player, string $value){
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
 		if(file_exists($path)){
@@ -681,12 +752,15 @@ class Utils{
 			yaml_emit_file($path, $data);
 		}
 	}
+
 	public static function getKillParticles($player){
 		return self::getPlayerData(self::getPlayerName($player))['kill-particles'];
 	}
+
 	public static function getSelectedKillParticle($player){
 		return self::getPlayerData(self::getPlayerName($player))['kill-particle'];
 	}
+
 	public static function setKillParticles($player, string $value){
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
 		if(file_exists($path)){
@@ -699,29 +773,30 @@ class Utils{
 			yaml_emit_file($path, $data);
 		}
 	}
+
 	public static function getRivalries($player){
 		return self::getPlayerData(self::getPlayerName($player))['rivalries'];
 	}
+
 	public static function startRivalry($player, string $enemy){
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
 		if(file_exists($path)){
 			$data=yaml_parse_file($path, 0);
 			if(isset($data['rivalries'])){
 				$rivals=$data['rivalries'];
-				//$rivals[]=$value;
 				$rivals[]=array($enemy => 0);
 				$data['rivalries']=$rivals;
 			}
 			yaml_emit_file($path, $data);
 		}
 	}
+
 	public static function updateRivalry($player, string $enemy){
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
 		if(file_exists($path)){
 			$data=yaml_parse_file($path, 0);
 			if(isset($data['rivalries'])){
 				$rivals=$data['rivalries'];
-				//$rivals[]=$value;
 				$current=self::
 				$rivals[]=array($enemy => $current + 1);
 				$data['rivalries']=$rivals;
@@ -729,9 +804,11 @@ class Utils{
 			yaml_emit_file($path, $data);
 		}
 	}
+
 	public static function getPerms($player){
 		return self::getPlayerData(self::getPlayerName($player))['permissions'];
 	}
+
 	public static function clearPerms($player){
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
 		if(file_exists($path)){
@@ -742,6 +819,7 @@ class Utils{
 			yaml_emit_file($path, $data);
 		}
 	}
+
 	public static function setPerms($player, $value){
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
 		if(file_exists($path)){
@@ -754,6 +832,7 @@ class Utils{
 			yaml_emit_file($path, $data);
 		}
 	}
+
 	public static function setPlayerData($player, string $key, $value=null):bool{
 		$executed=true;
 		$path=Core::getInstance()->getDataFolder()."playerdata/".self::getPlayerName($player).".yml";
@@ -764,12 +843,13 @@ class Utils{
 				$executed=true;
 			}
 			yaml_emit_file($path, $data);
-			}else{
-				self::initPlayer(self::getPlayer($player));
-				$executed=self::setPlayerData($player, $key, $value);
-			}
-			return $executed;
+		}else{
+			self::initPlayer(self::getPlayer($player));
+			$executed=self::setPlayerData($player, $key, $value);
+		}
+		return $executed;
 	}
+
 	public static function getPlayerData($player):array{
 		$name=null;
 		$data=array();
@@ -791,6 +871,7 @@ class Utils{
 		}
 		return $data;
 	}
+
 	public static function setCape($player, string $cape){
 		$player=self::getPlayer($player);
 		$oldSkin=$player->getSkin();
@@ -800,6 +881,7 @@ class Utils{
 		$player->sendSkin();
 		$player->setHasCape(true);
 	}
+
 	public static function removeCape($player){
 		$player=self::getPlayer($player);
 		$oldSkin=$player->getSkin();
@@ -808,6 +890,7 @@ class Utils{
 		$player->sendSkin();
 		$player->setHasCape(false);
 	}
+
 	public static function customPots(Item $potion, Player $player, bool $animate=false){
 		$dir=$player->getDirectionVector();
 		$dx=$dir->getX();
@@ -828,6 +911,7 @@ class Utils{
 			Core::getInstance()->getServer()->broadcastPacket($player->getLevel()->getPlayers(), $packet);
 		}
 	}
+
 	public static function generateRandomFloat($min, $max, $round=0){
 		if($min>$max){
 			$min=$max;
@@ -842,6 +926,7 @@ class Utils{
 		}
 		return $randomfloat;
 	}
+
 	public static function giveTemporaryRank($player, $rank){
 		switch($rank){
 			case "Voter":
@@ -1006,6 +1091,7 @@ class Utils{
 			break;
 		}
 	}
+
 	public static function offerVoteRewards($player){
 		$now=time();
 		$day=0 * 86400;
@@ -1022,6 +1108,7 @@ class Utils{
 		}
 		Core::getInstance()->getDatabaseHandler()->voteAccessCreate($player, $duration);
 	}
+
 	public static function throwItem(Item $item, $player, bool $animate=false){
 		$dir=$player->getDirectionVector();
 		$dx=$dir->getX();
@@ -1049,23 +1136,74 @@ class Utils{
 			Core::getInstance()->getServer()->broadcastPacket($player->getLevel()->getPlayers(), $packet);
 		}
 	}
+
 	public static function consumeItem(Item $item, $player){
 		$item->onClickAir($player, $player->getDirectionVector());
 		if(!$player->isCreative()){
 			$inventory=$player->getInventory();
 			$itemInHand=$player->getInventory()->getItemInHand();
 			if($item->getId()===Item::MUSHROOM_STEW and $item instanceof MushroomStew){
-				//$inventory->setItem($inventory->getHeldItemIndex(), Item::get(281));
 				$inventory->setItem($inventory->getHeldItemIndex(), Item::get(0));
 				$player->setHealth($player->getHealth() + 8);
 				$player->setFood($player->getMaxFood());
 			}
 		}
 	}
-	public static function instantPots($item, $player, bool $animate=false){
+
+	public static function instantPotsEasy($item, $player, bool $animate=false){
 		$inventory=$player->getInventory();
 		if($item===Item::SPLASH_POTION){
-			//$inventory->setItem($inventory->getHeldItemIndex(), Item::get(0));
+			$player->setHealth($player->getHealth() + 8);
+			
+			$colors=[new Color(4, 255, 55)];
+			$player->getLevel()->broadcastLevelEvent($player->asVector3()->add($player->getDirectionVector()->x + 0.3, 1, 0), LevelEventPacket::EVENT_PARTICLE_SPLASH, Color::mix(...$colors)->toARGB());
+			$player->getLevel()->broadcastLevelSoundEvent($player->asVector3(), LevelSoundEventPacket::SOUND_GLASS);
+		}
+		if($animate===true){
+			$packet=new AnimatePacket();
+			$packet->action=AnimatePacket::ACTION_SWING_ARM;
+			$packet->entityRuntimeId=$player->getId();
+			Core::getInstance()->getServer()->broadcastPacket($player->getLevel()->getPlayers(), $packet);
+		}
+	}
+
+	public static function instantPotsMedium($item, $player, bool $animate=false){
+		$inventory=$player->getInventory();
+		if($item===Item::SPLASH_POTION){
+			$player->setHealth($player->getHealth() + 8);
+			
+			$colors=[new Color(248, 255, 0)];
+			$player->getLevel()->broadcastLevelEvent($player->asVector3()->add($player->getDirectionVector()->x + 0.3, 1, 0), LevelEventPacket::EVENT_PARTICLE_SPLASH, Color::mix(...$colors)->toARGB());
+			$player->getLevel()->broadcastLevelSoundEvent($player->asVector3(), LevelSoundEventPacket::SOUND_GLASS);
+		}
+		if($animate===true){
+			$packet=new AnimatePacket();
+			$packet->action=AnimatePacket::ACTION_SWING_ARM;
+			$packet->entityRuntimeId=$player->getId();
+			Core::getInstance()->getServer()->broadcastPacket($player->getLevel()->getPlayers(), $packet);
+		}
+	}
+
+	public static function instantPotsHard($item, $player, bool $animate=false){
+		$inventory=$player->getInventory();
+		if($item===Item::SPLASH_POTION){
+			$player->setHealth($player->getHealth() + 8);
+			
+			$colors=[new Color(255, 128, 0)];
+			$player->getLevel()->broadcastLevelEvent($player->asVector3()->add($player->getDirectionVector()->x + 0.3, 1, 0), LevelEventPacket::EVENT_PARTICLE_SPLASH, Color::mix(...$colors)->toARGB());
+			$player->getLevel()->broadcastLevelSoundEvent($player->asVector3(), LevelSoundEventPacket::SOUND_GLASS);
+		}
+		if($animate===true){
+			$packet=new AnimatePacket();
+			$packet->action=AnimatePacket::ACTION_SWING_ARM;
+			$packet->entityRuntimeId=$player->getId();
+			Core::getInstance()->getServer()->broadcastPacket($player->getLevel()->getPlayers(), $packet);
+		}
+	}
+
+	public static function instantPotsHacker($item, $player, bool $animate=false){
+		$inventory=$player->getInventory();
+		if($item===Item::SPLASH_POTION){
 			$player->setHealth($player->getHealth() + 8);
 			
 			$colors=[new Color(0xf8, 0x24, 0x23)];
@@ -1079,6 +1217,7 @@ class Utils{
 			Core::getInstance()->getServer()->broadcastPacket($player->getLevel()->getPlayers(), $packet);
 		}
 	}
+
 	public static function spawnParticle(Player $player, $particle, bool $ispreview=false){
 		switch($particle){
 			case 1:
@@ -1105,6 +1244,7 @@ class Utils{
 			return;
 		}
 	}
+
 	public static function matchOutcome($player, int $reason, bool $isRanked=false){
 		switch($reason){
 			case 0:
@@ -1123,7 +1263,7 @@ class Utils{
 			if($newkillstreak >= $bestkillstreak){
 				Core::getInstance()->getDatabaseHandler()->setBestKillstreak($player, $newkillstreak);
 			}
-			if(!is_null($oplayer)) $oplayer->sendMessage("§l§eKillStreak §7» §r§a".$newkillstreak);
+			if(!is_null($oplayer)) $oplayer->sendMessage("§aYou are on a killstreak of ".$newkillstreak."!");
 			$setelo=mt_rand(8, 14);
 			if($isRanked===true){
 				Core::getInstance()->getDatabaseHandler()->setRankedElo($player, $elo + $setelo);
@@ -1143,7 +1283,7 @@ class Utils{
 			Core::getInstance()->getDatabaseHandler()->setDeaths($player, $deaths + 1);
 			Core::getInstance()->getDatabaseHandler()->setDailyDeaths($player, $dailydeaths + 1);
 			Core::getInstance()->getDatabaseHandler()->setKillstreak($player, 0);
-			if(!is_null($oplayer) and $killstreak > 0) $oplayer->sendMessage("§l§eKillStreak §7» §r§c".$killstreak);
+			if(!is_null($oplayer) and $killstreak > 0) $oplayer->sendMessage("§cYou lost your killstreak of ".$killstreak."!");
 			$setelo=mt_rand(6, 12);
 			if($isRanked===true){
 				Core::getInstance()->getDatabaseHandler()->setRankedElo($player, $elo - $setelo);
@@ -1160,6 +1300,7 @@ class Utils{
 			return;
 		}
 	}
+
 	public static function updateStats($player, int $reason){
 		switch($reason){
 			case 0:
@@ -1175,7 +1316,7 @@ class Utils{
 			if($newkillstreak >= $bestkillstreak){
 				Core::getInstance()->getDatabaseHandler()->setBestKillstreak($player, $newkillstreak);
 			}
-			if(!is_null($oplayer)) $oplayer->sendMessage("§l§eKillStreak §l§7»§r §a".$newkillstreak);
+			if(!is_null($oplayer)) $oplayer->sendMessage("§aYou are on a killstreak of ".$newkillstreak."!");
 			break;
 			case 1:
 			$oplayer=self::getPlayer($player);
@@ -1185,7 +1326,7 @@ class Utils{
 			Core::getInstance()->getDatabaseHandler()->setDeaths($player, $deaths + 1);
 			Core::getInstance()->getDatabaseHandler()->setDailyDeaths($player, $dailydeaths + 1);
 			Core::getInstance()->getDatabaseHandler()->setKillstreak($player, 0);
-			if(!is_null($oplayer) and $killstreak > 0) $oplayer->sendMessage("§l§eKillStreak §r§7»§r §c".$killstreak);
+			if(!is_null($oplayer) and $killstreak > 0) $oplayer->sendMessage("§cYou lost your killstreak of ".$killstreak."!");
 			break;
 			case 2:
 			$deaths=Core::getInstance()->getDatabaseHandler()->getDeaths($player);
@@ -1198,9 +1339,11 @@ class Utils{
 			return;
 		}
 	}
+
 	public static function isPlayer($player):bool{
 		return !is_null(self::getPlayer($player));
 	}
+
 	public static function getPlayer($info){
 		$result=null;
 		$player=self::getPlayerName($info);
@@ -1214,6 +1357,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function getPlayerName($player){
 		$result=null;
 		if(isset($player) and !is_null($player)){
@@ -1225,6 +1369,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function getPlayerDisplayName($player){
 		$result=null;
 		if(isset($player) and !is_null($player)){
@@ -1239,6 +1384,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function spawnStaticTextsToPlayer($player){
 		$player=self::getPlayer($player);
 		if(is_null($player)) return;
@@ -1251,6 +1397,7 @@ class Utils{
 			$level->addParticle($ft, [$player]);
 		}
 	}
+
 	public static function spawnUpdatingTextsToPlayer($player){
 		$player=self::getPlayer($player);
 		if(is_null($player)) return;
@@ -1263,34 +1410,39 @@ class Utils{
 			$level->addParticle($ft, [$player]);
 		}
 	}
+
 	public static function getTime():string{
-		$timezone='America/Chicago';
+		$timezone='Africa/Cairo';
 		$timestamp=time();
 		$date=new \DateTime("now", new \DateTimeZone($timezone));
 		$date->setTimestamp($timestamp);
 		$format=$date->format('m/d/Y');
 		return $format;
 	}
+
 	public static function getTimeExact():string{
-		$timezone='America/Chicago';
+		$timezone='Africa/Cairo';
 		$timestamp=time();
 		$date=new \DateTime("now", new \DateTimeZone($timezone));
 		$date->setTimestamp($timestamp);
 		$format=$date->format('m/d/Y @H:i:s');
 		return $format;
 	}
+
 	public static function getTimeByHour():string{
-		$timezone='America/Chicago';
+		$timezone='Africa/Cairo';
 		$timestamp=time();
 		$date=new \DateTime("now", new \DateTimeZone($timezone));
 		$date->setTimestamp($timestamp);
 		$format=$date->format('H:i');
 		return $format;
 	}
+
 	public static function getFakeNames(){
-		$names=["Trapzies","ghxsty","LuckyXTapz","obeseGamerGirl","UnknownXzzz","zAnthonyyy","FannityPE","Vatitelc","StudSport","MCCaffier","Keepuphulk8181","LittleComfy","Decdarle","mythic_d4nger","gambling life","BASIC x VIBES","lawlogic","hutteric","BiggerCobra_1181","Lextech817717","Chnixxor","AloneShun","AddictedToYou","Board","Javail","MusicPqt","REYESOOKIE","Asaurus Rex","Popperrr","oopsimSorry_","lessthan greaterthan","Regrexxx","adam 22","NotCqnadian","brtineyMCPE","samanthaplayzmc","ShaniquaLOL","OptimusPrimeXD","BouttaBust","GamingNut66","NoIdkbruh","ThisIsWhyYoure___","voLT_811","Sekrum","Artificial_","ReadMyBook","urmum__77","idkwhatiatetoday","udkA77161","Stimpy","Adviser","St1pmyPVP","GangGangGg","CoolKid888","AcornChaser78109","anon171717","AnonymousYT","Sintress Balline","Daviecrusha","HeatedBot46","CobraKiller2828","KingPVPYT","TempestG","ThePVPGod","McProGangYT","lmaonocap","NoClipXD","ImHqcking","undercoverbot","reswoownss199q","diego91881","CindyPlayz","HeyItzMe","iTzSkittlesMC","NOHACKJUSTPRO","idkHowToPlay","Bum Bummm","Bigumslol","Skilumsszz","SuperGamer756","ProPVPer2k20","N0S3_P1CK3R84","PhoenixXD","EnderProYT_81919","Ft MePro","NotHaqing","aababah_a","badbtch4life","serumxxx","bigdogoo_","william18187","ZeroLxck","Gamer dan","SuperSAIN","DefNoHax","GoldFox","ClxpKxng","AdamIsPro","XXXPRO655","proshtGGxD","T0PL543","GamerKid9000","SphericalAxeum","ImABot"];
+		$names=["Trapzies","ghxsty","LuckyXTapz","obeseGamerGirl","UnknownXzzz","zAnthonyyy","FannityPE","Vatitelc","StudSport","MCCaffier","Keepuphulk8181","LittleComfy","Decdarle","mythic_d4nger","gambling life","BASIC x VIBES","lawlogic","hutteric","BiggerCobra_1181","Lextech817717","Chnixxor","AloneShun","AddictedToYou","Board","Javail","MusicPqt","REYESOOKIE","Asaurus Rex","Popperrr","oopsimSorry_","lessthan greaterthan","Regrexxx","adam 22","NotCqnadian","brtineyMCPE","samanthaplayzmc","ShaniquaLOL","OptimusPrimeXD","BouttaBust","GamingNut66","NoIdkbruh","ThisIsWhyYoure___","voLT_811","Sekrum","Artificial_","ReadMyBook","urmum__77","idkwhatiatetoday","udkA77161","Stimpy","Adviser","St1pmyPVP","GangGangGg","CoolKid888","AcornChaser78109","anon171717","AnonymousYT","Sintress Balline","Daviecrusha","HeatedBot46","CobraKiller2828","KingPVPYT","TempestG","ThePVPGod","McProGangYT","lmaonocap","NoClipXD","ImHqcking","undercoverbot","reswoownss199q","diego91881","CindyPlayz","HeyItzMe","iTzSkittlesMC","NOHACKJUSTPRO","idkHowToPlay","Bum Bummm","Bigumslol","Skilumsszz","SuperGamer756","ProPVPer2k20","N0S3_P1CK3R84","PhoenixXD","EnderProYT_81919","Ft MePro","NotHaqing","aababah_a","badbtch4life","serumxxx","bigdogoo_","william18187","ZeroLxck","Gamer dan","SuperSAIN","DefNoHax","GoldFox","ClxpKxng","AdamIsPro","XXXPRO655","proshtGGxD","T0PL543","GamerKid9000","SphericalAxeum","ImABot","PRIM x GAY","BETENGAN","FUCK YOU TABUSH","warro is NIGGA"];
 		return $names;
 	}
+
 	public static function abc123($string){
 		if(function_exists('ctype_alnum')){
 			$return=ctype_alnum($string);
@@ -1299,6 +1451,7 @@ class Utils{
 		}
 		return $return;
 	}
+
 	public static function isLetter($string){
 		if(function_exists('ctype_alnum')){
 			$return=ctype_alnum($string);
@@ -1307,6 +1460,7 @@ class Utils{
 		}
 		return $return;
 	}
+
 	public static function isNumerical($string){
 		if(function_exists('ctype_alnum')){
 			$return=ctype_alnum($string);
@@ -1315,17 +1469,20 @@ class Utils{
 		}
 		return $return;
 	}
+
 	public static function replaceVars($str, array $vars){
 		foreach($vars as $key => $value){
 			$str=str_replace($key, $value, $str);
 		}
 		return $str;
 	}
+
 	public static function postWebhook(String $url, String $content, String $replyTo='Pandaz'){
 		$post=new DiscordTask($url, $content, $replyTo);
 		$task=Server::getInstance()->getAsyncPool()->submitTask($post);
 		return;
 	}
+
 	public static function classChangeEvent($player, string $change, string $class){
 		$player=self::getPlayer($player);
 		switch($change){
@@ -1347,45 +1504,41 @@ class Utils{
 			return;
 		}
 	}
-	public static function spawnLightning($player){
+
+	public static function spawnPublicLightning($player){
 		if($player instanceof Player){
 			$player=self::getPlayer($player);
 		}else{
 			$player=$player;
 		}
 		if(is_null($player)) return;
-		$lightning=new AddActorPacket();
-		$lightning->type="minecraft:lightning_bolt";
-		$lightning->entityRuntimeId=Entity::$entityCount++;
-		$lightning->metadata=[];
-		$lightning->motion=null;
-		$lightning->yaw=$player->getYaw();
-		$lightning->pitch=$player->getPitch();
-		$lightning->position=new Vector3($player->getX(), $player->getY(), $player->getZ());
-		Server::getInstance()->broadcastPacket($player->getLevel()->getPlayers(), $lightning);
-		
-		
-		self::impactSound($player);
+		$packet = new AddActorPacket();
+		$packet->type = "minecraft:lightning_bolt";
+		$packet->entityRuntimeId  =Entity::$entityCount++;
+		$packet->metadata = [];
+		$packet->motion = null;
+		$packet->yaw = $player->getYaw();
+		$packet->pitch = $player->getPitch();
+		$packet->position = new Vector3($player->getX(), $player->getY(), $player->getZ());
+		Server::getInstance()->broadcastPacket($player->getLevel()->getPlayers(), $packet);
 	}
 
-
-	public static function spawnRocket($player){
-	    if($player instanceof Player){
-		    $player=self::getPlayer($player);
-	    }else{
-		    $player=$player;
-	    }
-	    if(is_null($player)) return;
-        $rocket=new AddActorPacket();
-        $rocket->type=72;
-        $rocket->entityRuntimeId=Entity::$entityCount++;
-        $rocket->metadata=array();
-        $rocket->motion=null;
-        $rocket->yaw=$player->getYaw();
-        $rocket->pitch=$player->getPitch();
-        $rocket->position=new Vector3($player->getX(), $player->getY(), $player->getZ());
-        Server::getInstance()->broadcastPacket($player->getLevel()->getPlayers(), $rocket);
-    }
+	public static function spawnPrivateLightning($player, $viewers) : void{
+		if($player instanceof Player){
+			$player=self::getPlayer($player);
+		}else{
+			$player=$player;
+		}
+		if(is_null($player)) return;
+		$packet = new AddActorPacket();
+		$packet->type = "minecraft:lightning_bolt";
+		$packet->entityRuntimeId = Entity::$entityCount++;
+		$packet->metadata = [];
+		$packet->yaw = $player->getYaw();
+		$packet->pitch = $player->getPitch();
+		$packet->position = new Vector3($player->getX(), $player->getY(), $player->getZ());
+		$player->getServer()->broadcastPacket($viewers, $packet);
+	}
 
 	public static function knockbackPlayer($player){
 		$player=self::getPlayer($player);
@@ -1416,7 +1569,6 @@ class Utils{
 		$sound->pitch=1;
 		Server::getInstance()->broadcastPacket($player->getLevel()->getPlayers(), $sound);
 	}
-
 
 	public static function teleportSound($player){
 		$player=self::getPlayer($player);
@@ -1462,20 +1614,6 @@ class Utils{
 		$player->dataPacket($sound);
 	}
 
-	public static function testSound($player, $id){
-		$player=self::getPlayer($player);
-		if(is_null($player)) return;
-		$v3=$player->asVector3();
-		if(!$v3 instanceof Vector3){
-			return;
-		}
-		$sound=new LevelEventPacket();
-		$sound->evid=$id;
-		$sound->position=$v3;
-		$sound->data=$id;
-		$player->dataPacket($sound);
-	}
-
 	public static function shootSound($player){
 		$player=self::getPlayer($player);
 		if(is_null($player)) return;
@@ -1514,9 +1652,7 @@ class Utils{
 		$sound->volume=0.7;
 		$sound->pitch=1;
 		foreach($player->getLevel()->getPlayers() as $players){
-			//if($players==$player and $player!==null){
-				$players->dataPacket($sound);
-			//}
+			$players->dataPacket($sound);
 		}
 	}
 
@@ -1549,7 +1685,7 @@ class Utils{
         $sound->x = $player->getX();
         $sound->y = $player->getY();
         $sound->z = $player->getZ();
-        $sound->volume = 10;
+        $sound->volume = 20;
         $sound->pitch = 1;
         $player->dataPacket($sound);
     }
@@ -1579,6 +1715,7 @@ class Utils{
 		$player->knockBack($player, 0, -$dx, -$dz, 0.4);
 		self::playSound($player, 84);
 	}
+
 	public static function playSound($player, int $sound, $all=false){
 		$player=self::getPlayer($player);
 		if(is_null($player)) return;
@@ -1595,6 +1732,7 @@ class Utils{
 			$player->dataPacket($packet);
 		}
 	}
+
 	public static function playSoundAbove($player, int $sound, $all=false){
 		$player=self::getPlayer($player);
 		if(is_null($player)) return;
@@ -1613,138 +1751,145 @@ class Utils{
 			$player->dataPacket($packet);
 		}
 	}
+
 	public static function getChatFormat($rank){
 		switch($rank){
 			case "Player":
-			$format="§7{clan}§l§ePlayer §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §7{clan}§l§7Player §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "Voter":
-			$format="§7{clan}§l§6Voter §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §7{clan}§l§6Voter §r§f{name}§7 » §b{message}";
+			return $format;
+			break;
+			case "VIP":
+			$format="§●§f[§a{kills}§f] §7{clan}§l§eVIP §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "Elite":
-			$format="§7{clan}§l§aElite §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§aElite §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "Premium":
-			$format="§7{clan}§l§bPremium §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§bPremium §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "Booster":
-			$format="§7{clan}§l§5Booster §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§5Booster §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "YouTube":
-			$format="§7{clan}§l§cYou§fTube §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§cYou§fTube §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "Famous":
-			$format="§7{clan}§l§dFamous §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§dFamous §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "Trainee":
-			$format="§7{clan}§l§2Trainee §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§2Trainee §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "Helper":
-			$format="§7{clan}§l§1Helper §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§1Helper §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "Mod":
-			$format="§7{clan}§l§9Mod §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§9Mod §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "HeadMod":
-			$format="§7{clan}§l§3Head-Mod §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§3Head-Mod §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "Admin":
-			$format="§7{clan}§l§6Admin §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§6Admin §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "Manager":
-			$format="§7{clan}§l§cManager §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§cManager §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			case "Owner":
-			$format="§7{clan}§l§4Owner §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§4Owner §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 			default:
-			$format="§7{clan}§l§ePlayer §r§f{name}§7 » §b{message}";
+			$format="§●§f[§a{kills}§f] §l§ePlayer §r§f{name}§7 » §b{message}";
 			return $format;
 			break;
 		}
 	}
+
 	public static function getNameTagFormat($rank){
 		switch($rank){
 			case "Player":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "Voter":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
+			return $format;
+			break;
+			case "VIP":
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "Elite":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "Premium":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "Booster":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "YouTube":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "Famous":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "Trainee":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "Helper":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "Mod":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "HeadMod":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "Admin":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "Manager":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			case "Owner":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
-			return $format;
-			break;
-			case "Founder":
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 			default:
-			$format="§f(§a{kills}§f) §e{name} §r§f(§b{hp}§f)\n§r§f[ §r§bCPS: §r§f{cps} §r§7- §r§b{ping} ms§f ]\n§r§f[ §r§b{os} §f]";
+			$format="§e{name} §r§f[§c{hp}§f]\n§r§bCPS: §r§f{cps} §●§l§f| §r§b{os} §●§l§f| §r§b{ping}ms";
 			return $format;
 			break;
 		}
 	}
+
 	public static function createImage($file){
 		$path=Core::getInstance()->toGetFile($file);
 		$img=@imagecreatefrompng($path);
@@ -1763,6 +1908,7 @@ class Utils{
 		@imagedestroy($img);
 		return $bytes;
 	}
+
 	public static function hasPermission($player, $permission){
 		$base="";
 		$nodes=explode(".", $permission);
@@ -1775,12 +1921,14 @@ class Utils{
 		}
 		return false;
     }
+
 	public static function translateColors($string){
 		$message=preg_replace_callback("/(\\\&|\&)[0-9a-fk-or]/", function($matches){
 		return str_replace("§r", "§r§f", str_replace("\\§", "&", str_replace("&", "§", $matches[0])));
 		}, $string);
 		return $message;
 	}
+
 	public static function equals_string(string $input, string...$tests):bool{
 		$result=false;
 		foreach($tests as $test){
@@ -1791,6 +1939,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function arr_contains_keys(array $haystack, ...$needles):bool{
 		$result=true;
 		foreach($needles as $key){
@@ -1801,6 +1950,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function getPositionFromMap($posArr, $level){
 		$result=null;
 		if(!is_null($posArr) and is_array($posArr) and self::arr_contains_keys($posArr,'x', 'y', 'z')){
@@ -1820,6 +1970,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function isALevel($level, bool $loaded=true):bool{
 		$server=Server::getInstance();
 		$lvl=($level instanceof Level) ? $level:$server->getLevelByName($level);
@@ -1837,6 +1988,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function getLevelsFromFolder(){
 		$index=self::str_indexOf("/plugin_data", Core::getInstance()->getDataFolder());
 		$substr=substr(Core::getInstance()->getDataFolder(), 0, $index);
@@ -1847,6 +1999,7 @@ class Utils{
 		$files=scandir($worlds);
 		return $files;
 	}
+
 	public static function str_indexOf(string $needle, string $haystack, int $len=0):int{
 		$result=-1;
 		$indexes=self::str_indexes($needle, $haystack);
@@ -1858,6 +2011,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function str_indexes(string $needle, string $haystack):array{
 		$result=[];
 		$end=strlen($needle);
@@ -1871,6 +2025,7 @@ class Utils{
 		}
 		return $result;
 	}
+
 	public static function areLevelsEqual(Level $a, Level $b):bool{
 		$aName=$a->getName();
 		$bName=$b->getName();

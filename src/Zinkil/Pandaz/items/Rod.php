@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\items;
@@ -19,15 +36,19 @@ class Rod extends Durable{
 	public function __construct($meta=0){
 		parent::__construct(Item::FISHING_ROD, $meta, "Fishing Rod");
 	}
+
 	public function getMaxStackSize():int{
 		return 1;
 	}
+
 	public function getCooldownTicks():int{
 		return 5;
 	}
+
 	public function getMaxDurability():int{
 		return 355;
 	}
+
 	public function onClickAir(Player $player, Vector3 $directionVector):bool{
 		if(!$player->hasItemCooldown($this)){
 			$player->resetItemCooldown($this);
@@ -48,9 +69,11 @@ class Rod extends Durable{
 		}
 		return false;
 	}
+
 	public function getProjectileEntityType():string{
 		return "Hook";
 	}
+
 	public function getThrowForce():float{
 		return 0.9;
 	}

@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\entities;
@@ -39,12 +56,15 @@ class Pearl extends Projectile{
 			$this->handleMotion($this->motion->x, $this->motion->y, $this->motion->z, 1.3, 1);
 		}
 	}
+
 	protected function initEntity():void{
 		parent::initEntity();
 	}
+
 	public function getResultDamage():int{
-		return -1;
+		return -1; //-1 is to disable the damage
 	}
+
 	protected function onHit(ProjectileHitEvent $event):void{
 		$owner=$this->getOwningEntity();
 		if($owner===null) return;
@@ -64,6 +84,7 @@ class Pearl extends Projectile{
 			}
 		}
 	}
+
 	public function handleMotion(float $x, float $y, float $z, float $f1, float $f2){
 		$rand=new Random();
 		$f=sqrt($x * $x + $y * $y + $z * $z);
@@ -80,6 +101,7 @@ class Pearl extends Projectile{
 		$this->motion->y += $y * 1.40;//145
 		$this->motion->z += $z;
 	}
+
 	public function entityBaseTick(int $tickDiff=1):bool{
 		$hasUpdate=parent::entityBaseTick($tickDiff);
 		$owner=$this->getOwningEntity();
@@ -88,9 +110,11 @@ class Pearl extends Projectile{
 		}
 		return $hasUpdate;
 	}
+
 	public function close():void{
 		parent::close();
 	}
+
 	public function applyGravity():void{
 		if($this->isUnderwater()){
 			$this->motion->y += $this->gravity;

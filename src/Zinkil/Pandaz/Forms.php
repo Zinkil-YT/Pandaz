@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz;
@@ -15,14 +32,13 @@ class Forms{
 	private $plugin;
 	
 	private $targetParty=[];
-	
 	private $targetPlayer=[];
-	
 	private $targetInvite=[];
 	
 	public function __construct(){
 		$this->plugin=Core::getInstance();
 	}
+
 	public function partyForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			if($data===null) return;
@@ -79,7 +95,7 @@ class Forms{
 				break;
 			}
 		});
-		$form->setTitle("§l§cParty");
+		$form->setTitle("§l§eParty");
 		$party=$player->getParty();
 		if(!$player->isInParty()){
 			$form->addButton("Create", -1, "", "create");
@@ -96,6 +112,7 @@ class Forms{
 		$form->addButton("List", -1, "", "list");
 		$player->sendForm($form);
 	}
+
 	public function invitesForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			if($data===null) return;
@@ -115,7 +132,7 @@ class Forms{
 				break;
 			}
 		});
-		$form->setTitle("§l§cInvites");
+		$form->setTitle("§l§eInvites");
 		foreach(PartyManager::getInvites($player) as $invite){
 			$party=$invite->getParty()->getName()."'s Party";
 			$form->addButton($party, -1, "", $invite->getParty()->getName());
@@ -123,6 +140,7 @@ class Forms{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function manageInviteForm(Player $player):void{
 		$form=new SimpleForm(function (Player $player, $data=null):void{
 			if($data===null) return;
@@ -146,12 +164,13 @@ class Forms{
 			}
 			unset($this->targetPlayer[Utils::getPlayerName($player)]);
 		});
-		$form->setTitle("§l§cManage Invitation");
+		$form->setTitle("§l§eManage Invitation");
 		$form->addButton("Accept", -1, "", "accept");
 		$form->addButton("Decline", -1, "", "decline");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function partyDuelForm(Player $player):void{
 		$form=new CustomForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -175,9 +194,6 @@ class Forms{
 				case 4:
 				$this->mode="Diamond";
 				break;
-				case 5:
-				$this->mode="Combo";
-				break;
 			}
 			switch($data[1]){
 				case 0:
@@ -189,12 +205,13 @@ class Forms{
 			}
 			$this->plugin->getDuelHandler()->startPartyDuel($player->getParty(), $player->getParty()->getMembers(), $this->mode, $this->specs);
 		});
-		$data[0]=["NoDebuff", "Gapple", "Soup", "BuildUHC", "Diamond", "Combo"];
-		$form->setTitle("§l§cSetup");
+		$data[0]=["NoDebuff", "Gapple", "Soup", "BuildUHC", "Diamond"];
+		$form->setTitle("§l§eSetup");
 		$form->addDropdown("Choose a mode", $data[0], 0);
 		$form->addToggle("Allow spectators", false, null);
 		$player->sendForm($form);
 	}
+
 	public function partiesForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			if($data===null) return;
@@ -228,7 +245,7 @@ class Forms{
 			}
 			unset($this->targetParty[Utils::getPlayerName($player)]);
 		});
-		$form->setTitle("§l§cParties");
+		$form->setTitle("§l§eParties");
 		foreach($this->plugin->parties as $party){
 			$name=$party->getName()."'s Party";
 			$members=count($party->getMembers());
@@ -238,6 +255,7 @@ class Forms{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function partyMembersForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			if($data===null) return;
@@ -264,7 +282,7 @@ class Forms{
 		$party=$player->getParty();
 		$members=count($party->getMembers());
 		$capacity=$party->getCapacity();
-		$form->setTitle("§l§cMembers (".$members."/".$capacity.")");
+		$form->setTitle("§l§eMembers (".$members."/".$capacity.")");
 		foreach($party->getMembers() as $members){
 			$players=$this->plugin->getServer()->getPlayerExact($members);
 			$form->addButton($members."\n".$players->getPartyRank(), -1, "", $members);
@@ -272,6 +290,7 @@ class Forms{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function managePartyMemberForm(Player $player):void{
 		$form=new SimpleForm(function (Player $player, $data=null):void{
 			if($data===null) return;
@@ -287,11 +306,12 @@ class Forms{
 			}
 			unset($this->targetPlayer[Utils::getPlayerName($player)]);
 		});
-		$form->setTitle("§l§cManage ".$this->targetPlayer[Utils::getPlayerName($player)]);
+		$form->setTitle("§l§eManage ".$this->targetPlayer[Utils::getPlayerName($player)]);
 		$form->addButton("Kick", -1, "", "kick");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function playerListForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			if($data===null) return;
@@ -324,13 +344,14 @@ class Forms{
 			}
 			unset($this->targetPlayer[Utils::getPlayerName($player)]);
 		});
-		$form->setTitle("§l§cOnline Players");
+		$form->setTitle("§l§eOnline Players");
 		foreach(Core::getInstance()->getServer()->getOnlinePlayers() as $players){
 			$form->addButton($players->getDisplayName(), -1, "", $players->getName());
 		}
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function partyManageForm(Player $player):void{
 		$form=new CustomForm(function(Player $player, $data=null):void{
 			if($data===null) return;
@@ -354,11 +375,11 @@ class Forms{
 				break;
 			}
 		});
-		$form->setTitle("§l§cManage Party");
+		$form->setTitle("§l§eManage Party");
 		if($player->getParty()->isClosed()){
-			$form->addToggle("Closed", true, null);//data[0]
+			$form->addToggle("Closed", true, null);
 		}else{
-			$form->addToggle("Open", false, null);//data[0]
+			$form->addToggle("Open", false, null);
 		}
 		$player->sendForm($form);
 	}

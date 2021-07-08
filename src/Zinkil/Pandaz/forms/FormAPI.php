@@ -1,6 +1,23 @@
 <?php
 
-declare(strict_types = 1);
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
+declare(strict_types=1);
 
 namespace Zinkil\Pandaz\forms;
 
@@ -8,33 +25,15 @@ use pocketmine\plugin\PluginBase;
 
 class FormAPI extends PluginBase{
 
-    /**
-     * @deprecated
-     *
-     * @param callable $function
-     * @return CustomForm
-     */
-    public function createCustomForm(callable $function = null) : CustomForm {
+    public function createCustomForm(callable $function = null) : CustomForm{
         return new CustomForm($function);
     }
 
-    /**
-     * @deprecated
-     *
-     * @param callable|null $function
-     * @return SimpleForm
-     */
-    public function createSimpleForm(callable $function = null) : SimpleForm {
+    public function createSimpleForm(callable $function = null) : SimpleForm{
         return new SimpleForm($function);
     }
 
-    /**
-     * @deprecated
-     *
-     * @param callable|null $function
-     * @return ModalForm
-     */
-    public function createModalForm(callable $function = null) : ModalForm {
+    public function createModalForm(callable $function = null) : ModalForm{
         return new ModalForm($function);
     }
 }

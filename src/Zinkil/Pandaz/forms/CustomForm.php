@@ -1,6 +1,23 @@
 <?php
 
-declare(strict_types = 1);
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
+declare(strict_types=1);
 
 namespace Zinkil\Pandaz\forms;
 
@@ -8,17 +25,14 @@ class CustomForm extends Form {
 
     private $labelMap = [];
 
-    /**
-     * @param callable $callable
-     */
-    public function __construct(?callable $callable) {
+    public function __construct(?callable $callable){
         parent::__construct($callable);
         $this->data["type"] = "custom_form";
         $this->data["title"] = "";
         $this->data["content"] = [];
     }
 
-    public function processData(&$data) : void {
+    public function processData(&$data) : void{
         if(is_array($data)) {
             $new = [];
             foreach ($data as $i => $v) {
@@ -28,35 +42,20 @@ class CustomForm extends Form {
         }
     }
 
-    /**
-     * @param string $title
-     */
-    public function setTitle(string $title) : void {
+    public function setTitle(string $title) : void{
         $this->data["title"] = $title;
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle() : string {
+    public function getTitle() : string{
         return $this->data["title"];
     }
 
-    /**
-     * @param string $text
-     * @param string|null $label
-     */
-    public function addLabel(string $text, ?string $label = null) : void {
+    public function addLabel(string $text, ?string $label = null) : void{
         $this->addContent(["type" => "label", "text" => $text]);
         $this->labelMap[] = $label ?? count($this->labelMap);
     }
 
-    /**
-     * @param string $text
-     * @param bool|null $default
-     * @param string|null $label
-     */
-    public function addToggle(string $text, bool $default = null, ?string $label = null) : void {
+    public function addToggle(string $text, bool $default = null, ?string $label = null) : void{
         $content = ["type" => "toggle", "text" => $text];
         if($default !== null) {
             $content["default"] = $default;
@@ -65,15 +64,7 @@ class CustomForm extends Form {
         $this->labelMap[] = $label ?? count($this->labelMap);
     }
 
-    /**
-     * @param string $text
-     * @param int $min
-     * @param int $max
-     * @param int $step
-     * @param int $default
-     * @param string|null $label
-     */
-    public function addSlider(string $text, int $min, int $max, int $step = -1, int $default = -1, ?string $label = null) : void {
+    public function addSlider(string $text, int $min, int $max, int $step = -1, int $default = -1, ?string $label = null) : void{
         $content = ["type" => "slider", "text" => $text, "min" => $min, "max" => $max];
         if($step !== -1) {
             $content["step"] = $step;
@@ -85,13 +76,7 @@ class CustomForm extends Form {
         $this->labelMap[] = $label ?? count($this->labelMap);
     }
 
-    /**
-     * @param string $text
-     * @param array $steps
-     * @param int $defaultIndex
-     * @param string|null $label
-     */
-    public function addStepSlider(string $text, array $steps, int $defaultIndex = -1, ?string $label = null) : void {
+    public function addStepSlider(string $text, array $steps, int $defaultIndex = -1, ?string $label = null) : void{
         $content = ["type" => "step_slider", "text" => $text, "steps" => $steps];
         if($defaultIndex !== -1) {
             $content["default"] = $defaultIndex;
@@ -100,33 +85,17 @@ class CustomForm extends Form {
         $this->labelMap[] = $label ?? count($this->labelMap);
     }
 
-    /**
-     * @param string $text
-     * @param array $options
-     * @param int $default
-     * @param string|null $label
-     */
-    public function addDropdown(string $text, array $options, int $default = null, ?string $label = null) : void {
+    public function addDropdown(string $text, array $options, int $default = null, ?string $label = null) : void{
         $this->addContent(["type" => "dropdown", "text" => $text, "options" => $options, "default" => $default]);
         $this->labelMap[] = $label ?? count($this->labelMap);
     }
 
-    /**
-     * @param string $text
-     * @param string $placeholder
-     * @param string $default
-     * @param string|null $label
-     */
-    public function addInput(string $text, string $placeholder = "", string $default = null, ?string $label = null) : void {
+    public function addInput(string $text, string $placeholder = "", string $default = null, ?string $label = null) : void{
         $this->addContent(["type" => "input", "text" => $text, "placeholder" => $placeholder, "default" => $default]);
         $this->labelMap[] = $label ?? count($this->labelMap);
     }
 
-    /**
-     * @param array $content
-     */
-    private function addContent(array $content) : void {
+    private function addContent(array $content) : void{
         $this->data["content"][] = $content;
     }
-
 }

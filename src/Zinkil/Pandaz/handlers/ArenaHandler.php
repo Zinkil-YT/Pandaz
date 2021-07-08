@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\handlers;
@@ -37,6 +54,7 @@ class ArenaHandler{
 			}
 		}
 	}
+
 	private function initConfig():void{
 		$this->config=new Config($this->configPath, Config::YAML, array());
 		$edited=false;
@@ -46,7 +64,8 @@ class ArenaHandler{
 		}
 		if($edited === true) $this->config->save();
 	}
-private function initArenas():void{
+
+    private function initArenas():void{
         $this->duelArenas=[];
         $duelKeys=$this->getConfig()->get("duel-arenas");
         $duelArenaKeys=array_keys($duelKeys);
@@ -58,9 +77,11 @@ private function initArenas():void{
             }
         }
     }
+
 	private function getConfig():Config{
 		return $this->config;
 	}
+
 	public function getDuelArena(string $name){
 		$result=null;
 		if(isset($this->duelArenas[$name])){
@@ -68,6 +89,7 @@ private function initArenas():void{
 		}
 		return $result;
 	}
+
 	private function getDuelArenaFromConfig(string $name){
 		$duelArenas=$this->getConfig()->get("duel-arenas");
 		$result=null;
@@ -98,12 +120,15 @@ private function initArenas():void{
 		}
 		return $result;
 	}
+
 	private function isDuelArenaFromConfig(string $name):bool{
 		return !is_null($this->getDuelArenaFromConfig($name));
 	}
+
 	public function isDuelArena(string $name):bool{
 		return isset($this->duelArenas[$name]);
 	}
+
 	public function getArena(string $name){
 		$result=null;
 		if($this->isDuelArena($name)){
@@ -111,9 +136,11 @@ private function initArenas():void{
 		}
 		return $result;
 	}
+
 	public function doesArenaExist(string $name):bool{
 		return $this->isDuelArena($name);
 	}
+
 	public function setArenaClosed($arena):void{
 		$name=null;
 		if(isset($arena) and !is_null($arena)){
@@ -129,9 +156,11 @@ private function initArenas():void{
 			}
 		}
 	}
+
 	public function isArenaClosed(string $arena):bool{
 		return isset($this->closedArenas[$arena]) and $this->closedArenas[$arena] === true;
 	}
+
 	public function setArenaOpen($arena):void{
 		$name=null;
 		if(isset($arena) and !is_null($arena)){
@@ -147,9 +176,11 @@ private function initArenas():void{
 			}
 		}
 	}
+
 	public function getDuelArenas():array{
 		return $this->duelArenas;
 	}
+
 	public function getArenaClosestTo(Position $pos){
 		$arenas=$this->getDuelArenas();
 		$greatest=null;
@@ -161,7 +192,6 @@ private function initArenas():void{
 					$currentDistance=$center->distance($pos);
 					if($closestDistance<200){
 						$greatest=$arena;
-						//$this->plugin->getServer()->broadcastMessage("Arena found");
 					}
 				}
 			}

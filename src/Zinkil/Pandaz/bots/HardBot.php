@@ -1,5 +1,24 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
+declare(strict_types=1);
+
 namespace Zinkil\Pandaz\bots;
 
 use pocketmine\Player;
@@ -26,7 +45,7 @@ class HardBot extends Human{
 	const LOW_REACH_DISTANCE=0.5;
 	const ACCURACY=70;
 	const POT_CHANCE=970;
-	const POT_WAIT=20 * 4;//4 seconds
+	const POT_WAIT=20 * 4;
 	
 	public $name="Hard Bot";
 	public $target=null;
@@ -53,13 +72,16 @@ class HardBot extends Human{
 		$this->setNametag($this->name);
 		$this->generateRandomPosition();
 	}
+
 	public function getType(){
 		return "HardBot";
 	}
+
 	public function setTarget($player){
 		$target=$player;
 		$this->target=($target!=null ? $target->getName():"");
 	}
+
 	public function hasTarget():bool{
 		if($this->target===null) return false;
 		$target=$this->getTarget();
@@ -67,36 +89,47 @@ class HardBot extends Human{
 		$player=$this->getTarget();
 		return !$player->isSpectator();
 	}
+
 	public function getTarget(){
 		return Server::getInstance()->getPlayerExact($this->target);
 	}
+
 	public function setDuel(BotDuelGroup $duel){
 		$this->duel=$duel;
 	}
+
 	public function hasDuel():bool{
 		return $this->duel!==null;
 	}
+
 	public function getDuel(){
 		return $this->duel;
 	}
+
 	private function isDeactivated():bool{
 		return $this->deactivated===true;
 	}
+
 	public function setDeactivated(bool $result=true){
 		$this->deactivated=$result;
 	}
+
 	private function isRefilling():bool{
 		return $this->refilling===true;
 	}
+
 	public function setRefilling(bool $result=true){
 		$this->refilling=$result;
 	}
+
 	public function getName():string{
 		return $this->name;
 	}
+
 	public function getNameTag():string{
 		return $this->name;
 	}
+
 	public function entityBaseTick(int $tickDiff=1):bool{
 		parent::entityBaseTick($tickDiff);
 		if($this->isDeactivated()) return false;
@@ -158,6 +191,7 @@ class HardBot extends Human{
 		if($this->isAlive()) $this->updateMovement();
 		return $this->isAlive();
 	}
+
 	public function attackTarget(){
 		if($this->isDeactivated()) return;
 		if(!$this->isAlive()){
@@ -185,7 +219,7 @@ class HardBot extends Human{
 				$this->motion->x=$this->getSpeed() * 0.15 * -$x;
 				$this->motion->z=$this->getSpeed() * 0.15 * -$z;
 			}
-			if($this->motion->y > -$this->gravity * 1){ //default is 4
+			if($this->motion->y > -$this->gravity * 1){
 				$this->motion->y=-$this->gravity * 1;
 			}else{
 				$this->motion->y += $this->isUnderwater() ? $this->gravity:-$this->gravity;
@@ -220,11 +254,9 @@ class HardBot extends Human{
 				if($this->isAlive()) $this->broadcastEntityEvent(4);
 				if(mt_rand(0, 100) <= self::ACCURACY){
 					$target->attack($event);
-					//$target->sendMessage("Hit");
 					$volume=0x10000000 * (min(30, 10) / 5);
 					$target->getLevel()->broadcastLevelSoundEvent($target->asVector3(), LevelSoundEventPacket::SOUND_ATTACK, (int) $volume);
 				}else{
-					//$target->sendMessage("Missed");
 					$volume=0x10000000 * (min(30, 10) / 5);
 					$target->getLevel()->broadcastLevelSoundEvent($this->asVector3(), LevelSoundEventPacket::SOUND_ATTACK_NODAMAGE, (int) $volume);
 				}
@@ -235,6 +267,7 @@ class HardBot extends Human{
 		$this->attackcooldown--;
 		return $this->isAlive();
 	}
+
 	public function attack(EntityDamageEvent $source):void{
 		parent::attack($source);
 		if($source->isCancelled()){
@@ -254,6 +287,7 @@ class HardBot extends Human{
 			}
 		}
 	}
+
 	public function knockBack($damager, float $damage, float $x, float $z, float $base=0.4):void{
 		$xzKB=0.390;
 		$yKb=0.388;
@@ -276,15 +310,19 @@ class HardBot extends Human{
 			if($this->isAlive() and !$this->isClosed()) $this->move($motion->x * 1.60, $motion->y * 1.40, $motion->z * 1.60);
 		}
 	}
+
 	public function kill():void{
 		parent::kill();
 	}
+
 	public function atRandomPosition(){
 		return $this->getRandomPosition()==null or $this->distance($this->getRandomPosition()) <= 2;
 	}
+
 	public function getRandomPosition(){
 		return $this->randomPosition;
 	}
+
 	public function generateRandomPosition(){
 		$minX=$this->getFloorX() - 8;
 		$minY=$this->getFloorY() - 8;
@@ -312,17 +350,21 @@ class HardBot extends Human{
 		}
 		$this->randomPosition=new Vector3($x, $y + 1, $z);
 	}
+
 	public function getSpeed(){
 		return ($this->isUnderwater() ? $this->speed / 2:$this->speed);
 	}
+
 	public function getBaseAttackDamage(){
 		return $this->attackDamage;
 	}
+
 	public function getFrontBlock($y=0){
 		$dv=$this->getDirectionVector();
 		$pos=$this->asVector3()->add($dv->x * $this->getScale(), $y + 1, $dv->z * $this->getScale())->round();
 		return $this->getLevel()->getBlock($pos);
 	}
+
 	public function shouldJump(){
 		if($this->jumpTicks > 0) return false;
 		if(!$this->isOnGround()) return false;
@@ -335,11 +377,13 @@ class HardBot extends Human{
 		!$this->getFrontBlock() instanceof Flowable and
 		$this->jumpTicks==0;
 	}
+
 	public function shouldPot(){
 		if($this->potsUsed >= 25) return false;
 		if($this->potTicks > 0) return false;
 		return mt_rand(7, 9) >= $this->getHealth();
 	}
+
 	public function getJumpMultiplier(){
 		return 64;
 		if($this->getFrontBlock() instanceof Slab or $this->getFrontBlock() instanceof Stair or $this->getLevel()->getBlock($this->asVector3()->subtract(0,0.5)->round()) instanceof Slab and $this->getFrontBlock()->getId()!=0){
@@ -350,16 +394,18 @@ class HardBot extends Human{
 		}
 		return 32;
 	}
+
 	public function jump():void{
 		if($this->jumpTicks > 0) return;
 		$this->motion->y=$this->gravity * $this->getJumpMultiplier();
 		if($this->isAlive() and !$this->isClosed()) $this->move($this->motion->x * 1.15, $this->motion->y, $this->motion->z * 1.15);
-		$this->jumpTicks=10; //($this->getJumpMultiplier()==4 ? 2:5);
+		$this->jumpTicks=10;
 	}
+
 	public function pot():void{
 		if($this->potsUsed >= 25) return;
 		if(mt_rand(0, 1000) > self::POT_CHANCE){
-			Utils::instantPots(Item::SPLASH_POTION, $this, true);
+			Utils::instantPotsHard(Item::SPLASH_POTION, $this, true);
 			$this->potTicks=self::POT_WAIT;
 			$this->potsUsed++;
 		}

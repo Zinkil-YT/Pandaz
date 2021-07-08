@@ -1,11 +1,9 @@
 # **Pandaz**
-**The Official Core System For MCPE Practice Server Pandaz.**
+**The Official Core System For MCPE Practice Server Pandaz.** 🎮🔥
 
-I developed this core for the intention of private use, so everything is hard coded. I suggest understanding [PHP](https://www.php.net/) and [PocketMine-MP](https://github.com/pmmp/PocketMine-MP) before attempting to make changes.
+<hr>
 
-Enjoy.💛😎
-
-## Features
+## Features:
 - [x] FFA arena management
 - [x] Bots Duels system
 - [x] Duels system
@@ -29,7 +27,11 @@ Enjoy.💛😎
   - Daily Deaths
 - [x] Scoreboards
 - [x] Leaderboards
-- [x] Discord webhook (messages, embeds)
+- [x] Discord webhook system (messages, embeds)
+  - Player join and quit (Public)
+  - Anti-Cheat alerts (Staff)
+  - Players reports (Staff)
+  - Staff notification (Staff)
 - [x] Custom entity creation
   - Fully custom throwable potions (2 variations)
   - Fully custom ender pearls
@@ -38,23 +40,26 @@ Enjoy.💛😎
   - Auto Rekit
   - Auto Queue
   - Auto (Toggle) Sprint
-- [x] PvP stats counters 
+- [x] PvP stats counters
   - CPS Counter
-  - Reach Counter
   - Combo Counter
   - Pots Counter
+  - Reach Counter
 - [x] Ranks & Permissions
 - [x] Staff utilities
   - Staff mode (Staff portal, Teleporter)
   - Permanent ban
   - Temporary ban
+  - kick
   - Mute
+  - Freeze
+  - Player info to get all information about a player
+  - Alias to know if a player is alting
   - All bans are carried out through both an IP and client-id blacklisting
   - Notifications on rank changes, ban/mute/rank expirations, gamemode changes, anti-cheat alerts
   - Staff chat (use `!` before your message)
 - [x] Anti-Cheat
   - Reach
-  - Hitbox
   - CPS
   - High ping
 - [x] Anti-Abuse
@@ -62,32 +67,111 @@ Enjoy.💛😎
   - Advertising
   - Toxic
 - [x] Capes system
-  - Owner
-  - Staff
-  - Youtube
-  - Paid
-  - Guest
+  - Capes on join (Based on rankes)
+  - Capes can be choosed by the player
 - [x] Anti-Toolbox
-  - If hackers tried joining the server with toolbox they will stuck on infinite locating server
+  - If hackers tried joining the server with toolbox they will stuck on infinite locating server and if they joined they will get kicked
+- [x] Good respawn system
+  - when a player get killed he dont get death menu (Respawn, Main menu) it send him to lobby without getting death menu and give the killer his kills and rewards
 
-## Todo list
-- [x] Events system (Tournament)
-- [x] Leagues (Bronze, iron, etc..)
-- [x] Custom bot duels
-- [x] Skywars duels mode
-- [x] Anticheat webhook
-- [x] Tap to ender pearl
-- [x] Report system
-- [x] Better respawn system
+## Config
+- [x] Arena Config
+```yaml
+---
 
-## Working on
-- [x] MultiVersion (very unstable and should be left alone)
-- [x] Anti 2v1/Clean (Under developing)
+duel-arenas: 
+    example-arena:
+    
+        # The coords where players spawn in a party duel.
+        center:
+          x: 1
+          "y": 1
+          z: 1
+          
+        # The name of the world.
+        level: duelworld
+        
+        # Whether you want to enable player building or not.
+        build: true
+        
+        # The coords where the player spawns in a duel.
+        player-pos:
+          x: 1
+          "y": 1
+          z: 1
+          
+        # The coords where the opponent spawns in a duel.
+        opponent-pos:
+          x: 1
+          "y": 1
+          z: 1
+          
+        # Configure what gamemode this duel map is for.
+        # Gamemodes: nodebuff, gapple, fist, sumo, combo
+        modes:
+          - nodebuff
+...
+```
 
-# Questions or any help
-Contact me on discord @Zinkil#1603
-and go subscribe for my channel [MR Zinkil](https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg) 😉💖
+- [x] Leaderboard Config (staticfloatingtexts, updatingfloatingtexts)
+```yaml
+---
+
+# You can name this whatever you want.
+topkills:
+
+    x: 1 #x coord where the floatingtext spawns in.
+    y: 1 #y coord where the floatingtext spawns in.
+    z: 1 #z coord where the floatingtext spawns in.
+    
+    # The Title of the floating text.
+    title: "Top Kills"
+    
+    # The bottom part of the floating text.
+    
+    # Allowed variables: {world}, {ip}, {discord}, {shop}, {vote}, {doubleline}, {line}, {player}, {kills}, {deaths}, {kdr}, {elo}, {coins}, {streak}, {player_health}, {player_max_health}, {online_players}, {online_max_players}, {topkills}, {topdeaths}, {topkdr}, {topelo}, {toplevels}, {topwins}, {toplosses}, {topkillstreaks}, {topdailykills} and {topdailydeaths}
+    
+    text: "{doubleline}{topkills}"
+    
+    # The world where the floating text spawns in.
+    level: leaderboardworld
+    
+...
+```
+
+## Todo list:
+- [ ] Events system (Tournament)
+- [ ] Leagues (Bronze, Silver, etc..)
+- [ ] Custom bot duels
+- [ ] MlgRush duels
+- [ ] Tags system
+- [ ] Anti 2v1/Clean/Intrrupt/Teaming
+- [ ] Market/Shop system 
+- [ ] Bots emote on win
+- [ ] Voting system
+- [ ] Anti-Cheat improvments to support more types of cheats
+- [ ] Add multi languages system
+- [ ] Replay system
+- [x] FFA custom scoreboard (Better scoreboards..)
+- [ ] KitPvP gamemode
+- [ ] Anti-VPN/Proxy
+- [ ] Custom bossbars
+- [ ] Better spectating
+- [ ] Duels invites
+- [ ] Anti-Swearing/Toxic improvments to support more languages
+- [x] ChangeLogs ui and with settings (When a player joins it apears)
+- [ ] Better color scheme
+- [x] Level system
+
+## Questions or any help:
 
 <hr>
 
-### **`Developed by Zinkil-YT`**
+Contact me on discord **Zinkil#2006** you can also join our discord server [Pandaz Practice](https://discord.gg/2zt7P5EUuN)
+
+Feel free to subscribe to my channel [MR Zinkil](https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg) 😇👍
+
+<hr>
+
+## **Developed By Zinkil**
+##### **Made With Love** 💛

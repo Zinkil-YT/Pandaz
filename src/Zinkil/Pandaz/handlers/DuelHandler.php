@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\handlers;
@@ -40,13 +57,13 @@ class DuelHandler{
 		$this->partyduels=[];
 		$this->botduels=[];
 	}
+
 	public function startPartyDuel(Party $party, array $players, string $queue, bool $allowspecs):void{
 		$arena=$this->findRandomArena($queue);
 		if($this->plugin->getDuelHandler()->isAnArenaOpen($queue)){
 			if($arena!==null){
 				$name=$arena->getLevel()->getName();
 				$level=Server::getInstance()->getLevelByName($name);
-				//if(!Server::getInstance()->isLevelLoaded($name)) return;
 				$world=Server::getInstance()->getLevelByName($name);
 				if($world instanceof Level) $world->setAutoSave(false);
 				if(count($players) >= 2){
@@ -64,6 +81,7 @@ class DuelHandler{
 			}
 		}
 	}
+
 	public function createBotDuel($player, string $type){
 		$arena=$this->findRandomArena(strtolower($type));
 		foreach($arena->getLevel()->getEntities() as $entity){
@@ -123,6 +141,7 @@ class DuelHandler{
 			}
 		}
 	}
+
 	public function addPlayerToQueue($player, string $queue, bool $isRanked=false){
 		$name=Utils::getPlayerName($player);
 		$pe=true;
@@ -137,6 +156,7 @@ class DuelHandler{
 			}
 		}
 	}
+
 	public function removePlayerFromQueue($player):void{
 		if($this->isPlayerInQueue($player)){
 			$queue=$this->getQueuedPlayer($player);
@@ -146,6 +166,7 @@ class DuelHandler{
 			}
 		}
 	}
+
 	public function setPlayersMatched($player, $opponent, bool $isDirect=false, string $queue=null):void{
 		if(!$isDirect){
 			if($this->isPlayerInQueue($player) and $this->isPlayerInQueue($opponent)){
@@ -167,17 +188,31 @@ class DuelHandler{
 					$o=$opponentqueue->getPlayer();
 					$opponentRankedElo=$this->plugin->getDatabaseHandler()->getRankedElo($opponentName);
 					$playerRankedElo=$this->plugin->getDatabaseHandler()->getRankedElo($playerName);
+					$playerping=round($p->getPing(), 1);
+					$opponentping=round($o->getPing(), 1);
+					$playeros=$this->plugin->getPlayerOs($p);
+					$opponentos=$this->plugin->getPlayerOs($o);
 					$group=new MatchedGroup($playerName, $opponentName, $queue, $ranked);
 					$this->matchedGroups[]=$group;
 					$this->matchedPlayers[]=$playerqueue;
 					$this->matchedPlayers[]=$opponentqueue;
 					
-					$p->sendMessage("§fMatch Found!");
-					$p->sendMessage("§cOpponent: ".$opponentDisplayName." (".$opponentRankedElo." Elo)");
+					$p->sendMessage("§bMatch Found!");
+					$p->sendMessage("§f------------------");
+					$p->sendMessage("§fOpponent: §b".$opponentDisplayName);
+					$p->sendMessage("§fElo: §b".$opponentRankedElo);
+					$p->sendMessage("§fPing: §b".$opponentping."ms");
+					$p->sendMessage("§fOS: §b".$opponentos);
+					$p->sendMessage("§f------------------");
 					
-					$o->sendMessage("§fMatch Found!");
-					$o->sendMessage("§cOpponent: ".$playerDisplayName." (".$playerRankedElo." Elo)");
-					
+					$o->sendMessage("§bMatch Found!");
+					$o->sendMessage("§f------------------");
+					$o->sendMessage("§fOpponent: §b".$playerDisplayName);
+					$o->sendMessage("§fElo: §b".$playerRankedElo);
+					$o->sendMessage("§fPing: §b".$playerping."ms");
+					$o->sendMessage("§fOS: §b".$playeros);
+					$o->sendMessage("§f------------------");
+
 					if($ranked===true){
 						$this->plugin->getScoreboardHandler()->sendDuelScoreboard($p, "Ranked", $queue, $opponentDisplayName);
 						$this->plugin->getScoreboardHandler()->sendDuelScoreboard($o, "Ranked", $queue, $playerDisplayName);
@@ -198,6 +233,7 @@ class DuelHandler{
 			}
 		}
 	}
+
 	public function getOpenArenas(string $queue):array{
 		$result=[];
 		$arenas=$this->plugin->getArenaHandler()->getDuelArenas();
@@ -211,9 +247,11 @@ class DuelHandler{
 		}
 		return $result;
 	}
+
 	public function isAnArenaOpen(string $queue):bool{
 		return count($this->getOpenArenas(strtolower($queue))) > 0;
 	}
+
 	private function findRandomArena(string $queue){
 		$result=null;
 		if($this->isAnArenaOpen($queue)){
@@ -225,43 +263,55 @@ class DuelHandler{
 		}
 		return $result;
 	}
+
 	public function isPlayerInQueue($player):bool{
 		$name=Utils::getPlayerName($player);
 		return($name !== null) and isset($this->queuedPlayers[$name]);
 	}
+
 	public function getAwaitingGroups():array{
 		return $this->matchedGroups;
 	}
+
 	public function getDuelsInProgress():array{
 		return $this->duels;
 	}
+
 	public function getNumberOfDuelsInProgress():int{
 		return count($this->duels);
 	}
+
 	public function getPartyDuelsInProgress():array{
 		return $this->partyduels;
 	}
+
 	public function getNumberOfPartyDuelsInProgress():int{
 		return count($this->partyduels);
 	}
+
 	public function getBotDuelsInProgress():array{
 		return $this->botduels;
 	}
+
 	public function getNumberOfBotDuelsInProgress():int{
 		return count($this->botduels);
 	}
+
 	public function didFindMatch($player):bool{
 		return !is_null($this->findQueueMatch($player));
 	}
+
 	public function getQueuedPlayers():array{
 		return $this->queuedPlayers;
 	}
 	public function getNumberOfQueuedPlayers():int{
 		return count($this->queuedPlayers);
 	}
+
 	public function getNumberOfMatchedGroups():int{
 		return count($this->matchedGroups);
 	}
+
 	public function getNumberQueuedFor(string $queue, bool $ranked):int{
 		$result=0;
 		foreach($this->queuedPlayers as $aQueue){
@@ -271,6 +321,7 @@ class DuelHandler{
 		}
 		return $result;
 	}
+
 	public function getQueuedPlayer($player){
 		$name=Utils::getPlayerName($player);
 		$result=null;
@@ -279,30 +330,19 @@ class DuelHandler{
 			return $result;
 		}
 	}
+
 	private function findQueueMatch($player){
 		$opponent=null;
 		if(isset($player) and $this->isPlayerInQueue($player)){
 			$playerqueue=$this->getQueuedPlayer($player);
-			//$peQueueCheck=$playerqueue->isPEOnly();
 			foreach($this->queuedPlayers as $queue){
 				$equals=$queue->equals($playerqueue);
 				if($equals!==true){
 					if($playerqueue->hasSameQueue($queue)){
-						$found=true;/*
-						if($peQueueCheck===true){
-							if($queue->getPlayer()->peOnlyQueue()){
-								$found=true;
-								}else{
-									if($queue->isPEOnly()){
-										$found=$playerqueue->getPlayer()->peOnlyQueue();
-										}else{
-											$found=true;
-											}
-										}
-									}*/
-									if($found===true){
-										$opponent=$queue;
-										break;
+						$found=true;
+							if($found===true){
+								$opponent=$queue;
+								break;
 							}
 						}
 					}
@@ -310,10 +350,12 @@ class DuelHandler{
 			}
 			return $opponent;
 	}
+
 	public function isPlayerMatched($player):bool{
 		$name=Utils::getPlayerName($player);
 		return($name !== null) and isset($this->matchedPlayers[$name]);
 	}
+
 	public function getMatchedPlayer($player){
 		$opponent=null;
 		if($this->didFindMatch($player)){
@@ -324,6 +366,7 @@ class DuelHandler{
 			return $opponent;
 		}
 	}
+
 	public function getNumberMatchedFor(string $queue, bool $ranked):int{
 		$result=0;
 		foreach($this->matchedGroups as $aMatch){
@@ -333,6 +376,7 @@ class DuelHandler{
 		}
 		return $result;
 	}
+
 	public function getNumberOfDuelsOfQueue(string $queue, bool $ranked):int{
 		$result=0;
 		foreach($this->duels as $duel){
@@ -342,6 +386,7 @@ class DuelHandler{
 		}
 		return $result;
 	}
+
 	private function getMatchedIndexOf(MatchedGroup $group):int{
 		$index=array_search($group, $this->matchedGroups);
 		if(is_bool($index) and $index===false){
@@ -349,6 +394,7 @@ class DuelHandler{
 		}
 		return $index;
 	}
+
 	private function getDuelIndexOf(DuelGroup $group):int{
 		$index=array_search($group, $this->duels);
 		if(is_bool($index) and $index===false){
@@ -356,6 +402,7 @@ class DuelHandler{
 		}
 		return $index;
 	}
+
 	private function getPartyDuelIndexOf(PartyDuelGroup $group):int{
 		$index=array_search($group, $this->partyduels);
 		if(is_bool($index) and $index===false){
@@ -363,6 +410,7 @@ class DuelHandler{
 		}
 		return $index;
 	}
+
 	private function getBotDuelIndexOf(BotDuelGroup $group):int{
 		$index=array_search($group, $this->botduels);
 		if(is_bool($index) and $index===false){
@@ -370,9 +418,11 @@ class DuelHandler{
 		}
 		return $index;
 	}
+
 	public function isWaitingForDuelToStart($player):bool{
 		return !is_null($this->getGroupFrom($player));
 	}
+
 	public function getGroupFrom($player){
 		$str=Utils::getPlayerName($player);
 		$result=null;
@@ -386,6 +436,7 @@ class DuelHandler{
 		}
 		return $result;
 	}
+
 	private function isValidMatched(MatchedGroup $group):bool{
 		return $this->getMatchedIndexOf($group) !== -1;
 	}
@@ -403,7 +454,6 @@ class DuelHandler{
 		if(!Server::getInstance()->isLevelLoaded($name)) return;
 		$world=Server::getInstance()->getLevelByName($name);
 		if($world instanceof Level){
-			//$this->plugin->getLogger()->notice("is instanceof level");
 			$world->setAutoSave(false);
 		}
 		if(!is_null($arena) and $this->isValidMatched($group)){
@@ -440,6 +490,7 @@ class DuelHandler{
 			$this->matchedGroups=array_values($this->matchedGroups);
 		}
 	}
+
 	public function endDuel(DuelGroup $group){
 		if($this->isValidDuel($group)){
 			$index=$this->getDuelIndexOf($group);
@@ -448,6 +499,7 @@ class DuelHandler{
 		} else unset($group);
 		$this->duels=array_values($this->duels);
 	}
+
 	public function endPartyDuel(PartyDuelGroup $group){
 		if($this->isValidPartyDuel($group)){
 			$index=$this->getPartyDuelIndexOf($group);
@@ -456,6 +508,7 @@ class DuelHandler{
 		} else unset($group);
 		$this->partyduels=array_values($this->partyduels);
 	}
+
 	public function endBotDuel(BotDuelGroup $group){
 		if($this->isValidBotDuel($group)){
 			$index=$this->getBotDuelIndexOf($group);
@@ -464,6 +517,7 @@ class DuelHandler{
 		} else unset($group);
 		$this->botduels=array_values($this->botduels);
 	}
+
 	public function getDuel($object, bool $isArena=false){
 		$result=null;
 		if(isset($object) and !is_null($object)){
@@ -491,6 +545,7 @@ class DuelHandler{
 		}
 		return $result;
 	}
+
 	public function getPartyDuel($object, bool $isArena=false){
 		$result=null;
 		if(isset($object) and !is_null($object)){
@@ -518,6 +573,7 @@ class DuelHandler{
 		}
 		return $result;
 	}
+
 	public function getBotDuel($object, bool $isArena=false){
 		$result=null;
 		if(isset($object) and !is_null($object)){
@@ -545,28 +601,36 @@ class DuelHandler{
 		}
 		return $result;
 	}
+
 	public function isInDuel($player):bool{
 		return !is_null($this->getDuel($player));
 	}
+
 	public function isInPartyDuel($player):bool{
 		$duel=$this->getPartyDuel($player);
 		return !is_null($this->getPartyDuel($player)) and $duel->isAlive($player);
 	}
+
 	public function isInBotDuel($player):bool{
 		return !is_null($this->getBotDuel($player));
 	}
+
 	public function isArenaInUse($arena):bool{
 		return !is_null($this->getDuel($arena, true)) and !is_null($this->getBotDuel($arena, true));
 	}
+
 	private function isValidDuel(DuelGroup $group):bool{
 		return $this->getDuelIndexOf($group) !== -1;
 	}
+
 	private function isValidPartyDuel(PartyDuelGroup $group):bool{
 		return $this->getPartyDuelIndexOf($group) !== -1;
 	}
+
 	private function isValidBotDuel(BotDuelGroup $group):bool{
 		return $this->getBotDuelIndexOf($group) !== -1;
 	}
+
 	public function getDuelFromSpec($spec){
 		$result=null;
 		$player=Utils::getPlayer($spec);
@@ -577,6 +641,7 @@ class DuelHandler{
 		}
 		return $result;
 	}
+
 	public function getPartyDuelFromSpec($spec){
 		$result=null;
 		$player=Utils::getPlayer($spec);
@@ -587,6 +652,7 @@ class DuelHandler{
 		}
 		return $result;
 	}
+
 	public function isASpectator($player):bool{
 		$duel=$this->getDuelFromSpec($player);
 		$pduel=$this->getPartyDuelFromSpec($player);

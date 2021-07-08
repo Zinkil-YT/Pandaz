@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\listeners;
@@ -7,31 +24,35 @@ namespace Zinkil\Pandaz\listeners;
 use pocketmine\event\Listener;
 use pocketmine\Player;
 use pocketmine\Server;
+use pocketmine\entity\Skin;
+use pocketmine\entity\Entity;
 use pocketmine\item\Item;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerRespawnEvent;
+use pocketmine\nbt\tag\CompoundTag;
+use pocketmine\nbt\tag\StringTag;
+use pocketmine\event\player\PlayerChangeSkinEvent;
+use Zinkil\Pandaz\Core;
+use Zinkil\Pandaz\Kits;
+use Zinkil\Pandaz\Utils;
 use Zinkil\Pandaz\forms\{SimpleForm, CustomForm, ModalForm};
 use Zinkil\Pandaz\duels\groups\{DuelGroup, PartyDuelGroup};
 use Zinkil\Pandaz\duels\groups\BotDuelGroup;
 use Zinkil\Pandaz\duels\groups\QueuedPlayer;
 use Zinkil\Pandaz\duels\groups\MatchedGroup;
-use Zinkil\Pandaz\Core;
-use Zinkil\Pandaz\Kits;
-use Zinkil\Pandaz\Utils;
 
 class ItemListener implements Listener{
 	
 	public $plugin;
-	
 	public $targetDuel=[];
-	
 	private $formCd=[];
 	
 	public function __construct(Core $plugin){
 		$this->plugin=$plugin;
 	}
+
 	public function onInteract(PlayerInteractEvent $event){
 		$player=$event->getPlayer();
 		$item=$player->getInventory()->getItemInHand();
@@ -309,7 +330,24 @@ class ItemListener implements Listener{
 				}
 			}
 		}
+		if($item->getCustomName()=="§l§bLeave Staff Mode"){
+			$event->setCancelled();
+			$cooldown=1;
+			if(!isset($this->formCd[$player->getName()])){
+				$this->formCd[$player->getName()]=time();
+				$this->plugin->getStaffUtils()->staffMode($player, false);
+			}else{
+				if($cooldown > time() - $this->formCd[$player->getName()]){
+					$time=time() - $this->formCd[$player->getName()];
+				}else{
+					$this->formCd[$player->getName()]=time();
+					$this->plugin->getStaffUtils()->staffMode($player, false);
+					return;
+				}
+			}
+		}
 	}
+
 	public function profileTap2(BlockPlaceEvent $event){
 		$block=$event->getBlock();
 		$id=$block->getId();
@@ -317,11 +355,12 @@ class ItemListener implements Listener{
 		if($id==144 and $meta==3){
 			if($block->getCustomName()=="§l§bProfile"){
 				$event->setCancelled();
-				}else{
-					return;
+			}else{
+				return;
 			}
 		}
 	}
+
 	public function cosmeticsForm(Player $player):void{
 		$form=new CustomForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -333,7 +372,7 @@ class ItemListener implements Listener{
 				case 0:
 				$color="default";
 				if(Utils::potSplashColor($player)!=$color){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "pot-splash-color", $color);
 						$player->sendMessage("§aYour pot splash color is now ".$color.".");
 					}else{
@@ -344,7 +383,7 @@ class ItemListener implements Listener{
 				case 1:
 				$color="pink";
 				if(Utils::potSplashColor($player)!=$color){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "pot-splash-color", $color);
 						$player->sendMessage("§aYour pot splash color is now ".$color.".");
 					}else{
@@ -355,7 +394,7 @@ class ItemListener implements Listener{
 				case 2:
 				$color="purple";
 				if(Utils::potSplashColor($player)!=$color){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "pot-splash-color", $color);
 						$player->sendMessage("§aYour pot splash color is now ".$color.".");
 					}else{
@@ -366,7 +405,7 @@ class ItemListener implements Listener{
 				case 3:
 				$color="blue";
 				if(Utils::potSplashColor($player)!=$color){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "pot-splash-color", $color);
 						$player->sendMessage("§aYour pot splash color is now ".$color.".");
 					}else{
@@ -377,7 +416,7 @@ class ItemListener implements Listener{
 				case 4:
 				$color="cyan";
 				if(Utils::potSplashColor($player)!=$color){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "pot-splash-color", $color);
 						$player->sendMessage("§aYour pot splash color is now ".$color.".");
 					}else{
@@ -388,7 +427,7 @@ class ItemListener implements Listener{
 				case 5:
 				$color="green";
 				if(Utils::potSplashColor($player)!=$color){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "pot-splash-color", $color);
 						$player->sendMessage("§aYour pot splash color is now ".$color.".");
 					}else{
@@ -399,7 +438,7 @@ class ItemListener implements Listener{
 				case 6:
 				$color="yellow";
 				if(Utils::potSplashColor($player)!=$color){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "pot-splash-color", $color);
 						$player->sendMessage("§aYour pot splash color is now ".$color.".");
 					}else{
@@ -410,7 +449,7 @@ class ItemListener implements Listener{
 				case 7:
 				$color="orange";
 				if(Utils::potSplashColor($player)!=$color){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "pot-splash-color", $color);
 						$player->sendMessage("§aYour pot splash color is now ".$color.".");
 					}else{
@@ -421,7 +460,7 @@ class ItemListener implements Listener{
 				case 8:
 				$color="white";
 				if(Utils::potSplashColor($player)!=$color){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "pot-splash-color", $color);
 						$player->sendMessage("§aYour pot splash color is now ".$color.".");
 					}else{
@@ -432,7 +471,7 @@ class ItemListener implements Listener{
 				case 9:
 				$color="grey";
 				if(Utils::potSplashColor($player)!=$color){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "pot-splash-color", $color);
 						$player->sendMessage("§aYour pot splash color is now ".$color.".");
 					}else{
@@ -443,7 +482,7 @@ class ItemListener implements Listener{
 				case 10:
 				$color="black";
 				if(Utils::potSplashColor($player)!=$color){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "pot-splash-color", $color);
 						$player->sendMessage("§aYour pot splash color is now ".$color.".");
 					}else{
@@ -493,7 +532,7 @@ class ItemListener implements Listener{
 				case 0:
 				$pot="default";
 				if(Utils::preferredPot($player)!=$pot){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "preferred-pot", $pot);
 						$player->sendMessage("§aYour preferred pot is now set to ".$pot.".");
 					}else{
@@ -504,7 +543,7 @@ class ItemListener implements Listener{
 				case 1:
 				$pot="fast";
 				if(Utils::preferredPot($player)!=$pot){
-					if($player->isOp() or $player->isElite() or $player->isPremium() or $player->isStaff()){
+					if($player->isOp() or $player->isVip() or $player->isElite() or $player->isPremium() or $player->isStaff() or $player->isMedia()){
 						Utils::setPlayerData($player, "preferred-pot", $pot);
 						$player->sendMessage("§aYour preferred  pot is now set to ".$pot.".");
 					}else{
@@ -518,7 +557,7 @@ class ItemListener implements Listener{
 		$multipliers=["Off","x1","x2","x4","x8"];
 		$pots=["Default", "Fast"];
 		$preferredpot=Utils::preferredPot($player);
-		$form->setTitle("§l§cCosmetics");
+		$form->setTitle("§l§eCosmetics");
 		$def1=-1;
 		if(Utils::potSplashColor($player)=="default") $def1=0;
 		if(Utils::potSplashColor($player)=="pink") $def1=1;
@@ -552,6 +591,7 @@ class ItemListener implements Listener{
 		}
 		$player->sendForm($form);
 	}
+
 	public function playerPortalForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -564,6 +604,9 @@ class ItemListener implements Listener{
 				case "locker":
 				$this->lockerForm($player);
 				break;
+				case "capes":
+				$this->capesForm($player);
+				break;
 				case "settings":
 				$this->settingsForm($player);
 				break;
@@ -574,12 +617,14 @@ class ItemListener implements Listener{
 				return;
 			}
 		});
-		$form->setTitle("§l§cPlayer Portal");
+		$form->setTitle("§l§ePlayer Portal");
 		$form->addButton("Stats", -1, "", "stats");
 		$form->addButton("Settings", -1, "", "settings");
+		//$form->addButton("Capes", -1, "", "capes");
 		$form->addButton("Size", -1, "", "size");
 		$player->sendForm($form);
 	}
+
 	public function statsForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -591,17 +636,25 @@ class ItemListener implements Listener{
 		$elo=$this->plugin->getDatabaseHandler()->getRankedElo($player->getName());
 		$wins=$this->plugin->getDatabaseHandler()->getWins($player->getName());
 		$losses=$this->plugin->getDatabaseHandler()->getLosses($player->getName());
-		$ffaelo=$this->plugin->getDatabaseHandler()->getElo($player->getName());
 		$kills=$this->plugin->getDatabaseHandler()->getKills($player->getName());
 		$deaths=$this->plugin->getDatabaseHandler()->getDeaths($player->getName());
 		$kdr=$this->plugin->getDatabaseHandler()->getKdr($player->getName());
 		$killstreak=$this->plugin->getDatabaseHandler()->getKillstreak($player->getName());
 		$bestkillstreak=$this->plugin->getDatabaseHandler()->getBestKillstreak($player->getName());
-		$form->setTitle("§l§cStats");
-		$form->setContent("§bCompetitive Stats\n§fElo: ".$elo."\nWins: ".$wins."\nLosses: ".$losses."\n\n§bCasual Stats\n§fKills: ".$kills."\nDeaths: ".$deaths."\nKDR: ".$kdr."\nKillstreak: ".$killstreak." §7(".$bestkillstreak.")");
+
+		$level=$this->plugin->getDatabaseHandler()->getLevel($player->getName());
+		$neededxp=$this->plugin->getDatabaseHandler()->getNeededXp($player->getName());
+		$currentxp=$this->plugin->getDatabaseHandler()->getCurrentXp($player->getName());
+		$totalxp=$this->plugin->getDatabaseHandler()->getTotalXp($player->getName());
+		$currentxpnew=$this->plugin->getDatabaseHandler()->getCurrentXp($player->getName());
+		$progress=round($currentxpnew / $neededxp * 100, 1);
+		$pc='%';
+		$form->setTitle("§l§eStats");
+		$form->setContent("§bCompetitive Stats\n§fElo: ".$elo."\nWins: ".$wins."\nLosses: ".$losses."\n\n§bCasual Stats\n§fKills: ".$kills."\nDeaths: ".$deaths."\nKDR: ".$kdr."\nKillstreak: ".$killstreak." §7(".$bestkillstreak.")"."\n\n§bLevel Stats"."\n§fLevel: ".Utils::formatLevel($level)."\nLevel Progress: ".$currentxpnew."/".$neededxp." (".$progress.$pc.")");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function friendsForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -619,6 +672,36 @@ class ItemListener implements Listener{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
+	public function capesForm(Player $player):void{
+		$form=new SimpleForm(function(Player $player, $data=null):void{
+			switch($data){
+				case "Pandaz-S1":
+				if($player->hasCape()){
+					$oldSkin=$player->getSkin();
+					$skin=new Skin($oldSkin->getSkinId(), $oldSkin->getSkinData(), "", $oldSkin->getGeometryName(), $oldSkin->getGeometryData());
+					$player->setSkin($skin);
+					$player->sendSkin();
+					$player->setHasCape(false);
+				}else{
+					$cape=Utils::createImage("Pandaz-S1");
+					$skin=new Skin($oldSkin->getSkinId(), $oldSkin->getSkinData(), $cape, $oldSkin->getGeometryName(), $oldSkin->getGeometryData());
+					$player->setSkin($skin);
+					$player->sendSkin();
+					$player->setHasCape(true);
+				}
+				break;
+				case "exit":
+				$this->playerPortalForm($player);
+				break;
+			}
+		});
+		$form->setTitle("§l§eCapes");
+		$form->addButton("Pandaz-S1", 0, "textures/items/banner_pattern", "Pandaz-S1");
+		$form->addButton("« Back", -1, "", "exit");
+		$player->sendForm($form);
+	}
+
 	public function lockerForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -635,34 +718,7 @@ class ItemListener implements Listener{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
-	public function capesForm(Player $player):void{
-		$form=new SimpleForm(function(Player $player, $data=null):void{
-			switch($data){
-				case "Pandaz":
-				if($player->hasCape()){
-					$oldSkin=$player->getSkin();
-					$skin=new Skin($oldSkin->getSkinId(), $oldSkin->getSkinData(), "", $oldSkin->getGeometryName(), $oldSkin->getGeometryData());
-					$player->setSkin($skin);
-					$player->sendSkin();
-					$player->setHasCape(false);
-				}else{
-					$cape=Utils::createImage("Pandaz");
-					$skin=new Skin($oldSkin->getSkinId(), $oldSkin->getSkinData(), $cape, $oldSkin->getGeometryName(), $oldSkin->getGeometryData());
-					$player->setSkin($skin);
-					$player->sendSkin();
-					$player->setHasCape(true);
-				}
-				break;
-				case "exit":
-				$this->playerPortalForm($player);
-				break;
-			}
-		});
-		$form->setTitle("Locker");
-		$form->addButton("Pandaz", -1, "", "Pandaz");
-		$form->addButton("« Back", -1, "", "exit");
-		$player->sendForm($form);
-	}
+
 	public function settingsForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -684,8 +740,8 @@ class ItemListener implements Listener{
 				case "sprint":
 				$this->sprintForm($player);
 				break;
-				case "pvp":
-				$this->pvputilsForm($player);
+				case "cps":
+				$this->cpsForm($player);
 				break;
 				case "swingsounds":
 				$this->swingSoundsForm($player);
@@ -695,17 +751,18 @@ class ItemListener implements Listener{
 				break;
 			}
 		});
-		$form->setTitle("§l§cSettings");
+		$form->setTitle("§l§eSettings");
 		$form->addButton("Show In Leaderboards\n§bYour visibility in leaderboards", -1, "", "leaderboards");
 		$form->addButton("Display Scoreboard\n§bYour scoreboard's visibility", -1, "", "scoreboard");
 		$form->addButton("Auto Re-queue\n§bAuto re-queue after a win", -1, "", "requeue");
 		$form->addButton("Auto Re-kit\n§bAuto re-kit after a kill", -1, "", "rekit");
 		$form->addButton("Auto Sprint\n§bSprint automatically", -1, "", "sprint");
 		$form->addButton("Swing Sounds\n§bEnable or disable hit sounds", -1, "", "swingsounds");
-		$form->addButton("PvP Stats Counters\n§bDisplays your PvP Stats (CPS, Combo, Reach)", -1, "", "pvp");
+		$form->addButton("CPS Counter\n§bDisplays your CPS", -1, "", "cps");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function potFeedbackForm(Player $player):void{
 		$form=new CustomForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -739,6 +796,7 @@ class ItemListener implements Listener{
 		}
 		$player->sendForm($form);
 	}
+
 	public function showInLdbrdsForm(Player $player):void{
 		$form=new CustomForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -764,7 +822,7 @@ class ItemListener implements Listener{
 				break;
 			}
 		});
-		$form->setTitle("§l§cShow In Leaderboards");
+		$form->setTitle("§l§eShow In Leaderboards");
 		if(Utils::isShowInLeaderboardsEnabled($player)==true){
 			$form->addToggle("Enabled", true, null);//data[0]
 		}else{
@@ -772,6 +830,7 @@ class ItemListener implements Listener{
 		}
 		$player->sendForm($form);
 	}
+
 	public function scoreboardForm(Player $player):void{
 		$form=new CustomForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -799,7 +858,7 @@ class ItemListener implements Listener{
 				break;
 			}
 		});
-		$form->setTitle("§l§cDisplay Scoreboard");
+		$form->setTitle("§l§eDisplay Scoreboard");
 		if(Utils::isScoreboardEnabled($player)==true){
 			$form->addToggle("Enabled", true, null);//data[0]
 		}else{
@@ -807,6 +866,7 @@ class ItemListener implements Listener{
 		}
 		$player->sendForm($form);
 	}
+
 	public function requeueForm(Player $player):void{
 		$form=new CustomForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -832,7 +892,7 @@ class ItemListener implements Listener{
 				break;
 			}
 		});
-		$form->setTitle("§l§cAuto Re-queue");
+		$form->setTitle("§l§eAuto Re-queue");
 		if(Utils::isAutoRequeueEnabled($player)==true){
 			$form->addToggle("Enabled", true, null);//data[0]
 		}else{
@@ -840,6 +900,7 @@ class ItemListener implements Listener{
 		}
 		$player->sendForm($form);
 	}
+
 	public function rekitForm(Player $player):void{
 		$form=new CustomForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -865,7 +926,7 @@ class ItemListener implements Listener{
 				break;
 			}
 		});
-		$form->setTitle("§l§cAuto Re-kit");
+		$form->setTitle("§l§eAuto Re-kit");
 		if(Utils::isAutoRekitEnabled($player)==true){
 			$form->addToggle("Enabled", true, null);//data[0]
 		}else{
@@ -873,6 +934,7 @@ class ItemListener implements Listener{
 		}
 		$player->sendForm($form);
 	}
+
 	public function sprintForm(Player $player):void{
 		$form=new CustomForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -898,7 +960,7 @@ class ItemListener implements Listener{
 				break;
 			}
 		});
-		$form->setTitle("§l§cAuto Sprint");
+		$form->setTitle("§l§eAuto Sprint");
 		if(Utils::isAutoSprintEnabled($player)==true){
 			$form->addToggle("Enabled", true, null);//data[0]
 		}else{
@@ -906,7 +968,8 @@ class ItemListener implements Listener{
 		}
 		$player->sendForm($form);
 	}
-	public function pvputilsForm(Player $player):void{
+
+	public function cpsForm(Player $player):void{
 		$form=new CustomForm(function(Player $player, $data=null):void{
 			switch($data){
 				case 0:
@@ -915,30 +978,31 @@ class ItemListener implements Listener{
 			}
 			switch($data[0]){
 				case 0://off
-				if(Utils::isPvPUtilsCounterEnabled($player)==false){
+				if(Utils::isCpsCounterEnabled($player)==false){
 					return;
 				}
-				Utils::setPlayerData($player, "pvp-counter", false);
-				$player->sendMessage("§aYou will no longer see your PvP Stats Counters.");
+				Utils::setPlayerData($player, "cps-counter", false);
+				$player->sendMessage("§aYou will no longer see your CPS counter.");
 				break;
 				case 1://on
-				if(Utils::isPvPUtilsCounterEnabled($player)==true){
+				if(Utils::isCpsCounterEnabled($player)==true){
 					return;
 				}
-				Utils::setPlayerData($player, "pvp-counter", true);
-				$player->sendMessage("§aYou will now see your PvP Stats Counters.");
+				Utils::setPlayerData($player, "cps-counter", true);
+				$player->sendMessage("§aYou will now see your CPS counter.");
 				return;
 				break;
 			}
 		});
-		$form->setTitle("§l§cPvP Stats Counters");
-		if(Utils::isPvPUtilsCounterEnabled($player)==true){
+		$form->setTitle("§l§eCPS Counter");
+		if(Utils::isCpsCounterEnabled($player)==true){
 			$form->addToggle("Enabled", true, null);//data[0]
 		}else{
 			$form->addToggle("Disabled", false, null);//data[0]
 		}
 		$player->sendForm($form);
 	}
+
 	public function swingSoundsForm(Player $player):void{
 		$form=new CustomForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -964,7 +1028,7 @@ class ItemListener implements Listener{
 				break;
 			}
 		});
-		$form->setTitle("§l§cSwing & Hit Sounds");
+		$form->setTitle("§l§eSwing & Hit Sounds");
 		if(Utils::isSwingSoundEnabled($player)==true){
 			$form->addToggle("Enabled", true, null);//data[0]
 		}else{
@@ -972,6 +1036,7 @@ class ItemListener implements Listener{
 		}
 		$player->sendForm($form);
 	}
+
 	public function dailyRankingsForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -983,11 +1048,12 @@ class ItemListener implements Listener{
 				break;
 			}
 		});
-		$form->setTitle("§l§cDaily Rankings");
+		$form->setTitle("§l§eDaily Rankings");
 		$form->addButton("Kills", -1, "", "kills");
 		$form->addButton("Deaths", -1, "", "deaths");
 		$player->sendForm($form);
 	}
+
 	public function dailyKillsForm(Player $player):void{
 		$form=new SimpleForm(function (Player $player, $data=null):void{
 			switch($data){
@@ -996,7 +1062,7 @@ class ItemListener implements Listener{
 				break;
 			}
 		});
-		$form->setTitle("§l§cDaily Kills");
+		$form->setTitle("§l§eDaily Kills");
 		$query=$this->plugin->main->query("SELECT * FROM temporary ORDER BY dailykills DESC LIMIT 20;");
 		while($resultArr=$query->fetchArray(SQLITE3_ASSOC)){
 			$players=$resultArr['player'];
@@ -1008,6 +1074,7 @@ class ItemListener implements Listener{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function dailyDeathsForm(Player $player):void{
 		$form=new SimpleForm(function (Player $player, $data=null):void{
 			switch($data){
@@ -1016,7 +1083,7 @@ class ItemListener implements Listener{
 				break;
 			}
 		});
-		$form->setTitle("§l§cDaily Deaths");
+		$form->setTitle("§l§eDaily Deaths");
 		$query=$this->plugin->main->query("SELECT * FROM temporary ORDER BY dailydeaths DESC LIMIT 20;");
 		while($resultArr=$query->fetchArray(SQLITE3_ASSOC)){
 			$players=$resultArr['player'];
@@ -1028,6 +1095,7 @@ class ItemListener implements Listener{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function toysForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -1042,6 +1110,7 @@ class ItemListener implements Listener{
 		$form->addButton("Size\n§bBecome a midget or a giant", -1, "", "size");
 		$player->sendForm($form);
 	}
+
 	public function sizeForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -1057,15 +1126,20 @@ class ItemListener implements Listener{
 				case "large":
 				$player->setScale(2);
 				break;
+				case "exit":
+				$this->playerPortalForm($player);
+				break;
 			}
 		});
-		$form->setTitle("§l§cSize");
+		$form->setTitle("§l§eSize");
 		$form->addButton("Small", -1, "", "small");
 		$form->addButton("Normal", -1, "", "normal");
 		$form->addButton("Medium", -1, "", "medium");
 		$form->addButton("Large", -1, "", "large");
+		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function warpForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -1097,13 +1171,24 @@ class ItemListener implements Listener{
 				$player->sendTo(13, true, true);
 				break;
 				case "offline":
-				$player->sendMessage("§bThis arena is currently offline.");
+				$player->sendMessage("§eThis arena is currently §cOffline.");
 				break;
 				case "wip":
-				$player->sendMessage("§bThis arena is currently being fixed.");
+				$player->sendMessage("§eThis arena is currently being §4Fixed.");
 				break;
 			}
 		});
+		//these counts players in all ffa arenas
+		$nodebuff2 = count(Core::getInstance()->getServer()->getLevelByName("nodebuff")->getPlayers());
+		$gapple2 = count(Core::getInstance()->getServer()->getLevelByName("gapple")->getPlayers());
+		$combo2 = count(Core::getInstance()->getServer()->getLevelByName("combo")->getPlayers());
+		$fist2 = count(Core::getInstance()->getServer()->getLevelByName("fist")->getPlayers());
+		$resistance2 = count(Core::getInstance()->getServer()->getLevelByName("resistance")->getPlayers());
+		$sumoffa2 = count(Core::getInstance()->getServer()->getLevelByName("sumoffa")->getPlayers());
+		$knockbackffa2 = count(Core::getInstance()->getServer()->getLevelByName("knockbackffa")->getPlayers());
+		$buildffa2 = count(Core::getInstance()->getServer()->getLevelByName("buildffa")->getPlayers());
+        $totalarenas = $nodebuff2 + $gapple2 + $combo2 + $fist2 + $resistance2 + $sumoffa2 + $knockbackffa2 + $buildffa2;
+		//these counts players in each arenas
 		$nodebuff=$this->plugin->getServer()->getLevelByName("nodebuff");
 		$nodebufflow=$this->plugin->getServer()->getLevelByName("nodebuff-low");
 		$nodebuffjava=$this->plugin->getServer()->getLevelByName("nodebuff-java");
@@ -1119,69 +1204,71 @@ class ItemListener implements Listener{
 			$count1="§cOffline";
 			$c1="offline";
 		}else{
-			$count1="Playing: §b".count($nodebuff->getPlayers());
+			$count1="§l»§r§7 Currently Playing: §9".count($nodebuff->getPlayers());
 			$c1="nodebuff";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("gapple")){
 			$count2="§cOffline";
 			$c2="offline";
 		}else{
-			$count2="Playing: §b".count($gapple->getPlayers());
+			$count2="§l»§r§7 Currently Playing: §9".count($gapple->getPlayers());
 			$c2="gapple";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("combo")){
 			$count4="§cOffline";
 			$c4="offline";
 		}else{
-			$count4="Playing: §b".count($combo->getPlayers());
+			$count4="§l»§r§7 Currently Playing: §9".count($combo->getPlayers());
 			$c4="combo";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("fist")){
 			$count5="§cOffline";
 			$c5="offline";
 		}else{
-			$count5="Playing: §b".count($fist->getPlayers());
+			$count5="§l»§r§7 Currently Playing: §9".count($fist->getPlayers());
 			$c5="fist";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("resistance")){
 			$count6="§cOffline";
 			$c6="offline";
 		}else{
-			$count6="Playing: §b".count($resistance->getPlayers());
+			$count6="§l»§r§7 Currently Playing: §9".count($resistance->getPlayers());
 			$c6="resistance";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("sumoffa")){
 			$count7="§cOffline";
 			$c7="offline";
 		}else{
-			$count7="Playing: §b".count($sumoffa->getPlayers());
+			$count7="§l»§r§7 Currently Playing: §9".count($sumoffa->getPlayers());
 			$c7="sumoffa";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("knockbackffa")){
 			$count8="§cOffline";
 			$c8="offline";
 		}else{
-			$count8="Playing: §b".count($knockbackffa->getPlayers());
+			$count8="§l»§r§7 Currently Playing: §9".count($knockbackffa->getPlayers());
 			$c8="knockbackffa";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("buildffa")){
 			$count9="§cOffline";
 			$c9="offline";
 		}else{
-			$count9="Playing: §b".count($buildffa->getPlayers());
+			$count9="§l»§r§7 Currently Playing: §9".count($buildffa->getPlayers());
 			$c9="buildffa";
 		}
-		$form->setTitle("§l§cFFA");
+		$form->setTitle("§l§eFFA");
+		$form->setContent("§fThere are §3".$totalarenas."§f playing FFA.");
 		$form->addButton("§l§bFist§r§8\n".$count5, 0, "textures/items/beef_cooked", $c5);
 		$form->addButton("§l§bResistance§r§8\n".$count6, 0, "textures/ui/resistance_effect", $c6);
 		$form->addButton("§l§bSumo§r§8\n".$count7, 0, "textures/ui/slow_falling_effect", $c7);
 		$form->addButton("§l§bNoDebuff§r§8\n".$count1, 0, "textures/items/potion_bottle_splash_heal", $c1);
 		$form->addButton("§l§bBuildFFA§r§8\n".$count9, 0, "textures/items/bed_red", $c9);
 		$form->addButton("§l§bGapple§r§8\n".$count2, 0, "textures/items/apple_golden", $c2);
-		$form->addButton("§l§bKnockBackPvP§r§8\n".$count8, 0, "textures/items/stick", $c8);
+		$form->addButton("§l§bKnockBackFFA§r§8\n".$count8, 0, "textures/items/stick", $c8);
 		$form->addButton("§l§bCombo§r§8\n".$count4, 0, "textures/items/fish_pufferfish_raw", $c4);
 		$player->sendForm($form);
 	}
+
 	public function nodebuffForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -1229,13 +1316,14 @@ class ItemListener implements Listener{
 			$count3="Playing: §b".count($java->getPlayers());
 			$c3="java";
 		}
-		$form->setTitle("§l§cNoDebuff");
+		$form->setTitle("§l§eNoDebuff");
 		$form->addButton("Normal\n".$count1, 0, "textures/items/potion_bottle_splash_heal", $c1);
 		$form->addButton("Low KB\n".$count2, 0, "textures/items/potion_bottle_splash_heal", $c2);
 		$form->addButton("Java\n".$count3, 0, "textures/items/potion_bottle_splash_heal", $c3);
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function gappleForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -1272,12 +1360,13 @@ class ItemListener implements Listener{
 			$count2="Playing: §b".count($op->getPlayers());
 			$c2="op";
 		}
-		$form->setTitle("§l§cGapple");
+		$form->setTitle("§l§eGapple");
 		$form->addButton("Normal\n".$count1, 0, "textures/items/apple_golden", $c1);
 		$form->addButton("OP\n".$count2, 0, "textures/items/apple_golden", $c2);
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function botDuelForm(Player $player):void{ 
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -1323,7 +1412,7 @@ class ItemListener implements Listener{
 				break;
 			}
 		});
-		$form->setTitle("§l§cBot Duels");
+		$form->setTitle("§l§eBot Duels");
 		$form->setContent("§fSelect your bot's difficulty.");
 		$form->addButton("§aEasy §fBot", 0, "textures/items/iron_ingot", "easy");
 		$form->addButton("§eMedium §fBot", 0, "textures/items/gold_ingot", "medium");
@@ -1331,6 +1420,7 @@ class ItemListener implements Listener{
 		$form->addButton("§cHacker §fBot", 0, "textures/items/emerald", "hacker");
 		$player->sendForm($form);
 	}
+
 	public function duelForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -1370,10 +1460,10 @@ class ItemListener implements Listener{
 				}
 			}
 		}
-		$form->setTitle("§l§cDuels");
-		$form->addButton("§l§6Ranked\n§r§8Queued: §b".$rankedqueued."§8 Matches: §b".$rankedmatches, -1, "", "ranked");
-		$form->addButton("§l§6Unranked\n§r§8Queued: §b".$unrankedqueued."§8 Matches: §b".$unrankedmatches, -1, "", "unranked");
-		$form->addButton("§l§6Specate\n§r§8[ ".$this->plugin->getDuelHandler()->getNumberOfDuelsInProgress()." ]", -1, "", "duels");
+		$form->setTitle("§l§eDuels");
+		$form->addButton("§l§bRanked\n§r§8Queued: §b".$rankedqueued."§8 Matches: §b".$rankedmatches, -1, "", "ranked");
+		$form->addButton("§l§bUnranked\n§r§8Queued: §b".$unrankedqueued."§8 Matches: §b".$unrankedmatches, -1, "", "unranked");
+		$form->addButton("§l§bSpecate\n§r§8[ ".$this->plugin->getDuelHandler()->getNumberOfDuelsInProgress()." ]", -1, "", "duels");
 		if($this->plugin->getDuelHandler()->isPlayerInQueue($player)){
 			$result=$this->plugin->getDuelHandler()->getQueuedPlayer($player);
 			if(is_null($result)) return;
@@ -1390,6 +1480,7 @@ class ItemListener implements Listener{
 		}
 		$player->sendForm($form);
 	}
+
 	public function rankedForm(Player $player):void{ 
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -1451,7 +1542,8 @@ class ItemListener implements Listener{
 		$builduhcplaying=$this->plugin->getDuelHandler()->getNumberOfDuelsOfQueue("BuildUHC", true);
 		$diamondqueued=$this->plugin->getDuelHandler()->getNumberQueuedFor("Diamond", true);
 		$diamondplaying=$this->plugin->getDuelHandler()->getNumberOfDuelsOfQueue("Diamond", true);
-		$form->setTitle("§l§cRanked");
+		$form->setTitle("§l§eRanked");
+		$form->setContent("§fSelect the mode you want play.");
 		$form->addButton("§l§bNoDebuff\n§r§8Queued: §b".$nodebuffqueued."§8 Matches: §b".$nodebuffplaying, 0, "textures/items/potion_bottle_splash_heal", "nodebuff");
 		$form->addButton("§l§bGapple\n§r§8Queued: §b".$gapplequeued."§8 Matches: §b".$gappleplaying, 0, "textures/items/apple_golden", "gapple");
 		$form->addButton("§l§bSoup\n§r§8Queued: §b".$soupqueued."§8 Matches: §b".$soupplaying, 0, "textures/items/mushroom_stew", "soup");
@@ -1473,6 +1565,7 @@ class ItemListener implements Listener{
 		}
 		$player->sendForm($form);
 	}
+
 	public function unrankedForm(Player $player):void{ 
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -1554,7 +1647,8 @@ class ItemListener implements Listener{
 		$sumoplaying=$this->plugin->getDuelHandler()->getNumberOfDuelsOfQueue("Sumo", false);
 		$diamondqueued=$this->plugin->getDuelHandler()->getNumberQueuedFor("Diamond", false);
 		$diamondplaying=$this->plugin->getDuelHandler()->getNumberOfDuelsOfQueue("Diamond", false);
-		$form->setTitle("§l§cUnranked");
+		$form->setTitle("§l§eUnranked");
+		$form->setContent("§fSelect the mode you want play.");
 		$form->addButton("§l§bNoDebuff\n§r§8Queued: §b".$nodebuffqueued."§8 Matches: §b".$nodebuffplaying, 0, "textures/items/potion_bottle_splash_heal", "nodebuff");
 		$form->addButton("§l§bGapple\n§r§8Queued: §b".$gapplequeued."§8 Matches: §b".$gappleplaying, 0, "textures/items/apple_golden", "gapple");
 		$form->addButton("§l§bSoup\n§r§8Queued: §b".$soupqueued."§8 Matches: §b".$soupplaying, 0, "textures/items/mushroom_stew", "soup");
@@ -1578,11 +1672,11 @@ class ItemListener implements Listener{
 		}
 		$player->sendForm($form);
 	}
+
 	public function spectateForm(Player $player):void{ 
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
 				case "exit":
-				//$this->duelForm($player);
 				return;
 				break;
 				case 0:
@@ -1603,7 +1697,7 @@ class ItemListener implements Listener{
 				break;
 			}
 		});
-		$form->setTitle("§l§cSpectate");
+		$form->setTitle("§l§eSpectate");
 		foreach($this->plugin->getDuelHandler()->getDuelsInProgress() as $duel){
 			if($duel instanceof DuelGroup){
 				$p=$duel->getPlayer();

@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\party;
@@ -23,41 +40,52 @@ class PartyInvite{
 		$this->sender=$sender;
 		$this->target=$target;
 	}
+
 	public function getParty():?Party{
 		return $this->party;
 	}
+
 	public function getSender():string{
 		return $this->sender;
 	}
+
 	public function getTarget():string{
 		return $this->target;
 	}
+
 	public function doesPartyExist():bool{
 		return PartyManager::doesPartyExist($this->party)!==false;
 	}
+
 	public function isParty($party):bool{
 		if($party instanceof Party) $party=$party->getName();
 		return $party==$this->getParty()->getName();
 	}
+
 	public function isSender($player):bool{
 		if($player instanceof Player) $player=$player->getName();
 		return $player==$this->sender;
 	}
+
 	public function isTarget($player):bool{
 		if($player instanceof Player) $player=$player->getName();
 		return $player==$this->target;
 	}
+
 	public function isSenderOnline():bool{
 		$player=Server::getInstance()->getPlayerExact($this->sender);
 		return $player!==null;
 	}
+
 	public function isTargetOnline():bool{
 		$player=Server::getInstance()->getPlayerExact($this->target);
 		return $player!==null;
 	}
+
 	public function clear(){
 		unset($this->plugin->partyinvites[array_search($this, $this->plugin->partyinvites)]);
 	}
+
 	public function accept(){
 		$sender=Server::getInstance()->getPlayerExact($this->sender);
 		$target=Server::getInstance()->getPlayerExact($this->target);
@@ -70,6 +98,7 @@ class PartyInvite{
 		}
 		$this->clear();
 	}
+
 	public function decline(){
 		$sender=Server::getInstance()->getPlayerExact($this->sender);
 		$target=Server::getInstance()->getPlayerExact($this->target);

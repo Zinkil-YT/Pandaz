@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz;
@@ -18,17 +35,16 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\EventPacket;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
-use Zinkil\Pandaz\commands\{KickAllCommand, AntiCheatCommand, ResetStatsCommand, SetClanTagCommand, ReplyCommand, DuelCommand, ForceKitCommand, KitCommand, NickCommand, MuteCommand, TempBanCommand, PermBanCommand, CoordsCommand, MessagesCommand, VanishCommand, KillCommand, PartyCommand, FlyCommand, StopCommand, ExecCommand, TpallCommand, AliasCommand, PingCommand, ForceRankCommand, ManageCommand, OnlineCommand, DisguiseCommand, MuteChatCommand, WhoCommand, StaffCommand, HubCommand, TestCommand, WhisperCommand, AnnounceCommand, FreezeCommand, RankCommand, GamemodeCommand};
-use Zinkil\Pandaz\listeners\{ServerListener, AntiCheatListener, WorldListener, ItemListener, PlayerListener, PvPUtilsListener, TNTListener, BlockListener, AntiAdvertisingListener, AntiSwearingListener, AntiToxicListener, CapeListener};
-use Zinkil\Pandaz\tasks\{FlagsTask, StatusTask, ParticleTask, PlayerTask, VoteAccessTask, TemporaryBansTask, MutesTask, DuelTask, CombatTask, TemporaryRankTask, DatabaseTask, SetDayTask, DropsTask, MotdTask, PingTask, FloatingTextTask, VanishTask, NameTagTask, BroadcastTask, CombatCheckTask, OnlineTask, BlockResetAirTask, BlockResetRedstoneTask};
+use Zinkil\Pandaz\commands\{KickAllCommand, AntiCheatCommand, ResetStatsCommand, SetClanTagCommand, ReplyCommand, DuelCommand, ForceKitCommand, RekitCommand, NickCommand, MuteCommand, TempBanCommand, PermBanCommand, CoordsCommand, MessagesCommand, VanishCommand, KillCommand, PartyCommand, FlyCommand, RestartCommand, ExecuteCommand, TpallCommand, AliasCommand, PingCommand, ForceRankCommand, ManageCommand, OnlineCommand, DisguiseCommand, MuteChatCommand, WhoCommand, StaffCommand, HubCommand, TestCommand, WhisperCommand, AnnounceCommand, FreezeCommand, RankCommand, GamemodeCommand, KickCommand, ReportCommand, SudoCommand, InformationCommand};
+use Zinkil\Pandaz\listeners\{ServerListener, AntiCheatListener, WorldListener, ItemListener, PlayerListener, TNTListener, BlockListener, AntiAdvertisingListener, AntiSwearingListener, AntiToxicListener, CapeListener};
+use Zinkil\Pandaz\tasks\{FlagsTask, StatusTask, ParticleTask, PlayerTask, VoteAccessTask, TemporaryBansTask, MutesTask, DuelTask, CombatTask, TemporaryRankTask, DatabaseTask, SetDayTask, DropsTask, MotdTask, PingTask, FloatingTextTask, VanishTask, NameTagTask, BroadcastTask, OnlineTask, BlockResetAirTask, BlockResetRedstoneTask};
 use Zinkil\Pandaz\handlers\{ArenaHandler, DuelHandler, ClickHandler, ScoreboardHandler, PermissionHandler, DatabaseHandler};
 use Zinkil\Pandaz\entities\{PotionEntity, FastPotion, DefaultPotion, Pearl, Hook, TNTEntity};
 use Zinkil\Pandaz\items\{Splash, Rod};
 use Zinkil\Pandaz\bots\{TestBot, EasyBot, MediumBot, HardBot, HackerBot};
-use Zinkil\Pandaz\data\Provider;
-use Zinkil\Pandaz\multiver\MultiVersion;
-use Zinkil\Pandaz\managers\PlayerProtectManager;
-use Zinkil\Pandaz\{Forms, StaffUtils};
+use Zinkil\Pandaz\misc\{Animations, Colors, Countries, Unicodes, Skins, Emotes, Math};
+use Zinkil\Pandaz\StaffUtils;
+use Zinkil\Pandaz\Forms;
 
 class Core extends PluginBase{
 	
@@ -48,10 +64,11 @@ class Core extends PluginBase{
 	public $staticFloatingTexts=[];
 	
 	public $allCtrs=["Unknown", "Mouse", "Touch", "Controller"];
-	public $allOs=["Unknown", "Android", "iOS", "macOS", "FireOS", "GearVR", "HoloLens", "Windows10", "Windows", "EducalVersion","Dedicated", "PlayStation4", "Switch", "XboxOne"];
+	public $allOs=["Unknown", "Android", "iOS", "macOS", "FireOS", "GearVR", "HoloLens", "Windows10", "Windows", "EducalVersion", "Dedicated", "PlayStation4", "Switch", "XboxOne"];
 	public $controls=[];
 	public $os=[];
 	public $device=[];
+	public $lastHit=[];
 	
 	private static $instance;
 	private static $databaseHandler;
@@ -65,94 +82,107 @@ class Core extends PluginBase{
 	
 	const PREFIX = "§l§bPandaz";
 	const CASTPREFIX = "§l§bPandaz » §r§e";
-	const WEBHOOK = "https://discord.com/api/webhooks/847878966772629525/gYlxBWOAdT8VwH_XHVdn-Zvqc9cFfFtrPAvmD_hyFndbuHFcjXbqaeMDwI8UnEDZm4tL";
+	const WEBHOOK = "https://discord.com/api/webhooks/859433988061790218/ZVhsbyhhjdf4vdL5rX3TR-sU3U9ZguHJ4Te4I0aUT-T0xr_pITQ85QV0-Yij8DEuU_fO";
+	const STAFFWEBHOOK = "https://discord.com/api/webhooks/859433988061790218/ZVhsbyhhjdf4vdL5rX3TR-sU3U9ZguHJ4Te4I0aUT-T0xr_pITQ85QV0-Yij8DEuU_fO";
 	const IP = "Pandaz.ddns.net";
 	const SITE = "www.pandaz.com";
 	const APPEAL = "www.pandaz.com/appeal";
 	const CCAPPLY = "www.pandaz.com/ccapply";
 	const APPLY = "www.pandaz.com/apply";
 	const RULES = "www.pandaz.com/rules";
-	const DISCORD = "discord.gg/d85MUcttJu";
-	const TWITTER = "@PandazPractice";
+	const DISCORD = "discord.gg/2zt7P5EUuN";
+	const TWITTER = "@PandazPracticeEU";
+	const INSTAGRAM = "@PandazNetwork";
 	const STORE = "https://pandaz.tebex.io/";
 	const VOTE = "www.pandaz.com/vote";
 	const LOBBY = "lobby";
-	const GOLDEN_HEAD = "§r§bGolden Head";
-	
-	const HOST='na02-db.cus.mc-panel.net';
-	const USER='db_157003';
-	const PASS='70402e59a4';
-	const DATABASE='db_157003';
-	
+	const GOLDEN_HEAD = "§r§eGolden Head";
+
+	const HOST='';
+	const USER='';
+	const PASS='';
+	const DATABASE='';
+
 	public function getPrefix():string{
 		return self::PREFIX;
 	}
+
 	public function getCastPrefix():string{
 		return self::CASTPREFIX;
 	}
+
 	public function getIp():string{
 		return self::IP;
 	}
+
 	public function getSite():string{
 		return self::SITE;
 	}
+
 	public function getAppeal():string{
 		return self::APPEAL;
 	}
+
 	public function getCcApply():string{
 		return self::CCAPPLY;
 	}
+
 	public function getApply():string{
 		return self::APPLY;
 	}
+
 	public function getRules():string{
 		return self::RULES;
 	}
+
 	public function getDiscord():string{
 		return self::DISCORD;
 	}
+
 	public function getTwitter():string{
 		return self::TWITTER;
 	}
+
+	public function getInstagram():string{
+		return self::INSTAGRAM;
+	}
+
 	public function getStore():string{
 		return self::STORE;
 	}
+
 	public function getVote():string{
 		return self::VOTE;
 	}
+
 	public function getLobby():string{
 		return self::LOBBY;
 	}
-	public function getEventLobby():string{
-		return self::EVENTLOBBY;
-	}
-	public function getKothArena():string{
-		return self::KOTHARENA;
-	}
+
 	public function onEnable():void{
 		self::$instance=$this;
+
+		foreach(['capes.yml', 'guest.png', 'paid.png', 'youtube.png', 'staff.png', 'owner.png', 'Pandaz-S1.png'] as $file){
+			$this->saveResource($file);
+		}
 
 		@mkdir($this->getDataFolder()."aliases/");
 		@mkdir($this->getDataFolder()."playerdata/");
 		$this->updatingFloatingText=new Config($this->getDataFolder()."updatingfloatingtexts.yml", Config::YAML);
 		$this->staticFloatingText=new Config($this->getDataFolder()."staticfloatingtexts.yml", Config::YAML);
+		$this->getLogger()->info("--- Configs Data loaded ---");
 
-		$this->getServer()->loadLevel("lobby");
-		$this->getServer()->loadLevel("nodebuff");
-		$this->getServer()->loadLevel("gapple");
-		$this->getServer()->loadLevel("combo");
-		$this->getServer()->loadLevel("fist");
-		$this->getServer()->loadLevel("resistance");
-		$this->getServer()->loadLevel("sumoffa");
-		$this->getServer()->loadLevel("knockbackffa");
-		$this->getServer()->loadLevel("buildffa");
+		foreach(['lobby', 'nodebuff', 'gapple', 'combo', 'fist', 'resistance', 'sumoffa', 'knockbackffa', 'buildffa'] as $level){
+			$this->getServer()->loadLevel($level);
+		}
+		$this->getLogger()->info("--- Levels loaded ---");
 
 		foreach($this->getServer()->getLevels() as $levels){
 			foreach($levels->getEntities() as $entity){
 				$entity->close();
 			}
 		}
-		$this->getLogger()->info("Entities cleared...");
+		$this->getLogger()->info("--- Entities Cleared ---");
 
 		$this->disableCommands();
 		$this->setListeners();
@@ -179,100 +209,100 @@ class Core extends PluginBase{
 		$this->staff->exec("CREATE TABLE IF NOT EXISTS permanentbans (player TEXT PRIMARY KEY, reason TEXT, staff TEXT, date TEXT);");
 		$this->staff->exec("CREATE TABLE IF NOT EXISTS warnpoints (player TEXT PRIMARY KEY, points INT);");
 		$this->staff->exec("CREATE TABLE IF NOT EXISTS staffstats (player TEXT PRIMARY KEY, timesjoined INT, timesleft INT, pointsgiven INT, mutesissued INT, kicksissued INT, temporarybansissued INT, permanentbansissued INT);");
-		$this->clans=new\SQLite3($this->getDataFolder()."PandazClans.db");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS master (player TEXT PRIMARY KEY, clan TEXT, rank TEXT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS confirm (player TEXT PRIMARY KEY, clan TEXT, invitemainy TEXT, timestamp INT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS alliance (player TEXT PRIMARY KEY, clan TEXT, requestemainy TEXT, timestamp INT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS motdrcv (player TEXT PRIMARY KEY, timestamp INT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS motd (clan TEXT PRIMARY KEY, message TEXT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS noticolor (clan TEXT PRIMARY KEY, color TEXT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS privacy (clan TEXT PRIMARY KEY, open TEXT);");//true false
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS friendlyfire (clan TEXT PRIMARY KEY, pvp TEXT);");//true false
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS plots (clan TEXT PRIMARY KEY, x1 INT, z1 INT, x2 INT, z2 INT, world TEXT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS home (clan TEXT PRIMARY KEY, x INT, y INT, z INT, world TEXT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS power (clan TEXT PRIMARY KEY, power INT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS maxplayers (clan TEXT PRIMARY KEY, slots INT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS allies (ID INT PRIMARY KEY, clan1 TEXT, clan2 TEXT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS enemies (ID INT PRIMARY KEY, clan1 TEXT, clan2 TEXT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS alliescountlimit (clan TEXT PRIMARY KEY, count INT);");
-		$this->clans->exec("CREATE TABLE IF NOT EXISTS created (clan TEXT PRIMARY KEY, date TEXT);");
 
+		$this->getServer()->setConfigString("enable-query", "off");
 		$this->getLogger()->info("
 		
-		 --- Pandaz Core V3.0.0 Made By Zinkil ---
+		 --- Pandaz Core V3.4.0 By Zinkil ---
+		
 		");
 
 		$this->getServer()->getNetwork()->setName("§bPandaz §f- Practice §3");
 	}
+
 	public function onDisable(){
 		foreach($this->getServer()->getLevels() as $levels){
 			foreach($levels->getEntities() as $entity){
 				$entity->close();
 			}
 		}
-		foreach (Server::getInstance()->getOnlinePlayers() as $players){
+		foreach(Server::getInstance()->getOnlinePlayers() as $players){
             if(PlayerProtectManager::isIn($players)){
                 PlayerProtectManager::delIn($players);
 			}
 		}
-		$this->getLogger()->info("Entities cleared...");
 		$players=$this->getServer()->getLoggedInPlayers();
 		if(sizeof($players)===0) return;
 		Utils::transferPlayers($players);
 	}
+
 	public function doesFileExist($filename):bool{
 		$result=file_exists($this->getFile()."resources/".$filename.".png");
 		return $result!==null;
 	}
+
 	public function toGetFile($filename){
 		$file=$this->getFile()."resources/".$filename.".png";
 		return $file;
 	}
+
 	public function getPlayerControls(Player $player):?string{
 		if(!isset($this->controls[$player->getName()]) or $this->controls[$player->getName()]==null){
 			return null;
 		}
 		return $this->allCtrs[$this->controls[$player->getName()]];
 	}
+
 	public function getPlayerOs(Player $player):?string{
 		if(!isset($this->os[$player->getName()]) or $this->os[$player->getName()]==null){
 			return null;
 		}
 		return $this->allOs[$this->os[$player->getName()]];
 	}
+
 	public function getPlayerDevice(Player $player):?string{
 		if(!isset($this->device[$player->getName()]) or $this->device[$player->getName()]==null){
 			return null;
 		}
 		return $this->device[$player->getName()];
 	}
+
 	public static function getInstance():Core{
 		return self::$instance;
 	}
+
 	public static function getDatabaseHandler():DatabaseHandler{
 		return self::$databaseHandler;
 	}
+
 	public static function getPermissionHandler():PermissionHandler{
 		return self::$permissionHandler;
 	}
+
 	public static function getScoreboardHandler():ScoreboardHandler{
 		return self::$scoreboardHandler;
 	}
+
 	public static function getClickHandler():ClickHandler{
 		return self::$clickHandler;
 	}
+
 	public static function getDuelHandler():DuelHandler{
 		return self::$duelHandler;
 	}
+
 	public static function getArenaHandler():ArenaHandler{
 		return self::$arenaHandler;
 	}
+
 	public static function getStaffUtils():StaffUtils{
 		return self::$staffUtils;
 	}
+
 	public static function getForms():Forms{
 		return self::$forms;
 	}
+
 	public function setListeners(){
 		$map=$this->getServer()->getPluginManager();
 		$map->registerEvents(new ServerListener($this), $this);
@@ -280,14 +310,15 @@ class Core extends PluginBase{
 		$map->registerEvents(new WorldListener($this), $this);
 		$map->registerEvents(new ItemListener($this), $this);
 		$map->registerEvents(new PlayerListener($this), $this);
-		$map->registerEvents(new PvPUtilsListener($this), $this);
 		$map->registerEvents(new TNTListener($this), $this);
 		$map->registerEvents(new BlockListener($this), $this);
 		$map->registerEvents(new AntiAdvertisingListener($this), $this);
 		$map->registerEvents(new AntiSwearingListener($this), $this);
 		$map->registerEvents(new AntiToxicListener($this), $this);
 		$map->registerEvents(new CapeListener($this), $this);
+		$this->getLogger()->info("--- Listeners Loaded ---");
 	}
+
 	public function setHandlers(){
 		self::$databaseHandler=new DatabaseHandler();
 		self::$permissionHandler=new PermissionHandler();
@@ -297,7 +328,9 @@ class Core extends PluginBase{
 		self::$arenaHandler=new ArenaHandler();
 		self::$staffUtils=new StaffUtils();
 		self::$forms=new Forms();
+		$this->getLogger()->info("--- Handlers Loaded ---");
 	}
+
 	public function setCommands(){
 		$map=$this->getServer()->getCommandMap();
 		$map->register("kickall", new KickAllCommand($this));
@@ -306,20 +339,19 @@ class Core extends PluginBase{
 		$map->register("setclantag", new SetClanTagCommand($this));
 		$map->register("reply", new ReplyCommand($this));
 		$map->register("forcekit", new ForceKitCommand($this));
-		$map->register("kit", new KitCommand($this));
+		$map->register("rekit", new RekitCommand($this));
 		$map->register("nick", new NickCommand($this));
 		$map->register("mute", new MuteCommand($this));
 		$map->register("tban", new TempBanCommand($this));
 		$map->register("pban", new PermBanCommand($this));
-		$map->register("kill", new KillCommand($this));
 		$map->register("coords", new CoordsCommand($this));
 		$map->register("messages", new MessagesCommand($this));
 		$map->register("vanish", new VanishCommand($this));
 		$map->register("kill", new KillCommand($this));
 		$map->register("party", new PartyCommand($this));
 		$map->register("fly", new FlyCommand($this));
-		$map->register("stop", new StopCommand($this));
-		$map->register("exec", new ExecCommand($this));
+		$map->register("restart", new RestartCommand($this));
+		$map->register("execute", new ExecuteCommand($this));
 		$map->register("tpall", new TpallCommand($this));
 		$map->register("alias", new AliasCommand($this));
 		$map->register("ping", new PingCommand($this));
@@ -335,8 +367,14 @@ class Core extends PluginBase{
 		$map->register("announce", new AnnounceCommand($this));
 		$map->register("freeze", new FreezeCommand($this));
 		$map->register("rank", new RankCommand($this));
-		$map->register("gm", new GamemodeCommand($this));
+		$map->register("gamemode", new GamemodeCommand($this));
+		$map->register("kick", new KickCommand($this));
+		$map->register("report", new ReportCommand($this));
+		$map->register("sudo", new SudoCommand($this));
+		$map->register("information", new InformationCommand($this));
+		$this->getLogger()->info("--- Commands Loaded ---");
 	}
+
 	public function setTasks(){
 		$map=$this->getScheduler();
 		$map->scheduleRepeatingTask(new FlagsTask($this), 20 * 10);
@@ -346,36 +384,42 @@ class Core extends PluginBase{
 		$map->scheduleRepeatingTask(new MutesTask($this), 1200);
 		$map->scheduleRepeatingTask(new DuelTask($this), 1);
 		$map->scheduleRepeatingTask(new CombatTask($this), 20);
-		$map->scheduleRepeatingTask(new CombatCheckTask($this), 20);
-		$map->scheduleRepeatingTask(new MotdTask($this), 50);
+		$map->scheduleRepeatingTask(new MotdTask($this), 100);
 		$map->scheduleRepeatingTask(new SetDayTask($this), 20);
-		$map->scheduleRepeatingTask(new FloatingTextTask($this), 50);
+		$map->scheduleRepeatingTask(new FloatingTextTask($this), 100);
 		$map->scheduleRepeatingTask(new TemporaryRankTask($this), 1200);
 		$map->scheduleRepeatingTask(new DatabaseTask($this), 1200);
 		$map->scheduleRepeatingTask(new DropsTask($this), 2400);
-		$map->scheduleRepeatingTask(new PingTask($this), 100);
-		$map->scheduleRepeatingTask(new OnlineTask($this), 50);
-		$map->scheduleDelayedRepeatingTask(new BroadcastTask($this), 200, 11000);
+		//$map->scheduleRepeatingTask(new PingTask($this), 100);
+		//$map->scheduleRepeatingTask(new OnlineTask($this), 20);
+		$map->scheduleDelayedRepeatingTask(new BroadcastTask($this), 200, 5000);
 		$map->scheduleRepeatingTask(new NameTagTask($this), 5);
 		$map->scheduleRepeatingTask(new VanishTask($this), 5);
+		$this->getLogger()->info("--- Tasks Loaded ---");
 	}
+
 	public function setEntities(){
 		Entity::registerEntity(FastPotion::class, true, ["FastPotion"]);
 		Entity::registerEntity(DefaultPotion::class, true, ["DefaultPotion"]);
 		Entity::registerEntity(Pearl::class, true, ["CPPearl"]);
 		Entity::registerEntity(Hook::class, false, ["FishingHook", "minecraft:fishing_rod"]);
 		Entity::registerEntity(TestBot::class, true, ["TestBot"]);
+		Entity::registerEntity(TNTEntity::class, true, ["PrimedTnt", "PrimedTNT", "minecraft::tnt"]);
+
 		Entity::registerEntity(EasyBot::class, true);
 		Entity::registerEntity(MediumBot::class, true);
 		Entity::registerEntity(HardBot::class, true);
 		Entity::registerEntity(HackerBot::class, true);
-		Entity::registerEntity(TNTEntity::class, true, ["PrimedTnt", "PrimedTNT", "minecraft::tnt"]);
 
 		Entity::registerEntity(PotionEntity::class, true);
+		$this->getLogger()->info("--- Custom Entities loaded ---");
 	}
+
 	public function setItems(){
 		ItemFactory::registerItem(new Rod(), true);
+		$this->getLogger()->info("--- Custom Items loaded ---");
 	}
+
 	public function disableCommands(){
 		$map=$this->getServer()->getCommandMap();
 		$map->unregister($map->getCommand("kill"));
@@ -393,23 +437,48 @@ class Core extends PluginBase{
 		$map->unregister($map->getCommand("gamemode"));
 		$map->unregister($map->getCommand("tell"));
 		$map->unregister($map->getCommand("say"));
+		$map->unregister($map->getCommand("reload"));
+		$map->unregister($map->getCommand("kick"));
+		$map->unregister($map->getCommand("ban-ip"));
+		$map->unregister($map->getCommand("ban"));
+		$map->unregister($map->getCommand("version"));
+		$map->unregister($map->getCommand("timings"));
+		$map->unregister($map->getCommand("time"));
+		$map->unregister($map->getCommand("setworldspawn"));
+		$map->unregister($map->getCommand("save-on"));
+		$map->unregister($map->getCommand("save-off"));
+		$map->unregister($map->getCommand("save-all"));
+		$map->unregister($map->getCommand("plugins"));
+		$map->unregister($map->getCommand("pardon"));
+		$map->unregister($map->getCommand("pardon-ip"));
+		$map->unregister($map->getCommand("list"));
+		$map->unregister($map->getCommand("help"));
+		$map->unregister($map->getCommand("give"));
+		$map->unregister($map->getCommand("banlist"));
+
+		$this->getLogger()->info("--- Default Commands Disabled ---");
 	}
+
 	public function loadUpdatingFloatingTexts(){
 		foreach($this->getUpdatingFloatingTexts()->getAll() as $id => $array){
 			$this->updatingFloatingTexts[$id]=new FloatingTextParticle(new Vector3($array["x"], $array["y"], $array["z"]), $array["text"], $array["title"]);
 		}
 	}
+
 	public function loadStaticFloatingTexts(){
 		foreach($this->getStaticFloatingTexts()->getAll() as $id => $array){
 			$this->staticFloatingTexts[$id]=new FloatingTextParticle(new Vector3($array["x"], $array["y"], $array["z"]), $array["text"], $array["title"]);
 		}
 	}
+
 	public function getUpdatingFloatingTexts():Config{
 		return $this->updatingFloatingText;
 	}
+
 	public function getStaticFloatingTexts():Config{
 		return $this->staticFloatingText;
 	}
+
 	public function replaceProcess(Player $player, string $string):string{
 		$string=str_replace("{world}", $this->getLobby(), $string);
 		$string=str_replace("{ip}", $this->getIp(), $string);

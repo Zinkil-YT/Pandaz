@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\entities;
@@ -49,23 +66,29 @@ class FastPotion extends Projectile{
 		$this->setPosition($this->add(0, $owner->getEyeHeight()));
 		$this->handleMotion($this->motion->x, $this->motion->y, $this->motion->z, -0.43, 0);
 	}
+
 	protected function initEntity():void{
 		parent::initEntity();
 		$this->setPotionId($this->namedtag->getShort("PotionId", 22));
 	}
+
 	public function saveNBT():void{
 		parent::saveNBT();
 		$this->namedtag->setShort("PotionId", $this->getPotionId());
 	}
+
 	public function getResultDamage():int{
-		return -1;
+		return -1; //-1 is to disable the damage
 	}
+
 	public function getPotionId():int{
 		return $this->propertyManager->getShort(self::DATA_POTION_AUX_VALUE) ?? 22;
 	}
+
 	public function setPotionId(int $id):void{
 		$this->propertyManager->setShort(self::DATA_POTION_AUX_VALUE, $id);
 	}
+
 	protected function onHit(ProjectileHitEvent $event):void{
 		$effects=$this->getPotionEffects();
 		$owner=$this->getOwningEntity();
@@ -133,9 +156,11 @@ class FastPotion extends Projectile{
 			}
 		}
 	}
+
 	public function getPotionEffects():array{
 		return ItemPotion::getPotionEffectsById($this->getPotionId());
 	}
+
 	public function handleMotion(float $x, float $y, float $z, float $f1, float $f2){
 		$rand=new Random();
 		$f=sqrt($x * $x + $y * $y + $z * $z);
@@ -152,6 +177,7 @@ class FastPotion extends Projectile{
 		$this->motion->y += $y;
 		$this->motion->z += $z;
 	}
+
 	public function entityBaseTick(int $tickDiff=1):bool{
 		$hasUpdate=parent::entityBaseTick($tickDiff);
 		$owner=$this->getOwningEntity();
@@ -160,9 +186,11 @@ class FastPotion extends Projectile{
 		}
 		return $hasUpdate;
 	}
+
 	public function close():void{
 		parent::close();
 	}
+
 	public function applyGravity():void{
 		if($this->isUnderwater()){
 			$this->motion->y += $this->gravity;

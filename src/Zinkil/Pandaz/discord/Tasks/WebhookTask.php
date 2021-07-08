@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\discord\Tasks;
@@ -9,12 +26,9 @@ use Zinkil\Pandaz\discord\Webhook;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 
-class WebhookTask extends AsyncTask
-{
+class WebhookTask extends AsyncTask{
 
-    /** @var Webhook */
     protected $webhook;
-    /** @var Message */
     protected $message;
 
     public function __construct(Webhook $webhook, Message $message){
@@ -22,8 +36,7 @@ class WebhookTask extends AsyncTask
         $this->message = $message;
     }
 
-    public function onRun()
-    {
+    public function onRun(){
         $ch = curl_init($this->webhook->getURL());
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($this->message));
         curl_setopt($ch, CURLOPT_POST,true);
@@ -38,7 +51,7 @@ class WebhookTask extends AsyncTask
     public function onCompletion(Server $server){
         $response = $this->getResult();
         if($response !== ""){
-            $server->getLogger()->error("[DiscordWebhookAPI] Got error: " . $response);
+            $server->getLogger()->error("[Pandaz-Discord] Got error: " . $response);
         }
     }
 }

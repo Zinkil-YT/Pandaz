@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\listeners;
@@ -17,20 +34,22 @@ class AntiToxicListener implements Listener{
 
     public function __construct(Core $plugin){
 		$this->plugin = $plugin;
-        $this->toxicwords = ["l", "ez", "noob", "trash", "owned", "L", "EZ", "NOOB", "TRASH", "OWNED"];
+        $this->toxicwords = ["ez", "noob", "trash", "owned", "clapped", "clown", "L", "EZ", "NOOB", "TRASH", "OWNED", "CLAPPED", "CLOWN"];
     }
 
     public function onChat(PlayerChatEvent $event) : void{
         $msg = $event->getMessage();
         $player = $event->getPlayer();
-        if(!$player instanceof Player) return;
-        if($player->hasPermission("Pandaz.bypass.toxic")){
-        }else{
-            foreach($this->toxicwords as $toxicwords){
-                if(strpos($msg, $toxicwords) !== false){
-                    $player->kick("§cDon't be toxic\n§fVia Anti-Toxic", false);
-                    $event->setCancelled();
-                    return;
+        if($player instanceof Player){
+            if($player->hasPermission("Pandaz.bypass.toxic")){
+                return;
+            }else{
+                foreach($this->toxicwords as $toxicwords){
+                    if(strpos($msg, $toxicwords) !== false){
+                        $event->setCancelled();
+                        $player->kick("§cDon't be toxic\n§fVia Anti-Toxic", false);
+                        return;
+                    }
                 }
             }
         }

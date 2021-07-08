@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\duels\groups;
@@ -81,11 +98,17 @@ class BotDuelGroup{
 		$this->arena=$this->plugin->getArenaHandler()->getDuelArena($arena);
 	}
 	
-	public function getDifficulty():string{ return $this->difficulty; }
+	public function getDifficulty():string{
+		return $this->difficulty;
+	}
 	
-	public function isEasy():bool{ return ucfirst($this->difficulty)=="Easy"; }
+	public function isEasy():bool{
+		return ucfirst($this->difficulty)=="Easy";
+	}
 	
-	public function getArena(){ return $this->arena; }
+	public function getArena(){
+		return $this->arena;
+	}
 	
 	public function isPlayer($player):bool{
 		$result=false;
@@ -94,32 +117,41 @@ class BotDuelGroup{
 		$result=$name===$this->playerName;
 		return $result;
 	}
+
 	public function isBot($player):bool{
 		$result=false;
 		$result=$player===$this->botName;
 		return $result;
 	}
+
 	public function getPlayer(){
 		return Utils::getPlayer($this->playerName);
 	}
+
 	public function getBot(){
 		return $this->bot;
 	}
+
 	public function getPlayerName():string{
 		return $this->playerName;
 	}
+
 	public function getBotName():string{
 		return $this->botName;
 	}
+
 	public function getArenaName():string{
 		return $this->arenaName;
 	}
+
 	public function isDuelRunning():bool{
 		return $this->started===true and $this->ended===false;
 	}
+
 	public function isLoadingDuel():bool{
 		return $this->started===false and $this->ended===false;
 	}
+
 	public function didDuelEnd():bool{
 		return $this->started===true and $this->ended===true;
 	}
@@ -129,13 +161,8 @@ class BotDuelGroup{
 			$this->endDuel();
 			return;
 		}
-		//if(!$this->isBotOnline() or $this->getBot()===null or $this->getBot()->getLevel()===null){
 		if(!$this->isBotOnline() or $this->getBot()===null){
 			$this->setResults($this->playerName, $this->botName);
-			//return;
-		/*}elseif(!$this->arePlayersOnline()){
-			$this->endDuelPrematurely();
-			return;*/
 		}
 		$arena=$this->getArena();
 		$arenaname=$this->getArenaName();
@@ -159,13 +186,13 @@ class BotDuelGroup{
 					if(6 > $second){
 						$this->broadcastSound(0);
 						$this->initializePlayers(0);
-						$this->broadcastMessage("§fThe match will start in §b".$second."§f seconds...");
+						$this->broadcastMessage("§eThe match will start in §b".$second."§e seconds...");
 						$this->broadcastTitle("§b".$second);
 					}
 				}else{
 					$this->broadcastSound(1);
 					$this->initializePlayers(1);
-					$this->broadcastMessage("§fThe match has started!");
+					$this->broadcastMessage("§eThe match has started!");
 					$this->broadcastTitle("§l§bDUEL!", "§r§fThe match has started", 5, 5, 5);
 				}
 			}
@@ -204,6 +231,7 @@ class BotDuelGroup{
 		}
 		$this->currentTick++;
 	}
+
 	public function setResults($winner=self::NONE, $loser=self::NONE){
 		if($this->didDuelEnd()) return;
 		$this->winnerName=$winner;
@@ -214,13 +242,13 @@ class BotDuelGroup{
 			if($this->winnerName==$this->playerName){
 				Server::getInstance()->broadcastMessage("§b".Utils::getPlayerDisplayName($this->winnerName)." won a match against the ".ucfirst($this->difficulty)." Bot!");
 			}else{
-				//Server::getInstance()->broadcastMessage("§b".Utils::getPlayerDisplayName($this->winnerName)." lost a match to the ".ucfirst($this->difficulty)." Bot!");
 			}
 			if($player instanceof CorePlayer) $this->initializeWin($player);
 			if($Lplayer instanceof CorePlayer) $this->initializeLoss($Lplayer);
 		}
 		$this->setDuelEnded();
 	}
+
 	private function endDuel(bool $endPrematurely=false, bool $disablePlugin=false):void{
 		$this->clearSpectators();
 		$this->setDuelEnded();
@@ -233,6 +261,7 @@ class BotDuelGroup{
 		$this->plugin->getDuelHandler()->endBotDuel($this);
 		$this->plugin->getArenaHandler()->setArenaOpen($this->arenaName);
 	}
+
 	public function endDuelPrematurely(bool $disablePlugin=false):void{
 		$premature=true;
 		if($disablePlugin===true){
@@ -245,12 +274,13 @@ class BotDuelGroup{
 		}
 		$this->endDuel($premature, $disablePlugin);
 	}
+
 	private function setDuelEnded(bool $result=true){
-		//if($this->didDuelEnd()) return;
 		$this->ended=$result;
 		$this->endTick=$this->endTick == -1 ? $this->currentTick : $this->endTick;
 		if($this->isBotOnline()) $this->getBot()->setDeactivated(true);
 	}
+
 	private function start(){
 		$this->started=true;
 		if($this->isPlayerOnline()){
@@ -258,6 +288,7 @@ class BotDuelGroup{
 			$player->setImmobile(false);
 		}
 	}
+
 	private function updateScoreboards():void{
 		$duration=$this->getDurationString();
 		if($this->isPlayerOnline()){
@@ -265,18 +296,21 @@ class BotDuelGroup{
 			$this->plugin->getScoreboardHandler()->updateBotDuelDuration($player, $duration);
 		}
 	}
+
 	public function broadcastMessage(string $message):void{
 		if($this->isPlayerOnline()){
 			$player=$this->getPlayer();
 			$player->sendMessage($message);
 		}
 	}
+
 	public function broadcastTitle(string $title, string $subtitle="", int $in=0, int $stay=40, int $out=0):void{
 		if($this->isPlayerOnline()){
 			$player=$this->getPlayer();
 			$player->addTitle($title, $subtitle, $in, $stay, $out);
 		}
 	}
+
 	public function broadcastSound(int $type):void{
 		switch($type){
 			case 0:
@@ -288,7 +322,6 @@ class BotDuelGroup{
 			case 1:
 			if($this->isPlayerOnline()){
 				$player=$this->getPlayer();
-				//Utils::shootSound($player);
 			}
 			break;
 			default:
@@ -296,6 +329,7 @@ class BotDuelGroup{
 			break;
 		}
 	}
+
 	public function initializePlayers(int $type):void{
 		switch($type){
 			case 0:
@@ -331,6 +365,7 @@ class BotDuelGroup{
 			break;
 		}
 	}
+
 	public function initializeWin($player):void{
 		if(Utils::isPlayer($player)){
 			if(!is_null($player)){
@@ -339,6 +374,7 @@ class BotDuelGroup{
 			}
 		}
 	}
+
 	public function initializeLoss($player):void{
 		if(Utils::isPlayer($player)){
 			if(!is_null($player)){
@@ -351,6 +387,7 @@ class BotDuelGroup{
 			}
 		}
 	}
+
 	public function clearSpectators(){
 		if(empty($this->spectators)) return;
 		foreach(Server::getInstance()->getOnlinePlayers() as $spectators){
@@ -362,12 +399,14 @@ class BotDuelGroup{
 			}
 		}
 	}
+
 	private function isPlayerBelowCenter(Player $player, float $below):bool{
 		$y=$player->getY();
 		$arena=$this->getArena();
 		$centerY=$arena->getCenterPos()->y;
 		return $y + $below <= $centerY;
     }
+
     private function isBotBelowCenter($bot, float $below):bool{
 		if(!$this->isBotOnline()) return true;
 		$y=$bot->getY();
@@ -375,6 +414,7 @@ class BotDuelGroup{
 		$centerY=$arena->getCenterPos()->y;
 		return $y + $below <= $centerY;
     }
+
     public function arePlayersOnline():bool{
 		$result=false;
 		$bt=$this->getBot();
@@ -382,6 +422,7 @@ class BotDuelGroup{
 		$result=$bt->isAlive() and $pl->isOnline();
 		return $result;
 	}
+
 	public function isPlayerOnline():bool{
 		$result=false;
 		if(Utils::isPlayer($this->playerName)){
@@ -390,11 +431,13 @@ class BotDuelGroup{
 		}
 		return $result;
 	}
+
 	public function isBotOnline():bool{
 		$result=false;
 		$bot=$this->getBot();
 		return $bot->isAlive() and $bot!==null;
 	}
+
 	public function getDuration():int{
 		$duration=$this->currentTick - $this->countdownTick;
 		if($this->didDuelEnd()){
@@ -403,6 +446,7 @@ class BotDuelGroup{
 		}
 		return $duration;
 	}
+
 	public function getDurationString():string{
 		$s="mm:ss";
 		$seconds=Utils::ticksToSeconds($this->getDuration());
@@ -428,10 +472,12 @@ class BotDuelGroup{
 		}
 		return $s;
 	}
+
 	public function isSpectator($player):bool{
 		$name=Utils::getPlayerName($player);
 		return($name !== null) and isset($this->spectators[$name]);
 	}
+
 	public function addSpectator($spectator):void{
 		$p=Utils::getPlayer($spectator);
 		if($this->plugin->getDuelHandler()->isInDuel($p)) return;
@@ -439,7 +485,6 @@ class BotDuelGroup{
 		$center=$this->getArena()->getSpawnPosition();
 		$spectator->teleport($center);
 		$name=Utils::getPlayerName($p);
-		//$this->spectators[$name]=$spectator;
 		
 		$player=$this->getPlayer();
 		$playerDS=Utils::getPlayerDisplayName($player);
@@ -455,12 +500,8 @@ class BotDuelGroup{
 			}
 		}
 		$this->spectators[Utils::getPlayerName($p)]=[];
-		/*if($this->ranked===true){
-			$this->plugin->getScoreboardHandler()->sendDuelSpectateScoreboard($p, "Ranked", $this->queue, $playerDS, $this->botName);
-		}else{
-			$this->plugin->getScoreboardHandler()->sendDuelSpectateScoreboard($p, "Unranked", $this->queue, $playerDS, $this->botName);
-		}*/
 	}
+
 	public function removeSpectator($spectator, $send=false):void{
 		if($this->isSpectator($spectator)){
 			$p=Utils::getPlayer($spectator);
@@ -484,6 +525,7 @@ class BotDuelGroup{
 			}
 		}
 	}
+
 	private function getSpectators():array{
 		$result=[];
 		$keys=array_keys($this->spectators);

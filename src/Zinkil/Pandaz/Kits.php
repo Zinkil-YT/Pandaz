@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz;
@@ -21,6 +38,7 @@ class Kits{
 	public function __construct(Core $plugin){
 		$this->plugin=$plugin;
 	}
+
 	public static function sendKit(Player $player, $kit){
 		switch($kit){
 			case "lobby":
@@ -40,40 +58,40 @@ class Kits{
 			$player->getInventory()->setSize(36);
 			$ffa=Item::get(Item::DIAMOND_SWORD, 0, 1);
 			$ffa->setCustomName("§l§bFFA");
-			$ffa->setLore(["§r§bWarp to FFA!"]);
+			$ffa->setLore(["§r§eWarp to FFA!"]);
 			$ranked=Item::get(Item::IRON_SWORD, 0, 1);
 			$ranked->setCustomName("§l§bRanked");
-			$ranked->setLore(["§r§bPlay ranked duels!"]);
+			$ranked->setLore(["§r§ePlay ranked duels!"]);
 			$unranked=Item::get(Item::GOLD_SWORD, 0, 1);
 			$unranked->setCustomName("§l§bUnranked");
-			$unranked->setLore(["§r§bPlay unranked duels!"]);
+			$unranked->setLore(["§r§ePlay unranked duels!"]);
 			$duels=Item::get(Item::IRON_SWORD, 0, 1);
 			$duels->setCustomName("§l§bDuels");
-			$duels->setLore(["§r§bPlay Duels!"]);
+			$duels->setLore(["§r§ePlay Duels!"]);
 			$botduels=Item::get(Item::GOLD_AXE, 0, 1);
 			$botduels->setCustomName("§l§bBot Duels");
-			$botduels->setLore(["§r§bPlay bot duels!"]);
+			$botduels->setLore(["§r§ePlay bot duels!"]);
 			$spectate=Item::get(Item::GOLD_AXE, 0, 1);
 			$spectate->setCustomName("§l§bSpectate");
-			$spectate->setLore(["§r§bSpectate Duels!"]);
+			$spectate->setLore(["§r§eSpectate Duels!"]);
 			$market=Item::get(421, 0, 1);
 			$market->setCustomName("§l§bMarket");
-			$market->setLore(["§r§bView the market!"]);
+			$market->setLore(["§r§eView the market!"]);
 			$party=Item::get(288, 0, 1);
 			$party->setCustomName("§l§bParty");
-			$party->setLore(["§r§bPlay With Your Friends!"]);
+			$party->setLore(["§r§ePlay With Your Friends!"]);
 			$daily=Item::get(345, 0, 1);
 			$daily->setCustomName("§l§bDaily Rankings");
-			$daily->setLore(["§r§bView Daily Rankings!"]);
+			$daily->setLore(["§r§eView Daily Rankings!"]);
 			$cosmetics=Item::get(399, 0, 1);
 			$cosmetics->setCustomName("§l§bCosmetics");
-			$cosmetics->setLore(["§r§bCustomize Your Gameplay!"]);
+			$cosmetics->setLore(["§r§eCustomize Your Gameplay!"]);
 			$profile=Item::get(130, 0, 1);
 			$profile->setCustomName("§l§bPlayer Portal");
-			$profile->setLore(["§r§bView Your Profile!"]);
+			$profile->setLore(["§r§eView Your Profile!"]);
 			$events=Item::get(340, 0, 1);
 			$events->setCustomName("§l§bEvents");
-			$events->setLore(["§r§bEnter an event!"]);
+			$events->setLore(["§r§eEnter an event!"]);
 			$player->getInventory()->setItem(0, $ffa);
 			$player->getInventory()->setItem(1, $duels);
 			$player->getInventory()->setItem(2, $botduels);
@@ -410,14 +428,18 @@ class Kits{
 			$player->getInventory()->setSize(9);
 			$player->getInventory()->clearAll();
 			$player->getArmorInventory()->clearAll();
-			$teleporter=Item::get(345, 0, 1);
-			$teleporter->setCustomName("§l§bTeleport");
-			$teleporter->setLore(["§r§bTeleport to a world!"]);
 			$staffportal=Item::get(339, 0, 1);
 			$staffportal->setCustomName("§l§bStaff Portal");
 			$staffportal->setLore(["§r§bStaff portal!"]);
+			$teleporter=Item::get(345, 0, 1);
+			$teleporter->setCustomName("§l§bTeleport");
+			$teleporter->setLore(["§r§bTeleport between FFA worlds!"]);
+			$leave=Item::get(355, 0, 1);
+			$leave->setCustomName("§l§bLeave Staff Mode");
+			$leave->setLore(["§r§bLeave staff mode!"]);
 			$player->getInventory()->setItem(0, $staffportal);
-			$player->getInventory()->setItem(8, $teleporter);
+			$player->getInventory()->setItem(4, $teleporter);
+			$player->getInventory()->setItem(8, $leave);
 			break;
 			case "spectator":
 			$player->extinguish();
@@ -431,12 +453,18 @@ class Kits{
 			$player->getInventory()->setSize(9);
 			$player->getInventory()->clearAll();
 			$player->getArmorInventory()->clearAll();
+			$leave=Item::get(355, 0, 1);
+			$leave->setCustomName("§l§bLeave Duel");
+			$leave->setLore(["§r§bLeave the duel!"]);
+			$player->getInventory()->setItem(4, $leave);
+			$player->getInventory()->setHeldItemIndex(4);
 			break;
 			default:
 			return;
 			break;
 		}
 	}
+
 	public static function sendMatchKit($player, $kit){
 		switch($kit){
 			case "nodebuff":
@@ -746,6 +774,7 @@ class Kits{
 			break;
 		}
 	}
+
 	public static function preComboKit(Player $player){
 		$player->setGamemode(2);
 		$player->setAllowFlight(false);
@@ -765,6 +794,7 @@ class Kits{
 		$player->getInventory()->setItem(0, $item1);
 		$player->getInventory()->setItem(8, $item2);
 	}
+
 	public static function preNoDebuffKit(Player $player){
 		$player->setGamemode(2);
 		$player->setAllowFlight(false);
@@ -784,6 +814,7 @@ class Kits{
 		$player->getInventory()->setItem(0, $item1);
 		$player->getInventory()->setItem(8, $item2);
 	}
+
 	public static function preGappleKit(Player $player){
 		$player->setGamemode(2);
 		$player->setAllowFlight(false);
