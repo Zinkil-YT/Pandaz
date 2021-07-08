@@ -19,33 +19,42 @@ Discord Server : https://discord.gg/2zt7P5EUuN
 
 declare(strict_types=1);
 
-namespace Zinkil\Pandaz\tasks;
+namespace Zinkil\Pandaz\Commands;
 
 use pocketmine\Player;
 use pocketmine\Server;
-use pocketmine\scheduler\Task;
+use pocketmine\command\PluginCommand;
+use pocketmine\command\CommandSender;
+use Zinkil\Pandaz\forms\{SimpleForm, CustomForm, ModalForm};
 use Zinkil\Pandaz\Core;
-use Zinkil\Pandaz\CorePlayer;
 use Zinkil\Pandaz\Utils;
 
-class CombatTask extends Task{
+class InformationCommand extends PluginCommand{
+	
+	private $plugin;
 	
 	public function __construct(Core $plugin){
+		parent::__construct("information", $plugin);
 		$this->plugin=$plugin;
+		$this->setDescription("§bGet information about server");
+		$this->setAliases(["info","about","server"]);
 	}
 
-	public function onRun(int $currentTick):void{
-		foreach($this->plugin->taggedPlayer as $name => $time) {
-			$time--;
-			$player=$this->plugin->getServer()->getPlayerExact($name);
-			if($player instanceof Player){
-			    $player->setXpLevel($time);
+	public function execute(CommandSender $player, string $commandLabel, array $args){
+		$this->informationForm($player);
+	}
+
+	public function informationForm(Player $player):void{
+		$form=new SimpleForm(function(Player $player, $data=null):void{
+			switch($data){
+				case "exit":
+				$player->sendMessage("§dHave a nice day.");
+				break;
 			}
-			if($time<=0){
-				$player->setTagged(false);
-				return;
-			}
-			$this->plugin->taggedPlayer[$name]--;
-		}
+		});
+		$form->setTitle("§l§eInformation");
+		$form->setContent("");
+		$form->addButton("Exit", -1, "", "exit");
+		$player->sendForm($form);
 	}
 }

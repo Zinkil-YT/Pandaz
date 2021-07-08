@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\Commands;
@@ -20,6 +37,7 @@ class ResetStatsCommand extends PluginCommand{
 		$this->setDescription("§bReset a player stats");
 		$this->setPermission("Pandaz.command.resetstats");
 	}
+
 	public function execute(CommandSender $player, string $commandLabel, array $args){
 		if(!$player->hasPermission("Pandaz.command.resetstats")){
 			$player->sendMessage("§cYou cannot execute this command.");

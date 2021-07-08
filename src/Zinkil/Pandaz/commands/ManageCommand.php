@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\Commands;
@@ -20,6 +37,7 @@ class ManageCommand extends PluginCommand{
 		$this->setDescription("§bChange a player stats");
 		$this->setPermission("Pandaz.command.manage");
 	}
+
 	public function execute(CommandSender $player, string $commandLabel, array $args){
 		if(!$player->hasPermission("Pandaz.command.manage")){
 			$player->sendMessage("§cYou cannot execute this command.");
@@ -30,7 +48,7 @@ class ManageCommand extends PluginCommand{
 			return;
 		}
 		if($this->plugin->getServer()->getPlayer($args[0])===null){
-			$player->sendMessage("§CorePlayer not found.");
+			$player->sendMessage("§cPlayer not found.");
 			return;
 		}
 		if(!isset($args[1])){

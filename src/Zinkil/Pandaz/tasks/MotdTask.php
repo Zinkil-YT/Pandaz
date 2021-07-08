@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\tasks;
@@ -13,17 +30,16 @@ class MotdTask extends Task{
 		$this->plugin=$plugin;
 		$this->line=-1;
 	}
+
 	public function onRun(int $tick):void{
 		$motd=[
-		"§l§bPANDAZ » §3On Top",
-		"§l§eNEW » §aBuildFFA",
-		"§l§cEU » §fPractice"
+		"§l§bPANDAZ » §r§3Season 1",
+		"§l§dNEW » §r§eAnti-Toolbox",
+		"§l§cEU » §r§fPractice"
 		];
 		$this->line++;
 		$msg=$motd[$this->line];
 		$this->plugin->getServer()->getNetwork()->setName($msg);
-		if($this->line===count($motd) - 1){
-			$this->line = -1;
-		}
+		if($this->line===count($motd) - 1) $this->line = -1;
 	}
 }

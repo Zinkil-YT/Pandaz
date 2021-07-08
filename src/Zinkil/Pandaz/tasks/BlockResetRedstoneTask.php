@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\tasks;
@@ -43,20 +60,17 @@ use pocketmine\block\Block;
 use pocketmine\block\Air;
 use Zinkil\Pandaz\Core;
 
-class BlockResetRedstoneTask extends Task
-{
+class BlockResetRedstoneTask extends Task{
+
     public $x;
     public $y;
     public $z;
 
-
-    public function __construct($block, $x, $y, $z)
-    {
+    public function __construct($block, $x, $y, $z){
         $this->x = $x;
         $this->y = $y;
         $this->z = $z;
     }
-
 
     public function onRun(int $tick){
         $level = Server::getInstance()->getLevelByName("buildffa");

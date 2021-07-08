@@ -25,24 +25,26 @@ use pocketmine\Player;
 use pocketmine\command\PluginCommand;
 use pocketmine\command\CommandSender;
 use Zinkil\Pandaz\Core;
+use Zinkil\Pandaz\CorePlayer;
+use Zinkil\Pandaz\Utils;
+use Zinkil\Pandaz\StaffUtils;
 
-class WhoCommand extends PluginCommand{
+class SudoCommand extends PluginCommand{
 	
 	private $plugin;
-	
+
 	public function __construct(Core $plugin){
-		parent::__construct("who", $plugin);
+		parent::__construct("sudo", $plugin);
 		$this->plugin=$plugin;
-		$this->setDescription("§bGet all information about a player");
-		$this->setPermission("Pandaz.command.who");
-		$this->setAliases(["pinfo","playerinfo"]);
+		$this->setDescription("§bExcute commands or send messages as another player");
+		$this->setPermission("Pandaz.command.sudo");
 	}
 
 	public function execute(CommandSender $player, string $commandLabel, array $args){
-		if(!$player->hasPermission("Pandaz.command.who")){
+		if(!$player->isOp() or !$player->hasPermission("Pandaz.command.sudo")){
 			$player->sendMessage("§cYou cannot execute this command.");
 			return;
-		}
+        }
 		if(!isset($args[0])){
 			$player->sendMessage("§cYou must provide a player.");
 			return;
@@ -51,23 +53,30 @@ class WhoCommand extends PluginCommand{
 			$player->sendMessage("§cPlayer not found.");
 			return;
 		}
-		$target=$this->plugin->getServer()->getPlayer($args[0]);
-		$rank=$target->getRank();
-		if($target->isOp()){
-			$op="True";
-		}else{
-			$op="False";
+	    if(count($args) < 2){
+			$player->sendMessage("§cYou must provide a command or a message.");
+			return;
 		}
-		$displayname=$target->getDisplayName();
-		$controls=$this->plugin->getPlayerControls($target);
-		$device=$this->plugin->getPlayerDevice($target);
-		$os=$this->plugin->getPlayerOs($target);
-		$ip=$target->getAddress();
-		$cid=$target->getClientId();
-		$ping=$target->getPing();
-		$level=$target->getLevel()->getName();
-		$xuid=$target->getXuid();
-		$uniqueid=$target->getUniqueId();
-		$player->sendMessage("\n\n§bDisplay Name:§6 ".$displayname."\n§bIP:§6 ".$ip."\n§bClientID:§6 ".$cid."\n§bRank:§6 ".$rank."\n§bOP:§6 ".$op."\n§bDevice:§6 ".$device."\n§bOS:§6 ".$os."\n§bControls:§6 ".$controls."\n§bPing:§6 ".$ping."\n§bWorld:§6 ".$level."\n§bXuid:§6 ".$xuid."\n§bUnique ID:§6 ".$uniqueid."\n\n");
+		$target=$this->plugin->getServer()->getPlayer(array_shift($args));
+		if($target->isOp() or $target->hasPermission("Pandaz.command.sudo")){
+			$player->sendMessage("§cYou cannot sudo this player.");
+			return;
+	    }
+		$target=$this->plugin->getServer()->getPlayer(array_shift($args));
+		$pn=$player->getName();
+		$tn=$target->getName();
+		$cmd=implode(" ", $args); //or the message
+        if($target instanceof Player){
+            $target->chat(trim(implode(" ", $args)));
+            return;
+        }
+		$message=$this->plugin->getStaffUtils()->sendStaffNoti("sudo");
+		$message=str_replace("{name}", $player->getName(), $message);
+		$message=str_replace("{target}", $target->getName(), $message);
+		foreach($this->plugin->getServer()->getOnlinePlayers() as $online){
+			if($online->hasPermission("Pandaz.staff.notifications")){
+				$online->sendMessage($message);
+			}
+		}
 	}
 }

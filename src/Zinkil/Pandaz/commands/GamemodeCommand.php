@@ -1,5 +1,24 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
+declare(strict_types=1);
+
 namespace Zinkil\Pandaz\commands;
 
 use pocketmine\command\CommandSender;
@@ -13,11 +32,13 @@ class GamemodeCommand extends PluginCommand{
 	private $plugin;
 	
 	public function __construct(Core $plugin){
-		parent::__construct("gm", $plugin);
+		parent::__construct("gamemode", $plugin);
 		$this->plugin=$plugin;
 		$this->setDescription("§bChange the gamemode for a player");
 		$this->setPermission("Pandaz.command.gm");
+		$this->setAliases(["gm"]);
 	}
+
 	public function execute(CommandSender $player, string $commandLabel, array $args){
 		if(!$player->hasPermission("Pandaz.command.gm")){
 			$player->sendMessage("§cYou cannot execute this command.");
@@ -120,13 +141,12 @@ class GamemodeCommand extends PluginCommand{
 				$player->sendMessage("§cProvide a valid argument: 0:1:2:3");
 			}
 		}else{
-		//if(isset($args[0]) && isset($args[1])){
 			if(!$player->hasPermission("Pandaz.command.gmother")){
 				$player->sendMessage("§cYou cannot update another players gamemode.");
 				return;
 			}
 			if($this->plugin->getServer()->getPlayer($args[1])===null){
-				$player->sendMessage("§CorePlayer not found.");
+				$player->sendMessage("§cPlayer not found.");
 				return;
 			}
 			switch($args[0]){

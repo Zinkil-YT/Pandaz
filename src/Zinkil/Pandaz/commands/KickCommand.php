@@ -25,23 +25,24 @@ use pocketmine\Player;
 use pocketmine\command\PluginCommand;
 use pocketmine\command\CommandSender;
 use Zinkil\Pandaz\Core;
+use Zinkil\Pandaz\CorePlayer;
 
-class SetClanTagCommand extends PluginCommand{
+class KickCommand extends PluginCommand{
 	
 	private $plugin;
 	
 	public function __construct(Core $plugin){
-		parent::__construct("setclantag", $plugin);
+		parent::__construct("kick", $plugin);
 		$this->plugin=$plugin;
-		$this->setDescription("§bSet a clan tag beside a player name");
-		$this->setPermission("Pandaz.command.setclantag");
+		$this->setDescription("§bKick a player from the server");
+		$this->setPermission("Pandaz.command.kick");
 	}
 
 	public function execute(CommandSender $player, string $commandLabel, array $args){
-		if(!$player->hasPermission("Pandaz.command.announce")){
+		if(!$player->isOp() or !$player->hasPermission("Pandaz.command.kick")){
 			$player->sendMessage("§cYou cannot execute this command.");
 			return;
-		}
+        }
 		if(!isset($args[0])){
 			$player->sendMessage("§cYou must provide a player.");
 			return;
@@ -50,23 +51,34 @@ class SetClanTagCommand extends PluginCommand{
 			$player->sendMessage("§cPlayer not found.");
 			return;
 		}
-		if(count($args) < 2){
-			$player->sendMessage("§cYou must provide a clan tag.");
+		$target=$this->plugin->getServer()->getPlayer(array_shift($args));
+		if($target->getName()==$player->getName()){
+			$player->sendMessage("§cYou cannot kick yourself.");
 			return;
 		}
+		if(count($args) < 2){
+			$player->sendMessage("§cYou must provide a reason.");
+			return;
+		}
+		if($target->isOp() or $target->hasPermission("Pandaz.command.kick")){
+			$player->sendMessage("§cYou cannot kick this player.");
+			return;
+	    }
 		$target=$this->plugin->getServer()->getPlayer(array_shift($args));
-		$message=implode(" ", $args);
-		$sn=$player->getDisplayName();
-		$tn=$target->getDisplayName();
-		if($target instanceof Player){
-			if($message=="off"){
-				$player->sendMessage("§aYou cleared ".$tn."'s clan tag.");
-				$target->sendMessage("§aYour clan tag was cleared.");
-				$target->setClanTag("");
-			}else{
-				$player->sendMessage("§aYou set ".$tn."'s clan tag to ".$message.".");
-				$target->sendMessage("§aYour clan tag was set to ".$message.".");
-				$target->setClanTag($message." ");
+		$pn=$player->getName();
+		$tn=$target->getName();
+		$reason=implode(" ", $args);
+		if(!$target->isOp()){
+			$target->kick("§r§cYou were kicked by §r§e".$player->getName()."\n§r§cReason: §r§e".$reason, false);
+		    $this->plugin->getServer()->broadcastMessage("§r§c".$target->getName()." §r§ewas kicked by §r§a".$player->getName()."\n§r§cReason: §r§e".$reason);
+	    }
+		$message=$this->plugin->getStaffUtils()->sendStaffNoti("kick");
+		$message=str_replace("{name}", $player->getName(), $message);
+		$message=str_replace("{target}", $target->getName(), $message);
+		$message=str_replace("{reason}", $args[1], $message);
+		foreach($this->plugin->getServer()->getOnlinePlayers() as $online){
+			if($online->hasPermission("Pandaz.staff.notifications")){
+				$online->sendMessage($message);
 			}
 		}
 	}

@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\commands;
@@ -19,10 +36,13 @@ class DuelCommand extends PluginCommand{
 		parent::__construct("duel", $plugin);
 		$this->plugin=$plugin;
 	}
+
 	public function execute(CommandSender $player, string $commandLabel, array $args){
-		if($player->isTagged()){
-			$player->sendMessage("§cYou cannot use this command while in combat.");
-			return;
+		if(!$player->isOp()){
+			if($player->isTagged()){
+				$player->sendMessage("§cYou cannot use this command while in combat.");
+				return;
+			}
 		}
 		$duel=$this->plugin->getDuelHandler()->getDuelFromSpec($player);
 		if($this->plugin->getDuelHandler()->isInDuel($player) or $this->plugin->getDuelHandler()->isInBotDuel($player) or !is_null($duel)){
@@ -34,7 +54,7 @@ class DuelCommand extends PluginCommand{
 			return;
 		}
 		if($this->plugin->getServer()->getPlayer($args[0])===null){
-			$player->sendMessage("§CorePlayer not found.");
+			$player->sendMessage("§cPlayer not found.");
 			return;
 		}
 		$target=$this->plugin->getServer()->getPlayer($args[0]);
@@ -54,6 +74,7 @@ class DuelCommand extends PluginCommand{
 		$target=$this->plugin->getServer()->getPlayer($args[0]);
 		$mode=$args[1];
 		switch($mode){
+			case "Nodebuff":
 			case "nodebuff":
 			$mode="NoDebuff";
 			$player->sendMessage("§aYou sent a ".$mode." duel request to ".Utils::getPlayerDisplayName($target).".");

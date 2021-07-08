@@ -26,30 +26,21 @@ use pocketmine\command\PluginCommand;
 use pocketmine\command\CommandSender;
 use Zinkil\Pandaz\Core;
 use Zinkil\Pandaz\CorePlayer;
-use Zinkil\Pandaz\Utils;
+use Zinkil\Pandaz\Kits;
 
-class StaffCommand extends PluginCommand{
+class RekitCommand extends PluginCommand{
 	
 	private $plugin;
 	
 	public function __construct(Core $plugin){
-		parent::__construct("staff", $plugin);
+		parent::__construct("rekit", $plugin);
 		$this->plugin=$plugin;
-		$this->setDescription("§bEnable or disable staff mode");
-		$this->setPermission("Pandaz.command.staff");
-		$this->setAliases(["staffmode"]);
+		$this->setDescription("§bRekit command");
+		$this->setAliases(["kit"]);
 	}
 
 	public function execute(CommandSender $player, string $commandLabel, array $args){
 		if(!$player instanceof Player){
-			return;
-		}
-		if(!$player->hasPermission("Pandaz.command.staff")){
-			$player->sendMessage("§cYou cannot execute this command.");
-			return;
-		}
-		if($this->plugin->getDuelHandler()->isInDuel($player) or $this->plugin->getDuelHandler()->isInBotDuel($player)){
-			$player->sendMessage("§cYou cannot use this command while in a duel.");
 			return;
 		}
 		if(!$player->isOp()){
@@ -62,10 +53,27 @@ class StaffCommand extends PluginCommand{
 			$player->sendMessage("§cYou cannot use this command while in a party.");
 			return;
 		}
-		if(!$player->isStaffMode()){
-			$this->plugin->getStaffUtils()->staffMode($player, true);
-		}else{
-			$this->plugin->getStaffUtils()->staffMode($player, false);
+		$duel=$this->plugin->getDuelHandler()->getDuelFromSpec($player);
+		if(!is_null($duel)){
+			$player->sendMessage("§cYou cannot use this command while in spectating a duel.");
+			return;
 		}
+		if($this->plugin->getDuelHandler()->isInDuel($player) or $this->plugin->getDuelHandler()->isInBotDuel($player)){
+			$player->sendMessage("§cYou cannot use this command while in a duel.");
+			return;
+		}
+		if($player->getPlayerLocation()===0) Kits::sendKit($player, "lobby");
+		if($player->getPlayerLocation()===1) Kits::sendKit($player, "nodebuff");
+		if($player->getPlayerLocation()===2) Kits::sendKit($player, "gapple");
+		if($player->getPlayerLocation()===3) Kits::sendKit($player, "opgapple");
+		if($player->getPlayerLocation()===4) Kits::sendKit($player, "combo");
+		if($player->getPlayerLocation()===5) Kits::sendKit($player, "fist");
+		if($player->getPlayerLocation()===6) return;
+		if($player->getPlayerLocation()===7) Kits::sendKit($player, "nodebuff");
+		if($player->getPlayerLocation()===8) Kits::sendKit($player, "nodebuffjava");
+		if($player->getPlayerLocation()===9) Kits::sendKit($player, "resistance");
+		if($player->getPlayerLocation()===11) Kits::sendKit($player, "sumoffa");
+		if($player->getPlayerLocation()===12) Kits::sendKit($player, "knockbackffa");
+		if($player->getPlayerLocation()===13) Kits::sendKit($player, "buildffa");
 	}
 }

@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\commands;
@@ -22,6 +39,7 @@ class FreezeCommand extends PluginCommand{
 		$this->setPermission("Pandaz.command.freeze");
 		$this->setAliases(["ss"]);
 	}
+
 	public function execute(CommandSender $player, string $commandLabel, array $args){
 		if(!$player->hasPermission("Pandaz.command.freeze")){
 			$player->sendMessage("§cYou cannot execute this command.");
@@ -32,7 +50,7 @@ class FreezeCommand extends PluginCommand{
 			return;
 		}
 		if($this->plugin->getServer()->getPlayer($args[0])===null){
-			$player->sendMessage("§CorePlayer not found.");
+			$player->sendMessage("§cPlayer not found.");
 			return;
 		}
 		$target=$this->plugin->getServer()->getPlayer($args[0]);
@@ -42,7 +60,7 @@ class FreezeCommand extends PluginCommand{
 		}
 		$target=$this->plugin->getServer()->getPlayer($args[0]);
 		if($target->isOp() or $target->hasPermission("Pandaz.command.freeze")){
-			$player->sendMessage("§cThis player cannot cannot be frozen.");
+			$player->sendMessage("§cThis player cannot be frozen.");
 			return;
 		}
 		$target=$this->plugin->getServer()->getPlayer($args[0]);
@@ -51,7 +69,6 @@ class FreezeCommand extends PluginCommand{
 			$target->setImmobile(false);
 			$target->sendMessage("§aYou have been unfrozen.");
 			$player->sendMessage("§aYou unfroze ".$target->getName().".");
-			//$this->plugin->getServer()->broadcastMessage("§c".$target->getName()." was unfrozen by ".$player->getName().".");
 			$message=$this->plugin->getStaffUtils()->sendStaffNoti("unfreeze");
 			$message=str_replace("{name}", $player->getName(), $message);
 			$message=str_replace("{target}", $target->getName(), $message);
@@ -64,9 +81,8 @@ class FreezeCommand extends PluginCommand{
 		}else{
 			$target->setFrozen(true);
 			$target->setImmobile(true);
-			$target->sendMessage("§7---------------\n§cOh No! You Have Been §bFrozen!\n\n§cBut Dont Worry!\nIf You Listen And Comply With The\nStaff Team, You Could Be Un-Frozen Quickly!\n§7---------------");
+			$target->sendMessage("§bYou have been frozen.");
 			$player->sendMessage("§aYou froze ".$target->getName().".");
-			//$this->plugin->getServer()->broadcastMessage("§c".$target->getName()." was frozen by ".$player->getName().".");
 			$message=$this->plugin->getStaffUtils()->sendStaffNoti("freeze");
 			$message=str_replace("{name}", $player->getName(), $message);
 			$message=str_replace("{target}", $target->getName(), $message);

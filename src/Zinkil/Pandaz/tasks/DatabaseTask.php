@@ -1,5 +1,22 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\tasks;
@@ -13,8 +30,9 @@ class DatabaseTask extends Task{
 	public function __construct(Core $plugin){
 		$this->plugin=$plugin;
 	}
+
 	public function onRun(int $tick):void{
-		if(Utils::getTimeByHour()=="19:00"){//6pm my time/8pm EST
+		if(Utils::getTimeByHour()=="19:00"){
 			$queryA=Core::getInstance()->main->query("SELECT * FROM temporary ORDER BY dailykills DESC LIMIT 10;");
 			$iA=0;
 			while($resultArr=$queryA->fetchArray(SQLITE3_ASSOC)){

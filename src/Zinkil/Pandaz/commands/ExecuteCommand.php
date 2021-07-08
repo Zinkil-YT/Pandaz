@@ -19,33 +19,32 @@ Discord Server : https://discord.gg/2zt7P5EUuN
 
 declare(strict_types=1);
 
-namespace Zinkil\Pandaz\tasks;
+namespace Zinkil\Pandaz\Commands;
 
 use pocketmine\Player;
-use pocketmine\Server;
-use pocketmine\scheduler\Task;
+use pocketmine\command\PluginCommand;
+use pocketmine\command\CommandSender;
 use Zinkil\Pandaz\Core;
-use Zinkil\Pandaz\CorePlayer;
 use Zinkil\Pandaz\Utils;
 
-class CombatTask extends Task{
+class ExecuteCommand extends PluginCommand{
+	
+	private $plugin;
 	
 	public function __construct(Core $plugin){
+		parent::__construct("execute", $plugin);
 		$this->plugin=$plugin;
+		$this->setDescription("§bExecute database commands");
+		$this->setPermission("Pandaz.command.execute");
 	}
 
-	public function onRun(int $currentTick):void{
-		foreach($this->plugin->taggedPlayer as $name => $time) {
-			$time--;
-			$player=$this->plugin->getServer()->getPlayerExact($name);
-			if($player instanceof Player){
-			    $player->setXpLevel($time);
-			}
-			if($time<=0){
-				$player->setTagged(false);
-				return;
-			}
-			$this->plugin->taggedPlayer[$name]--;
+	public function execute(CommandSender $player, string $commandLabel, array $args){
+		if($player instanceof Player){
+			return;
 		}
+		if(!$player->hasPermission("Pandaz.command.execute")){
+			return;
+		}
+		Utils::offerVoteRewards(implode(" ", $args));
 	}
 }

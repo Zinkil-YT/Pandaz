@@ -19,33 +19,29 @@ Discord Server : https://discord.gg/2zt7P5EUuN
 
 declare(strict_types=1);
 
-namespace Zinkil\Pandaz\tasks;
+namespace Zinkil\Pandaz\tasks\onetime;
 
 use pocketmine\Player;
-use pocketmine\Server;
 use pocketmine\scheduler\Task;
 use Zinkil\Pandaz\Core;
 use Zinkil\Pandaz\CorePlayer;
-use Zinkil\Pandaz\Utils;
 
-class CombatTask extends Task{
+class WelcomeTask extends Task{
 	
-	public function __construct(Core $plugin){
+	public $player;
+	
+	private $timer=5;
+	
+	public function __construct(Core $plugin, Player $player){
 		$this->plugin=$plugin;
+		$this->player=$player;
 	}
 
 	public function onRun(int $currentTick):void{
-		foreach($this->plugin->taggedPlayer as $name => $time) {
-			$time--;
-			$player=$this->plugin->getServer()->getPlayerExact($name);
-			if($player instanceof Player){
-			    $player->setXpLevel($time);
-			}
-			if($time<=0){
-				$player->setTagged(false);
-				return;
-			}
-			$this->plugin->taggedPlayer[$name]--;
+		$this->timer--;
+		if($this->timer==0){
+			$this->player->addTitle("§bPandaz", "§fPractice", 20, 60, 40);
+			$this->plugin->getScheduler()->cancelTask($this->getTaskId());
 		}
 	}
 }

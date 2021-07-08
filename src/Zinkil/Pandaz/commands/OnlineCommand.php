@@ -1,5 +1,24 @@
 <?php
 
+/**
+
+███████╗██╗███╗  ██╗██╗  ██╗██╗██╗
+╚════██║██║████╗ ██║██║ ██╔ ██║██║
+  ███╔═╝██║██╔██╗██║█████═╝ ██║██║
+██╔══╝  ██║██║╚████║██╔═██╗ ██║██║
+███████╗██║██║ ╚███║██║ ╚██╗██║███████╗
+╚══════╝╚═╝╚═╝  ╚══╝╚═╝  ╚═╝╚═╝╚══════╝
+
+CopyRight : Pandaz Practice :)
+Github : https://github.com/Zinkil-YT
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+Github : https://github.com/Zinkil-YT
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
 declare(strict_types=1);
 
 namespace Zinkil\Pandaz\Commands;
@@ -19,6 +38,7 @@ class OnlineCommand extends PluginCommand{
 		$this->setDescription("§bGet total players on the server");
 		$this->setPermission("Pandaz.command.online");
 	}
+
 	public function execute(CommandSender $player, string $commandLabel, array $args){
 		if(!$player->hasPermission("Pandaz.command.online")){
 			$player->sendMessage("§cYou cannot execute this command.");

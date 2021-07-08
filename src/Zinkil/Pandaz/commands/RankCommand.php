@@ -1,5 +1,24 @@
 <?php
 
+/**
+
+███████╗ ██╗ ███╗  ██╗ ██╗  ██╗ ██╗ ██╗
+╚════██║ ██║ ████╗ ██║ ██║ ██╔╝ ██║ ██║
+  ███╔═╝ ██║ ██╔██╗██║ █████═╝  ██║ ██║
+██╔══╝   ██║ ██║╚████║ ██╔═██╗  ██║ ██║
+███████╗ ██║ ██║ ╚███║ ██║ ╚██╗ ██║ ███████╗
+╚══════╝ ╚═╝ ╚═╝  ╚══╝ ╚═╝  ╚═╝ ╚═╝ ╚══════╝
+
+CopyRight : Zinkil-YT :)
+Github : https://github.com/Zinkil-YT
+Youtube : https://www.youtube.com/channel/UCW1PI028SEe2wi65w3FYCzg
+Discord Account : Zinkil#2006
+Discord Server : https://discord.gg/2zt7P5EUuN
+
+ */
+
+declare(strict_types=1);
+
 namespace Zinkil\Pandaz\commands;
 
 use pocketmine\command\CommandSender;
@@ -21,6 +40,7 @@ class RankCommand extends PluginCommand{
 		$this->setDescription("§bGive a player a rank");
 		$this->setPermission("Pandaz.command.rank");
 	}
+
 	public function execute(CommandSender $player, string $commandLabel, array $args){
 		if(!$player->hasPermission("Pandaz.command.rank")){
 			$player->sendMessage("§cYou cannot execute this command.");
@@ -31,6 +51,7 @@ class RankCommand extends PluginCommand{
 			}
 		}
 	}
+
 	public function rankMainForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -43,11 +64,12 @@ class RankCommand extends PluginCommand{
 			}
 		});
 		$rank=$this->plugin->getDatabaseHandler()->getRank($player->getName());
-		$form->setTitle("§l§cRank");
+		$form->setTitle("§l§eRank");
 		$form->addButton("Available Ranks", -1, "", "list");
 		$form->addButton("Set a Rank", -1, "", "set");
 		$player->sendForm($form);
 	}
+
 	public function rankListForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -57,6 +79,10 @@ class RankCommand extends PluginCommand{
 				break;
 				case "voter":
 				$rank="Voter";
+				$this->rankInfoForm($player, $rank);
+				break;
+				case "vip":
+				$rank="VIP";
 				$this->rankInfoForm($player, $rank);
 				break;
 				case "elite":
@@ -116,9 +142,9 @@ class RankCommand extends PluginCommand{
 				break;
 			}
 		});
-		$form->setTitle("§l§cAvailable Ranks");
-		//$form->addButton("Player\n(".$this->plugin->getDatabaseHandler()->countWithRank("Player")." total)", -1, "", "player");
+		$form->setTitle("§l§eAvailable Ranks");
 		$form->addButton("Voter\n(".$this->plugin->getDatabaseHandler()->countWithRank("Voter")." total)", -1, "", "voter");
+		$form->addButton("VIP\n(".$this->plugin->getDatabaseHandler()->countWithRank("VIP")." total)", -1, "", "vip");
 		$form->addButton("Elite\n(".$this->plugin->getDatabaseHandler()->countWithRank("Elite")." total)", -1, "", "elite");
 		$form->addButton("Premium\n(".$this->plugin->getDatabaseHandler()->countWithRank("Premium")." total)", -1, "", "premium");
 		$form->addButton("Booster\n(".$this->plugin->getDatabaseHandler()->countWithRank("Booster")." total)", -1, "", "booster");
@@ -135,6 +161,7 @@ class RankCommand extends PluginCommand{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function playerListForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			if($data===null){
@@ -163,13 +190,14 @@ class RankCommand extends PluginCommand{
 				break;
 			}
 		});
-		$form->setTitle("§l§cSelect a Player");
+		$form->setTitle("§l§eSelect a Player");
 		foreach($this->plugin->getServer()->getOnlinePlayers() as $players){
 			$form->addButton($players->getName(), -1, "", $players->getName());
 		}
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function rankForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -184,12 +212,13 @@ class RankCommand extends PluginCommand{
 				break;
 			}
 		});
-		$form->setTitle("§l§cSelect a Rank Variation");
+		$form->setTitle("§l§eSelect a Rank Variation");
 		$form->addButton("Permanent", -1, "", "perm");
 		$form->addButton("Temporary", -1, "", "temp");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function rankSetPermForm(Player $player):void{
 		$form=new CustomForm(function(Player $player, array $data=null):void{
 			switch($data){
@@ -246,6 +275,29 @@ class RankCommand extends PluginCommand{
 				}
 				break;
 				case 2:
+					$target=$this->targetPlayer[$player->getName()];
+					$targetpl=$this->plugin->getServer()->getPlayerExact($target);
+					$rank=$this->plugin->getDatabaseHandler()->getRank($target);
+					$newrank="VIP";
+					if($rank==$newrank){
+						$player->sendMessage("§cThis player has already been assigned ".$newrank.".");
+					}else{
+						$this->plugin->getDatabaseHandler()->setRank($target, $newrank);
+						if($targetpl instanceof Player) $targetpl->sendMessage("§aYour rank was updated to ".$newrank.".");
+						$player->sendMessage("§aYou updated ".$target."'s rank to ".$newrank.".");
+						$message=$this->plugin->getStaffUtils()->sendStaffNoti("rankchange");
+						$message=str_replace("{name}", $player->getName(), $message);
+						$message=str_replace("{target}", $target, $message);
+						$message=str_replace("{oldrank}", $rank, $message);
+						$message=str_replace("{newrank}", $newrank, $message);
+						foreach($this->plugin->getServer()->getOnlinePlayers() as $online){
+							if($online->hasPermission("Pandaz.staff.notifications")){
+								$online->sendMessage($message);
+							}
+						}
+					}
+					break;
+				case 3:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -268,7 +320,7 @@ class RankCommand extends PluginCommand{
 					}
 				}
 				break;
-				case 3:
+				case 4:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -291,7 +343,7 @@ class RankCommand extends PluginCommand{
 					}
 				}
 				break;
-				case 4:
+				case 5:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -314,7 +366,7 @@ class RankCommand extends PluginCommand{
 					}
 				}
 				break;
-				case 5:
+				case 6:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -337,7 +389,7 @@ class RankCommand extends PluginCommand{
 					}
 				}
 				break;
-				case 6:
+				case 7:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -360,7 +412,7 @@ class RankCommand extends PluginCommand{
 					}
 				}
 				break;
-				case 7:
+				case 8:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -383,7 +435,7 @@ class RankCommand extends PluginCommand{
 					}
 				}
 				break;
-				case 8:
+				case 9:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -406,7 +458,7 @@ class RankCommand extends PluginCommand{
 					}
 				}
 				break;
-				case 9:
+				case 10:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -429,7 +481,7 @@ class RankCommand extends PluginCommand{
 					}
 				}
 				break;
-				case 10:
+				case 11:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -452,7 +504,7 @@ class RankCommand extends PluginCommand{
 					}
 				}
 				break;
-				case 11:
+				case 12:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -475,7 +527,7 @@ class RankCommand extends PluginCommand{
 					}
 				}
 				break;
-				case 12:
+				case 13:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -498,7 +550,7 @@ class RankCommand extends PluginCommand{
 					}
 				}
 				break;
-				case 13:
+				case 14:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -521,7 +573,7 @@ class RankCommand extends PluginCommand{
 					}
 				}
 				break;
-				case 14:
+				case 15:
 				$target=$this->targetPlayer[$player->getName()];
 				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
 				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
@@ -548,9 +600,9 @@ class RankCommand extends PluginCommand{
 			unset($this->targetPlayer[$player->getName()]);
 		});
 		$target=$this->targetPlayer[$player->getName()];
-		$ranks=["Player", "Voter", "Elite", "Premium", "Booster", "YouTube", "Famous", "Builder", "Trainee", "Helper", "Mod", "HeadMod", "Admin", "Manager", "Owner"];
+		$ranks=["Player", "Voter", "VIP", "Elite", "Premium", "Booster", "YouTube", "Famous", "Builder", "Trainee", "Helper", "Mod", "HeadMod", "Admin", "Manager", "Owner"];
 		$rank=$this->plugin->getDatabaseHandler()->getRank($target);
-		$form->setTitle("§l§c".$target);
+		$form->setTitle("§l§e".$target);
 		$form->addLabel("§7This player is currently a/an ".$rank.".");//DATA[0]
 		switch($rank){
 			case "Player":
@@ -559,44 +611,47 @@ class RankCommand extends PluginCommand{
 			case "Voter":
 			$form->addDropdown("Choose a rank", $ranks, 1);//DATA[1]
 			break;
-			case "Elite":
+			case "VIP":
 			$form->addDropdown("Choose a rank", $ranks, 2);//DATA[1]
 			break;
-			case "Premium":
+			case "Elite":
 			$form->addDropdown("Choose a rank", $ranks, 3);//DATA[1]
 			break;
-			case "Booster":
+			case "Premium":
 			$form->addDropdown("Choose a rank", $ranks, 4);//DATA[1]
 			break;
-			case "YouTube":
+			case "Booster":
 			$form->addDropdown("Choose a rank", $ranks, 5);//DATA[1]
 			break;
-			case "Famous":
+			case "YouTube":
 			$form->addDropdown("Choose a rank", $ranks, 6);//DATA[1]
 			break;
-			case "Builder":
+			case "Famous":
 			$form->addDropdown("Choose a rank", $ranks, 7);//DATA[1]
 			break;
-			case "Trainee":
+			case "Builder":
 			$form->addDropdown("Choose a rank", $ranks, 8);//DATA[1]
 			break;
-			case "Helper":
+			case "Trainee":
 			$form->addDropdown("Choose a rank", $ranks, 9);//DATA[1]
 			break;
-			case "Mod":
+			case "Helper":
 			$form->addDropdown("Choose a rank", $ranks, 10);//DATA[1]
 			break;
-			case "HeadMod":
+			case "Mod":
 			$form->addDropdown("Choose a rank", $ranks, 11);//DATA[1]
 			break;
-			case "Admin":
+			case "HeadMod":
 			$form->addDropdown("Choose a rank", $ranks, 12);//DATA[1]
 			break;
-			case "Manager":
+			case "Admin":
 			$form->addDropdown("Choose a rank", $ranks, 13);//DATA[1]
 			break;
-			case "Owner":
+			case "Manager":
 			$form->addDropdown("Choose a rank", $ranks, 14);//DATA[1]
+			break;
+			case "Owner":
+			$form->addDropdown("Choose a rank", $ranks, 15);//DATA[1]
 			break;
 			default:
 			$form->addDropdown("Choose a rank", $ranks, 0);//DATA[1]
@@ -604,6 +659,7 @@ class RankCommand extends PluginCommand{
 		}
 		$player->sendForm($form);
 	}
+
 	public function rankSetTempForm(Player $player):void{
 		$form=new SimpleForm(function(Player $player, $data=null):void{
 			switch($data){
@@ -695,6 +751,106 @@ class RankCommand extends PluginCommand{
 					$player->sendMessage("§cThis player has already been assigned ".$newrank.".");
 				}else{
 					Utils::giveTemporaryRank($target, "elite30d");
+					if($targetpl instanceof Player) $targetpl->sendMessage("§aYour rank was updated to ".$newrank." for ".$days." days.");
+					$player->sendMessage("§aYou updated ".$target."'s rank to ".$newrank." for ".$days." days.");
+					$message=$this->plugin->getStaffUtils()->sendStaffNoti("temprankchange");
+					$message=str_replace("{name}", $player->getName(), $message);
+					$message=str_replace("{target}", $target, $message);
+					$message=str_replace("{oldrank}", $rank, $message);
+					$message=str_replace("{newrank}", $newrank, $message);
+					$message=str_replace("{days}", $days, $message);
+					foreach($this->plugin->getServer()->getOnlinePlayers() as $online){
+						if($online->hasPermission("Pandaz.staff.notifications")){
+							$online->sendMessage($message);
+						}
+					}
+				}
+				break;
+				case "vip3d":
+				$target=$this->targetPlayer[$player->getName()];
+				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
+				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
+				$newrank="VIP";
+				$days=3;
+				if($rank==$newrank){
+					$player->sendMessage("§cThis player has already been assigned ".$newrank.".");
+				}else{
+					Utils::giveTemporaryRank($target, "vip3d");
+					if($targetpl instanceof Player) $targetpl->sendMessage("§aYour rank was updated to ".$newrank." for ".$days." days.");
+					$player->sendMessage("§aYou updated ".$target."'s rank to ".$newrank." for ".$days." days.");
+					$message=$this->plugin->getStaffUtils()->sendStaffNoti("temprankchange");
+					$message=str_replace("{name}", $player->getName(), $message);
+					$message=str_replace("{target}", $target, $message);
+					$message=str_replace("{oldrank}", $rank, $message);
+					$message=str_replace("{newrank}", $newrank, $message);
+					$message=str_replace("{days}", $days, $message);
+					foreach($this->plugin->getServer()->getOnlinePlayers() as $online){
+						if($online->hasPermission("Pandaz.staff.notifications")){
+							$online->sendMessage($message);
+						}
+					}
+				}
+				break;
+				case "vip7d":
+				$target=$this->targetPlayer[$player->getName()];
+				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
+				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
+				$newrank="VIP";
+				$days=7;
+				if($rank==$newrank){
+					$player->sendMessage("§cThis player has already been assigned ".$newrank.".");
+				}else{
+					Utils::giveTemporaryRank($target, "vip7d");
+					if($targetpl instanceof Player) $targetpl->sendMessage("§aYour rank was updated to ".$newrank." for ".$days." days.");
+					$player->sendMessage("§aYou updated ".$target."'s rank to ".$newrank." for ".$days." days.");
+					$message=$this->plugin->getStaffUtils()->sendStaffNoti("temprankchange");
+					$message=str_replace("{name}", $player->getName(), $message);
+					$message=str_replace("{target}", $target, $message);
+					$message=str_replace("{oldrank}", $rank, $message);
+					$message=str_replace("{newrank}", $newrank, $message);
+					$message=str_replace("{days}", $days, $message);
+					foreach($this->plugin->getServer()->getOnlinePlayers() as $online){
+						if($online->hasPermission("Pandaz.staff.notifications")){
+							$online->sendMessage($message);
+						}
+					}
+				}
+				break;
+				case "vip14d":
+				$target=$this->targetPlayer[$player->getName()];
+				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
+				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
+				$newrank="VIP";
+				$days=14;
+				if($rank==$newrank){
+					$player->sendMessage("§cThis player has already been assigned ".$newrank.".");
+				}else{
+					Utils::giveTemporaryRank($target, "vip14d");
+					if($targetpl instanceof Player) $targetpl->sendMessage("§aYour rank was updated to ".$newrank." for ".$days." days.");
+					$player->sendMessage("§aYou updated ".$target."'s rank to ".$newrank." for ".$days." days.");
+					$message=$this->plugin->getStaffUtils()->sendStaffNoti("temprankchange");
+					$message=str_replace("{name}", $player->getName(), $message);
+					$message=str_replace("{target}", $target, $message);
+					$message=str_replace("{oldrank}", $rank, $message);
+					$message=str_replace("{newrank}", $newrank, $message);
+					$message=str_replace("{days}", $days, $message);
+					foreach($this->plugin->getServer()->getOnlinePlayers() as $online){
+						if($online->hasPermission("Pandaz.staff.notifications")){
+							$online->sendMessage($message);
+						}
+					}
+				}
+				break;
+				case "vip30d":
+				$target=$this->targetPlayer[$player->getName()];
+				$targetpl=$this->plugin->getServer()->getPlayerExact($target);
+				$rank=$this->plugin->getDatabaseHandler()->getRank($target);
+				$newrank="VIP";
+				$days=30;
+				if($rank==$newrank){
+					$player->sendMessage("§cThis player has already been assigned ".$newrank.".");
+				}else{
+					Utils::giveTemporaryRank($target, "vip30d");
 					if($targetpl instanceof Player) $targetpl->sendMessage("§aYour rank was updated to ".$newrank." for ".$days." days.");
 					$player->sendMessage("§aYou updated ".$target."'s rank to ".$newrank." for ".$days." days.");
 					$message=$this->plugin->getStaffUtils()->sendStaffNoti("temprankchange");
@@ -814,7 +970,11 @@ class RankCommand extends PluginCommand{
 			unset($this->targetPlayer[$player->getName()]);
 		});
 		$target=$this->targetPlayer[$player->getName()];
-		$form->setTitle("§l§c".$target);
+		$form->setTitle("§l§e".$target);
+		$form->addButton("VIP 3D", -1, "", "vip3d");
+		$form->addButton("VIP 7D", -1, "", "vip7d");
+		$form->addButton("VIP 14D", -1, "", "vip14d");
+		$form->addButton("VIP 30D", -1, "", "vip30d");
 		$form->addButton("Elite 3D", -1, "", "elite3d");
 		$form->addButton("Elite 7D", -1, "", "elite7d");
 		$form->addButton("Elite 14D", -1, "", "elite14d");
@@ -826,6 +986,7 @@ class RankCommand extends PluginCommand{
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
+
 	public function rankInfoForm(Player $player, string $rank):void{
 		$this->rank=$rank;
 		$form=new SimpleForm(function (Player $player, $data=null):void{
@@ -841,7 +1002,7 @@ class RankCommand extends PluginCommand{
 				break;
 			}
 		});
-		$form->setTitle("§l§CorePlayers With ".$this->rank." Rank");
+		$form->setTitle("§l§ePlayers With ".$this->rank." Rank");
 		$query=$this->plugin->main->query("SELECT * FROM rank ORDER BY rank;");
 		while($result=$query->fetchArray(SQLITE3_ASSOC)){
 			$target=$result['player'];
