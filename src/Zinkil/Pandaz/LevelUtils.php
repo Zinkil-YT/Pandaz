@@ -152,10 +152,10 @@ class LevelUtils{
 			$currentxp=Core::getInstance()->getDatabaseHandler()->getCurrentXp(Utils::getPlayerName($player));
 			$totalxp=Core::getInstance()->getDatabaseHandler()->getTotalXp(Utils::getPlayerName($player));
 			if($level>=146){
-				Core::getInstance()->getDatabaseHandler()->setTotalXp(Utils::getPlayerName($player), $totalxp + $total);
+				Core::getInstance()->getDatabaseHandler()->setTotalXp(Utils::getPlayerName($player), $totalxp - $total);
 			}else{
-				Core::getInstance()->getDatabaseHandler()->setCurrentXp(Utils::getPlayerName($player), $currentxp + $total);
-				Core::getInstance()->getDatabaseHandler()->setTotalXp(Utils::getPlayerName($player), $totalxp + $total);
+				Core::getInstance()->getDatabaseHandler()->setCurrentXp(Utils::getPlayerName($player), $currentxp - $total);
+				Core::getInstance()->getDatabaseHandler()->setTotalXp(Utils::getPlayerName($player), $totalxp - $total);
 			}
 			$currentxpnew=Core::getInstance()->getDatabaseHandler()->getCurrentXp(Utils::getPlayerName($player));
 			$progress=round($currentxpnew / $neededxp * 100, 1);

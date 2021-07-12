@@ -91,11 +91,11 @@ use Zinkil\Pandaz\Utils;
 use Zinkil\Pandaz\LevelUtils;
 use Zinkil\Pandaz\bossbar\BossBar;
 use Zinkil\Pandaz\discord\{Webhook, Message, Embed};
+use Zinkil\Pandaz\misc\Math;
 
 class PlayerListener implements Listener{
 	
 	public $plugin;
-	
 	private $gappleCooldown=[];
 	
 	public function __construct(Core $plugin){
@@ -275,6 +275,7 @@ class PlayerListener implements Listener{
 					if ($this->plugin->getDuelHandler()->isInPartyDuel($killer)) return;
                     if ($player->getHealth() - $event->getFinalDamage() <= 0){
 						Utils::spawnPrivateLightning($player, [$killer]);
+						Utils::spawnPrivateimpact($player, [$killer]);
 						if($player->isTagged()) $player->setTagged(false);
 						if($killer->isTagged()) $killer->setTagged(false);
 						if($player instanceof CorePlayer) $player->sendTo(0, true);
@@ -283,7 +284,7 @@ class PlayerListener implements Listener{
 						$weapon=$killer->getInventory()->getItemInHand()->getName();
 						$playername=$player->getDisplayName();
 						$killername=$killer->getDisplayName();
-						$messages=["quickied", "railed", "ezed", "clapped", "given an L", "smashed", "botted", "utterly defeated", "swept off their feet", "sent to the heavens", "killed", "owned", "kicked to hell", "UwUed", "OwOed"];
+						$messages=["quickied", "railed", "ezed", "clapped", "given an L", "smashed", "botted", "utterly defeated", "swept off their feet", "sent to the heavens", "killed", "owned", "kicked to hell", "UwUed", "OwOed", "Clowned", "360ed"];
 						$potsA=0;
 						$potsB=0;
 						foreach($player->getInventory()->getContents() as $pots){
@@ -305,7 +306,6 @@ class PlayerListener implements Listener{
 						if($killer instanceof CorePlayer) LevelUtils::increaseCurrentXp($killer, "kill", false);
 						if($killer instanceof CorePlayer) LevelUtils::checkXp($killer);
 						if($player instanceof CorePlayer) Utils::updateStats($player, 1);
-						if($player instanceof CorePlayer) LevelUtils::increaseCurrentXp($player, "death", false);
 						if($player instanceof CorePlayer) LevelUtils::checkXp($player);
 						if(Utils::isAutoRekitEnabled($killer)==true) Kits::sendKit($killer, $killer->getLevel()->getName());
 						if(Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) >= 5 and Core::getInstance()->getDatabaseHandler()->getKillstreak($killer) < 10){
@@ -743,14 +743,18 @@ class PlayerListener implements Listener{
 			}
 		}
 		if(Utils::isAutoSprintEnabled($player)==true){
-			if($from->x!=$to->x and $from->z!=$to->z){
-				if(!$player->isFlying()){
-					$player->setSprinting(true);
-				}
-			}
-		}
-		if($block->getId() === 165){
-			$player->setMotion(new Vector3(0, mt_rand(25, 40) / 10, 0));
+			// Gets the difference between the two vectors.
+			$difference = $event->getTo()->subtract($event->getFrom());
+			$distance = $difference->length();
+			$lookDirection = $player->getDirectionVector()->normalize();
+			$dotProductResult = Math::dot($lookDirection, $difference->normalize());
+			// Result of dot product:
+			// if result is 1 in this case, player is moving forward
+			// if result is 0 in this case, player is moving side to side
+			// if result is -1 in this case, player is moving backward
+			// TODO: Change 0.5 for dot product result to some threshold for
+			//       determining if player is moving forward
+			$player->setSprinting($distance > 0 && $dotProductResult >= 0.5);
 		}
 	}
 }

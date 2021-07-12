@@ -53,6 +53,7 @@ use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\ActorEventPacket;
 use pocketmine\utils\Color;
+use pocketmine\block\Redstone;
 use Zinkil\Pandaz\Core;
 use Zinkil\Pandaz\Utils;
 use Zinkil\Pandaz\CorePlayer;
@@ -1540,20 +1541,7 @@ class Utils{
 		$player->getServer()->broadcastPacket($viewers, $packet);
 	}
 
-	public static function knockbackPlayer($player){
-		$player=self::getPlayer($player);
-		if(is_null($player)) return;
-		$level=$player->getLevel();
-		$x=$player->getX();
-		$y=$player->getY();
-		$z=$player->getZ();
-		$dir=$player->getDirectionVector();
-		$dx=$dir->getX();
-		$dz=$dir->getZ();
-		$player->knockBack($player, 0, $dx, $dz);
-	}
-
-	public static function impactSound($player){
+	public static function spawnPublicimpact($player){
 		if($player instanceof Player){
 			$player=self::getPlayer($player);
 		}else{
@@ -1565,9 +1553,53 @@ class Utils{
 		$sound->x=$player->getX();
 		$sound->y=$player->getY();
 		$sound->z=$player->getZ();
-		$sound->volume=2;
+		$sound->volume=1;
 		$sound->pitch=1;
 		Server::getInstance()->broadcastPacket($player->getLevel()->getPlayers(), $sound);
+	}
+
+	public static function spawnPrivateimpact($player, $viewers) : void{
+		if($player instanceof Player){
+			$player=self::getPlayer($player);
+		}else{
+			$player=$player;
+		}
+		if(is_null($player)) return;
+		$sound=new PlaySoundPacket();
+		$sound->soundName="ambient.weather.lightning.impact";
+		$sound->x=$player->getX();
+		$sound->y=$player->getY();
+		$sound->z=$player->getZ();
+		$sound->volume=1;
+		$sound->pitch=1;
+		$player->getServer()->broadcastPacket(array_merge([$player], $viewers), $sound);
+	}
+
+	public static function sprayPrivateBlood($player, $viewers) : void{
+		if($player instanceof Player){
+			$player=self::getPlayer($player);
+		}else{
+			$player=$player;
+		}
+		$block = new Redstone();
+		$packet = new LevelEventPacket;
+		$packet->evid = LevelEventPacket::EVENT_PARTICLE_DESTROY;
+		$packet->position = new Vector3($player->getX(), $player->getY(), $player->getZ());
+		$packet->data = $block->getRuntimeId();
+		$player->getServer()->broadcastPacket($viewers, $packet);
+	}
+
+	public static function sendArrowDingSound($player) : void{
+		if($player instanceof Player){
+			$player=self::getPlayer($player);
+		}else{
+			$player=$player;
+		}
+		$packet = new LevelEventPacket();
+		$packet->evid = LevelEventPacket::EVENT_SOUND_ORB;
+		$packet->data = 1;
+		$packet->position = $player->asVector3();
+		$player->batchDataPacket($packet);
 	}
 
 	public static function teleportSound($player){

@@ -116,13 +116,13 @@ class StaffUtils{
 		if($bool===true){
 			$player->setCoordins(true);
 			$packet=new GameRulesChangedPacket();
-			$packet->gameRules=["showcoordinates" => [1, true]];
+			$packet->gameRules=["showcoordinates" => [1, true, false]];
 			$player->dataPacket($packet);
 			$player->sendMessage("§aYou will now see your coords.");
 		}else{
 			$player->setCoordins(false);
 			$packet=new GameRulesChangedPacket();
-			$packet->gameRules=["showcoordinates" => [1, false]];
+			$packet->gameRules=["showcoordinates" => [1, false, false]];
 			$player->dataPacket($packet);
 			$player->sendMessage("§cYou will no longer see your coords.");
 		}
@@ -232,10 +232,6 @@ class StaffUtils{
 			break;
 			case "autopermanentban":
 			$message="§o§7[§b{target}: §7automatic permanent ban, player reached the maximum warn points]";
-			return $message;
-			break;
-			case "sudo":
-			$message="§o§7[§b{name}: §7excuted command as {target}]";
 			return $message;
 			break;
 			case "kick":

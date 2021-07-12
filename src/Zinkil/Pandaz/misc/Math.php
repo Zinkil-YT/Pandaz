@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Zinkil\\Pandaz\misc;
+namespace Zinkil\Pandaz\misc;
 
 
 use pocketmine\level\Location;

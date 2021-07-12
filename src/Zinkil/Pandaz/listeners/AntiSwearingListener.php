@@ -34,7 +34,7 @@ class AntiSwearingListener implements Listener{
 
     public function __construct(Core $plugin){
 		$this->plugin = $plugin;
-        $this->badwords = ["anal", "anus", "ass", "bastard", "bitch", "boob", "tites", "cock", "cum", "cunt", "dick", "dildo", "dyke", "fag", "faggot", "fuck", "fuk", "fk", "hoe", "tits", "whore", "handjob", "homo", "jizz", "cunt", "kike", "kunt", "muff", "nigger", "penis", "piss", "poop", "pussy", "queer", "rape", "semen", "sex", "shit", "slut", "titties", "twat", "vagina", "vulva", "wank", "FUCK", "BITCH", "NIGGA", "PUSSY", "NIGGER", "CUM", "GAY", "FAGGOT", "DICK", "CUNT", "ASS", "BUTT", "nigger", "nigga", "pus", "puss", "pusy", "gay", "stupid"];
+        $this->badwords = ["anal", "anus", "ass", "bastard", "bitch", "boob", "tites", "cock", "cum", "cunt", "dick", "dildo", "dyke", "faggot", "fuck", "fuk", "fk", "hoe", "tits", "whore", "handjob", "homo", "jizz", "cunt", "kike", "kunt", "muff", "nigger", "penis", "piss", "poop", "pussy", "queer", "rape", "semen", "sex", "shit", "slut", "titties", "twat", "vagina", "vulva", "wank", "FUCK", "BITCH", "NIGGA", "PUSSY", "NIGGER", "CUM", "GAY", "FAGGOT", "DICK", "CUNT", "ASS", "BUTT", "nigger", "nigga", "pus", "puss", "pusy", "gay"];
     }
 
     public function onChat(PlayerChatEvent $event) : void{
@@ -47,7 +47,6 @@ class AntiSwearingListener implements Listener{
                 foreach($this->badwords as $badwords){
                     if(strpos($msg, $badwords) !== false){
                         $event->setCancelled();
-                        $player->kick("§cDon't be rude\n§fVia Anti-Swearing", false);
                         return;
                     }
                 }

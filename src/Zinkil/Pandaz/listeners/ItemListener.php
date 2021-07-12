@@ -650,7 +650,7 @@ class ItemListener implements Listener{
 		$progress=round($currentxpnew / $neededxp * 100, 1);
 		$pc='%';
 		$form->setTitle("§l§eStats");
-		$form->setContent("§bCompetitive Stats\n§fElo: ".$elo."\nWins: ".$wins."\nLosses: ".$losses."\n\n§bCasual Stats\n§fKills: ".$kills."\nDeaths: ".$deaths."\nKDR: ".$kdr."\nKillstreak: ".$killstreak." §7(".$bestkillstreak.")"."\n\n§bLevel Stats"."\n§fLevel: ".Utils::formatLevel($level)."\nLevel Progress: ".$currentxpnew."/".$neededxp." (".$progress.$pc.")");
+		$form->setContent("§bCompetitive Stats\n§fElo: ".$elo."\nWins: ".$wins."\nLosses: ".$losses."\n\n§bCasual Stats\n§fKills: ".$kills."\nDeaths: ".$deaths."\nKDR: ".$kdr."\nKillstreak: ".$killstreak." §7(".$bestkillstreak.")"."\n\n§bLevel Stats"."\n§fLevel: ".Utils::formatLevel($level)."\n§fLevel Progress: ".$currentxpnew."/".$neededxp." (".$progress.$pc.")");
 		$form->addButton("« Back", -1, "", "exit");
 		$player->sendForm($form);
 	}
@@ -1204,56 +1204,56 @@ class ItemListener implements Listener{
 			$count1="§cOffline";
 			$c1="offline";
 		}else{
-			$count1="§l»§r§7 Currently Playing: §9".count($nodebuff->getPlayers());
+			$count1="§l»§r§8 Currently Playing: §9".count($nodebuff->getPlayers());
 			$c1="nodebuff";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("gapple")){
 			$count2="§cOffline";
 			$c2="offline";
 		}else{
-			$count2="§l»§r§7 Currently Playing: §9".count($gapple->getPlayers());
+			$count2="§l»§r§8 Currently Playing: §9".count($gapple->getPlayers());
 			$c2="gapple";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("combo")){
 			$count4="§cOffline";
 			$c4="offline";
 		}else{
-			$count4="§l»§r§7 Currently Playing: §9".count($combo->getPlayers());
+			$count4="§l»§r§8 Currently Playing: §9".count($combo->getPlayers());
 			$c4="combo";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("fist")){
 			$count5="§cOffline";
 			$c5="offline";
 		}else{
-			$count5="§l»§r§7 Currently Playing: §9".count($fist->getPlayers());
+			$count5="§l»§r§8 Currently Playing: §9".count($fist->getPlayers());
 			$c5="fist";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("resistance")){
 			$count6="§cOffline";
 			$c6="offline";
 		}else{
-			$count6="§l»§r§7 Currently Playing: §9".count($resistance->getPlayers());
+			$count6="§l»§r§8 Currently Playing: §9".count($resistance->getPlayers());
 			$c6="resistance";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("sumoffa")){
 			$count7="§cOffline";
 			$c7="offline";
 		}else{
-			$count7="§l»§r§7 Currently Playing: §9".count($sumoffa->getPlayers());
+			$count7="§l»§r§8 Currently Playing: §9".count($sumoffa->getPlayers());
 			$c7="sumoffa";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("knockbackffa")){
 			$count8="§cOffline";
 			$c8="offline";
 		}else{
-			$count8="§l»§r§7 Currently Playing: §9".count($knockbackffa->getPlayers());
+			$count8="§l»§r§8 Currently Playing: §9".count($knockbackffa->getPlayers());
 			$c8="knockbackffa";
 		}
 		if(!$this->plugin->getServer()->isLevelLoaded("buildffa")){
 			$count9="§cOffline";
 			$c9="offline";
 		}else{
-			$count9="§l»§r§7 Currently Playing: §9".count($buildffa->getPlayers());
+			$count9="§l»§r§8 Currently Playing: §9".count($buildffa->getPlayers());
 			$c9="buildffa";
 		}
 		$form->setTitle("§l§eFFA");

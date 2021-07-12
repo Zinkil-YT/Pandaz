@@ -34,7 +34,7 @@ class AntiToxicListener implements Listener{
 
     public function __construct(Core $plugin){
 		$this->plugin = $plugin;
-        $this->toxicwords = ["ez", "noob", "trash", "owned", "clapped", "clown", "L", "EZ", "NOOB", "TRASH", "OWNED", "CLAPPED", "CLOWN"];
+        $this->toxicwords = ["ez", "noob", "trash", "owned", "clapped", "clown", "stupid", "dumb", "EZ", "NOOB", "TRASH", "OWNED", "CLAPPED", "CLOWN", "STUPID", "DUMB"];
     }
 
     public function onChat(PlayerChatEvent $event) : void{
@@ -47,7 +47,6 @@ class AntiToxicListener implements Listener{
                 foreach($this->toxicwords as $toxicwords){
                     if(strpos($msg, $toxicwords) !== false){
                         $event->setCancelled();
-                        $player->kick("§cDon't be toxic\n§fVia Anti-Toxic", false);
                         return;
                     }
                 }

@@ -34,14 +34,11 @@ use Zinkil\Pandaz\Core;
 use Zinkil\Pandaz\CorePlayer;
 use Zinkil\Pandaz\Utils;
 use Zinkil\Pandaz\discord\{Webhook, Message, Embed};
-use Zinkil\Pandaz\tasks\onetime\ToolboxTask;
 
 class AntiCheatListener implements Listener{
 	
 	private $plugin;
-	
 	private $reachCooldown=[];
-	
 	private $cpsCooldown=[];
 	
 	public function __construct(Core $plugin){

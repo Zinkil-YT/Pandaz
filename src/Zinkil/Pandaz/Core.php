@@ -35,9 +35,9 @@ use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\nbt\tag\StringTag;
 use pocketmine\network\mcpe\protocol\EventPacket;
 use pocketmine\network\mcpe\protocol\LevelEventPacket;
-use Zinkil\Pandaz\commands\{KickAllCommand, AntiCheatCommand, ResetStatsCommand, SetClanTagCommand, ReplyCommand, DuelCommand, ForceKitCommand, RekitCommand, NickCommand, MuteCommand, TempBanCommand, PermBanCommand, CoordsCommand, MessagesCommand, VanishCommand, KillCommand, PartyCommand, FlyCommand, RestartCommand, ExecuteCommand, TpallCommand, AliasCommand, PingCommand, ForceRankCommand, ManageCommand, OnlineCommand, DisguiseCommand, MuteChatCommand, WhoCommand, StaffCommand, HubCommand, TestCommand, WhisperCommand, AnnounceCommand, FreezeCommand, RankCommand, GamemodeCommand, KickCommand, ReportCommand, SudoCommand, InformationCommand};
+use Zinkil\Pandaz\commands\{KickAllCommand, AntiCheatCommand, ResetStatsCommand, SetClanTagCommand, ReplyCommand, DuelCommand, ForceKitCommand, RekitCommand, NickCommand, MuteCommand, TempBanCommand, PermBanCommand, CoordsCommand, MessagesCommand, VanishCommand, KillCommand, PartyCommand, FlyCommand, RestartCommand, ExecuteCommand, TpallCommand, AliasCommand, PingCommand, ForceRankCommand, ManageCommand, OnlineCommand, DisguiseCommand, MuteChatCommand, WhoCommand, StaffCommand, HubCommand, TestCommand, WhisperCommand, AnnounceCommand, FreezeCommand, RankCommand, GamemodeCommand, KickCommand, ReportCommand, InformationCommand};
 use Zinkil\Pandaz\listeners\{ServerListener, AntiCheatListener, WorldListener, ItemListener, PlayerListener, TNTListener, BlockListener, AntiAdvertisingListener, AntiSwearingListener, AntiToxicListener, CapeListener};
-use Zinkil\Pandaz\tasks\{FlagsTask, StatusTask, ParticleTask, PlayerTask, VoteAccessTask, TemporaryBansTask, MutesTask, DuelTask, CombatTask, TemporaryRankTask, DatabaseTask, SetDayTask, DropsTask, MotdTask, PingTask, FloatingTextTask, VanishTask, NameTagTask, BroadcastTask, OnlineTask, BlockResetAirTask, BlockResetRedstoneTask};
+use Zinkil\Pandaz\tasks\{FlagsTask, ParticleTask, PlayerTask, VoteAccessTask, TemporaryBansTask, MutesTask, DuelTask, CombatTask, TemporaryRankTask, DatabaseTask, SetDayTask, DropsTask, MotdTask, PingTask, FloatingTextTask, VanishTask, NameTagTask, BroadcastTask, OnlineTask, BlockResetAirTask, BlockResetRedstoneTask};
 use Zinkil\Pandaz\handlers\{ArenaHandler, DuelHandler, ClickHandler, ScoreboardHandler, PermissionHandler, DatabaseHandler};
 use Zinkil\Pandaz\entities\{PotionEntity, FastPotion, DefaultPotion, Pearl, Hook, TNTEntity};
 use Zinkil\Pandaz\items\{Splash, Rod};
@@ -68,7 +68,6 @@ class Core extends PluginBase{
 	public $controls=[];
 	public $os=[];
 	public $device=[];
-	public $lastHit=[];
 	
 	private static $instance;
 	private static $databaseHandler;
@@ -217,7 +216,7 @@ class Core extends PluginBase{
 		
 		");
 
-		$this->getServer()->getNetwork()->setName("§bPandaz §f- Practice §3");
+		$this->getServer()->getNetwork()->setName("§l§bPandaz §fPractice");
 	}
 
 	public function onDisable(){
@@ -370,7 +369,6 @@ class Core extends PluginBase{
 		$map->register("gamemode", new GamemodeCommand($this));
 		$map->register("kick", new KickCommand($this));
 		$map->register("report", new ReportCommand($this));
-		$map->register("sudo", new SudoCommand($this));
 		$map->register("information", new InformationCommand($this));
 		$this->getLogger()->info("--- Commands Loaded ---");
 	}
@@ -384,7 +382,7 @@ class Core extends PluginBase{
 		$map->scheduleRepeatingTask(new MutesTask($this), 1200);
 		$map->scheduleRepeatingTask(new DuelTask($this), 1);
 		$map->scheduleRepeatingTask(new CombatTask($this), 20);
-		$map->scheduleRepeatingTask(new MotdTask($this), 100);
+		//$map->scheduleRepeatingTask(new MotdTask($this), 100);
 		$map->scheduleRepeatingTask(new SetDayTask($this), 20);
 		$map->scheduleRepeatingTask(new FloatingTextTask($this), 100);
 		$map->scheduleRepeatingTask(new TemporaryRankTask($this), 1200);
@@ -392,7 +390,7 @@ class Core extends PluginBase{
 		$map->scheduleRepeatingTask(new DropsTask($this), 2400);
 		//$map->scheduleRepeatingTask(new PingTask($this), 100);
 		//$map->scheduleRepeatingTask(new OnlineTask($this), 20);
-		$map->scheduleDelayedRepeatingTask(new BroadcastTask($this), 200, 5000);
+		$map->scheduleDelayedRepeatingTask(new BroadcastTask($this), 200, 7000);
 		$map->scheduleRepeatingTask(new NameTagTask($this), 5);
 		$map->scheduleRepeatingTask(new VanishTask($this), 5);
 		$this->getLogger()->info("--- Tasks Loaded ---");
