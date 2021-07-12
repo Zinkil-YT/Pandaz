@@ -73,6 +73,7 @@
   - If hackers tried joining the server with toolbox they will stuck on infinite locating server and if they joined they will get kicked
 - [x] Good respawn system
   - when a player get killed he dont get death menu (Respawn, Main menu) it send him to lobby without getting death menu and give the killer his kills and rewards
+- [x] Levels system
 
 ## Config
 - [x] Arena Config
@@ -152,16 +153,13 @@ topkills:
 - [ ] Anti-Cheat improvments to support more types of cheats
 - [ ] Add multi languages system
 - [ ] Replay system
-- [x] FFA custom scoreboard (Better scoreboards..)
 - [ ] KitPvP gamemode
 - [ ] Anti-VPN/Proxy
 - [ ] Custom bossbars
 - [ ] Better spectating
 - [ ] Duels invites
 - [ ] Anti-Swearing/Toxic improvments to support more languages
-- [x] ChangeLogs ui and with settings (When a player joins it apears)
 - [ ] Better color scheme
-- [x] Level system
 
 ## Questions or any help:
 
@@ -173,5 +171,4 @@ Feel free to subscribe to my channel [MR Zinkil](https://www.youtube.com/channel
 
 <hr>
 
-## **Developed By Zinkil**
-##### **Made With Love** 💛
+### <b>Made with ❤ by Zinkil</b>
