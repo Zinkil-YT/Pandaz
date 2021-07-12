@@ -73,6 +73,3 @@ permissions:
   Pandaz.command.restart:
     description: 'Permission to restart the server.'
     default: op
-  Pandaz.command.sudo:
-    description: 'Permission to excute commands or send messages as another player.'
-    default: op
