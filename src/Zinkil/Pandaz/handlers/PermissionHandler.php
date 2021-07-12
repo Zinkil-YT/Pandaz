@@ -137,7 +137,6 @@ class PermissionHandler{
 			$player->addAttachment($this->plugin, "Pandaz.bypass.swearing", true);
 			$player->addAttachment($this->plugin, "Pandaz.bypass.toxic", true);
 			$player->addAttachment($this->plugin, "Pandaz.command.kick", true);
-			$player->addAttachment($this->plugin, "Pandaz.command.sudo", true);
 			break;
 			case "Admin":
 			$player->addAttachment($this->plugin, "Pandaz.command.alias", true);
@@ -171,7 +170,6 @@ class PermissionHandler{
 			$player->addAttachment($this->plugin, "Pandaz.bypass.toxic", true);
 			$player->addAttachment($this->plugin, "Pandaz.command.kick", true);
 			$player->addAttachment($this->plugin, "Pandaz.command.restart", true);
-			$player->addAttachment($this->plugin, "Pandaz.command.sudo", true);
 			break;
 			case "Manager":
 			$player->addAttachment($this->plugin, "Pandaz.command.mutechat", true);
@@ -210,7 +208,6 @@ class PermissionHandler{
 			$player->addAttachment($this->plugin, "Pandaz.bypass.toxic", true);
 			$player->addAttachment($this->plugin, "Pandaz.command.kick", true);
 			$player->addAttachment($this->plugin, "Pandaz.command.restart", true);
-			$player->addAttachment($this->plugin, "Pandaz.command.sudo", true);
 			break;
 			case "Owner":
 			return;
