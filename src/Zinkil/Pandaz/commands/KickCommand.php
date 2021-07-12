@@ -51,7 +51,7 @@ class KickCommand extends PluginCommand{
 			$player->sendMessage("§cPlayer not found.");
 			return;
 		}
-		$target=$this->plugin->getServer()->getPlayer(array_shift($args));
+		$target=$this->plugin->getServer()->getPlayer($args[0]);
 		if($target->getName()==$player->getName()){
 			$player->sendMessage("§cYou cannot kick yourself.");
 			return;
@@ -64,9 +64,7 @@ class KickCommand extends PluginCommand{
 			$player->sendMessage("§cYou cannot kick this player.");
 			return;
 	    }
-		$target=$this->plugin->getServer()->getPlayer(array_shift($args));
-		$pn=$player->getName();
-		$tn=$target->getName();
+		$target=$this->plugin->getServer()->getPlayer($args[0]);
 		$reason=implode(" ", $args);
 		if(!$target->isOp()){
 			$target->kick("§r§cYou were kicked by §r§e".$player->getName()."\n§r§cReason: §r§e".$reason, false);

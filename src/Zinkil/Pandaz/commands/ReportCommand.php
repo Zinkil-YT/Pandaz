@@ -58,16 +58,16 @@ class ReportCommand extends PluginCommand{
 				$player->sendMessage("§cPlayer not found.");
 				return;
 			}
-			$target=$this->plugin->getServer()->getPlayer(array_shift($args));
+			$target=$this->plugin->getServer()->getPlayer($args[0]);
 			if($target->getName()==$player->getName()){
 				$player->sendMessage("§cYou cannot report yourself.");
 				return;
 			}
-			if(count($args) < 2){
+			if(!isset($args[1])){
 				$player->sendMessage("§cYou must provide a reason.");
 				return;
 			}
-			$target=$this->plugin->getServer()->getPlayer(array_shift($args));
+			$target=$this->plugin->getServer()->getPlayer($args[0]);
 			$pn=$player->getName();
 			$tn=$target->getName();
 			$reason=implode(" ", $args);

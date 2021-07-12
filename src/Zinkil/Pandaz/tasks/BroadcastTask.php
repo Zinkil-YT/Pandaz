@@ -36,9 +36,7 @@ class BroadcastTask extends Task{
 		$this->plugin->getCastPrefix()."Join our official discord at ".$this->plugin->getDiscord().".",
 		$this->plugin->getCastPrefix()."If you want a Youtube rank (300+) or a Famous rank (800+) make a video on server and tell me in discord server ".$this->plugin->getDiscord().".",
 		$this->plugin->getCastPrefix()."Check out our twitter, ".$this->plugin->getTwitter().".",
-		$this->plugin->getCastPrefix()."Buy a rank for access to exlusive features at ".$this->plugin->getStore().".",
 		$this->plugin->getCastPrefix()."Want to rekit you can use /rekit or enable auto rekit in settings.",
-		$this->plugin->getCastPrefix()."Feel free to go subscribe to the owner on youtube: §6MR Zinkil.",
 		$this->plugin->getCastPrefix()."Don't 2v1, Use glitches or share them, Abuse players and staff To not get banned."
 		];
 		$this->line++;
